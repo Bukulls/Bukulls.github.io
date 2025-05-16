@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Taller Automotriz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .btn {
+            @apply px-4 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-opacity-50;
+        }
+        .btn-sm {
+            @apply px-3 py-1 text-xs rounded-md shadow-sm; /* Botones más pequeños para acciones en tablas */
+        }
+        .btn-primary {
+            @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+        }
+        .btn-secondary {
+            @apply bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500;
+        }
+        .btn-danger {
+            @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+        }
+        .btn-success {
+            @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+        }
+        .btn-warning {
+            @apply bg-yellow-500 text-black hover:bg-yellow-600 focus:ring-yellow-400;
+        }
+        .btn-info {
+            @apply bg-sky-500 text-white hover:bg-sky-600 focus:ring-sky-400;
+        }
+        .btn-whatsapp {
+            @apply bg-green-500 text-white hover:bg-green-600 focus:ring-green-400;
+        }
+        .input-field {
+            @apply mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+        }
+        .card {
+            @apply bg-white shadow-xl rounded-xl p-6 md:p-8;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        /* Styling for message box */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1050; /* Ensure it's above modal */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            max-width: 300px;
+        }
+        .message-box.show {
+            opacity: 1;
+        }
+        .message-box.error {
+            background-color: #f44336; /* Red for errors */
+        }
+        .message-box.info {
+            background-color: #2196F3; /* Blue for info */
+        }
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1001; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; /* 5% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%; /* Could be more or less, depending on screen size */
+            max-width: 800px; /* Max width for image modal */
+            border-radius: 10px;
+            position: relative;
+        }
+        .modal-content-sm { /* For export modal */
+             margin: 10% auto;
+             max-width: 700px;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .phone-input-group {
+            @apply flex items-center mt-1;
+        }
+        .phone-prefix {
+            @apply px-3 py-3 border border-r-0 border-gray-300 bg-gray-100 text-gray-600 rounded-l-lg sm:text-sm;
+        }
+        .phone-number-input {
+            @apply block w-full px-4 py-3 border border-gray-300 rounded-r-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+        }
+        .image-preview-container {
+            @apply mt-2 flex flex-wrap gap-2;
+        }
+        .image-preview-item {
+            @apply relative border border-gray-300 rounded-md p-1;
+        }
+        .image-preview-item img {
+            @apply h-24 w-24 object-cover rounded;
+        }
+        .image-preview-item .remove-img-btn {
+            @apply absolute top-0 right-0 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs cursor-pointer transform translate-x-1/2 -translate-y-1/2;
+        }
+        .estado-pendiente { @apply bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs; }
+        .estado-aceptado { @apply bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs; }
+        .estado-rechazado { @apply bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs; }
+        .estado-en-proceso { @apply bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs; }
+        .estado-completado { @apply bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs; }
+
+        #imagenesVehiculoModalContent img {
+            @apply w-full h-auto object-contain mb-2 rounded-md shadow-md;
+            max-height: 70vh; /* Max height for images in modal */
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 min-h-screen">
+
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-700">Sistema de Gestión Taller Automotriz</h1>
+        </header>
+
+        <nav class="mb-8">
+            <ul class="flex flex-wrap justify-center border-b border-gray-300">
+                <li class="-mb-px mr-1">
+                    <a class="bg-white inline-block py-3 px-6 text-blue-600 hover:text-blue-800 font-semibold rounded-t-lg border-l border-t border-r border-gray-300 tab-link active-tab" href="#" data-tab="clientes">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" /></svg>
+                        Clientes
+                    </a>
+                </li>
+                <li class="mr-1">
+                    <a class="bg-white inline-block py-3 px-6 text-blue-600 hover:text-blue-800 font-semibold rounded-t-lg tab-link" href="#" data-tab="vehiculos">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM2 10a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2zm3 1a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1-4a1 1 0 100 2h6a1 1 0 100-2H6z" clip-rule="evenodd" /></svg>
+                        Vehículos
+                    </a>
+                </li>
+                <li class="mr-1">
+                    <a class="bg-white inline-block py-3 px-6 text-blue-600 hover:text-blue-800 font-semibold rounded-t-lg tab-link" href="#" data-tab="presupuestos">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 100 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 100-4V6z" /></svg>
+                        Presupuestos
+                    </a>
+                </li>
+                <li class="mr-1">
+                    <a class="bg-white inline-block py-3 px-6 text-blue-600 hover:text-blue-800 font-semibold rounded-t-lg tab-link" href="#" data-tab="datos">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                        Datos
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main>
+            <section id="clientes" class="tab-content active card">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-700">Gestión de Clientes</h2>
+                <form id="formCliente" class="space-y-6 mb-8">
+                    <input type="hidden" id="clienteEditIndex" value="-1"> 
+                    <div>
+                        <label for="clienteNombre" class="block text-sm font-medium text-gray-700">Nombre Completo:</label>
+                        <input type="text" id="clienteNombre" name="clienteNombre" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="clienteTelefonoNum" class="block text-sm font-medium text-gray-700">Teléfono (8 dígitos):</label>
+                        <div class="phone-input-group">
+                            <span class="phone-prefix">+569</span>
+                            <input type="tel" id="clienteTelefonoNum" name="clienteTelefonoNum" class="phone-number-input" required maxlength="8" pattern="\d{8}" title="Ingrese 8 dígitos numéricos">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="clienteEmail" class="block text-sm font-medium text-gray-700">Correo Electrónico:</label>
+                        <input type="email" id="clienteEmail" name="clienteEmail" class="input-field">
+                    </div>
+                    <div>
+                        <label for="clienteDireccion" class="block text-sm font-medium text-gray-700">Dirección:</label>
+                        <textarea id="clienteDireccion" name="clienteDireccion" rows="3" class="input-field"></textarea>
+                    </div>
+                    <button type="submit" id="btnSubmitCliente" class="btn btn-primary w-full sm:w-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                        Agregar Cliente
+                    </button>
+                </form>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-700">Listado de Clientes</h3>
+                <div class="overflow-x-auto rounded-lg shadow">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaClientes" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="vehiculos" class="tab-content card">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-700">Gestión de Vehículos</h2>
+                <form id="formVehiculo" class="space-y-6 mb-8">
+                     <input type="hidden" id="vehiculoEditIndex" value="-1">
+                    <div>
+                        <label for="vehiculoCliente" class="block text-sm font-medium text-gray-700">Cliente Asociado:</label>
+                        <select id="vehiculoCliente" name="vehiculoCliente" class="input-field" required>
+                            <option value="">Seleccione un cliente...</option>
+                            </select>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="vehiculoMarca" class="block text-sm font-medium text-gray-700">Marca:</label>
+                            <input type="text" id="vehiculoMarca" name="vehiculoMarca" class="input-field" required>
+                        </div>
+                        <div>
+                            <label for="vehiculoModelo" class="block text-sm font-medium text-gray-700">Modelo:</label>
+                            <input type="text" id="vehiculoModelo" name="vehiculoModelo" class="input-field" required>
+                        </div>
+                        <div>
+                            <label for="vehiculoAno" class="block text-sm font-medium text-gray-700">Año:</label>
+                            <input type="number" id="vehiculoAno" name="vehiculoAno" class="input-field" min="1900" max="2099" step="1" required>
+                        </div>
+                        <div>
+                            <label for="vehiculoPatente" class="block text-sm font-medium text-gray-700">Patente:</label>
+                            <input type="text" id="vehiculoPatente" name="vehiculoPatente" class="input-field" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="vehiculoVin" class="block text-sm font-medium text-gray-700">VIN (Nº Chasis):</label>
+                        <input type="text" id="vehiculoVin" name="vehiculoVin" class="input-field">
+                    </div>
+                    <div>
+                        <label for="vehiculoImagenes" class="block text-sm font-medium text-gray-700">Imágenes del Vehículo (Opcional, para detalles):</label>
+                        <input type="file" id="vehiculoImagenes" name="vehiculoImagenes" class="input-field" multiple accept="image/*">
+                        <div id="vehiculoImagenesPreview" class="image-preview-container">
+                            </div>
+                        <p class="text-xs text-gray-500 mt-1">Nota: Las imágenes se guardan localmente. Evite archivos muy grandes o muchas imágenes para no exceder el límite de almacenamiento del navegador.</p>
+                    </div>
+                    <button type="submit" id="btnSubmitVehiculo" class="btn btn-primary w-full sm:w-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                        Agregar Vehículo
+                    </button>
+                </form>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-700">Listado de Vehículos</h3>
+                 <div class="overflow-x-auto rounded-lg shadow">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patente</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marca</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modelo</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Año</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaVehiculos" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="presupuestos" class="tab-content card">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-700">Gestión de Presupuestos</h2>
+                <form id="formPresupuesto" class="space-y-6 mb-8">
+                    <input type="hidden" id="presupuestoEditIndex" value="-1">
+                    <div>
+                        <label for="presupuestoCliente" class="block text-sm font-medium text-gray-700">Cliente:</label>
+                        <select id="presupuestoCliente" name="presupuestoCliente" class="input-field" required>
+                            <option value="">Seleccione un cliente...</option>
+                            </select>
+                    </div>
+                    <div>
+                        <label for="presupuestoVehiculo" class="block text-sm font-medium text-gray-700">Vehículo (filtrado por cliente):</label>
+                        <select id="presupuestoVehiculo" name="presupuestoVehiculo" class="input-field" required>
+                            <option value="">Seleccione un vehículo...</option>
+                            </select>
+                    </div>
+
+                    <fieldset class="border border-gray-300 p-4 rounded-lg">
+                        <legend class="text-lg font-medium text-gray-700 px-2">Servicios / Repuestos</legend>
+                        <div id="itemsPresupuesto" class="space-y-4">
+                            <div class="item-presupuesto bg-gray-50 p-3 rounded-md border border-gray-200">
+                                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-end">
+                                    <div class="md:col-span-4">
+                                        <label class="block text-sm font-medium text-gray-700">Descripción:</label>
+                                        <input type="text" name="itemDescripcion[]" class="input-field text-sm py-2" placeholder="Ej: Cambio de aceite" required>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700">Cantidad:</label>
+                                        <input type="number" name="itemCantidad[]" class="input-field text-sm py-2" value="1" min="1" required>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700">Precio Unit.:</label>
+                                        <input type="number" name="itemPrecio[]" class="input-field text-sm py-2" placeholder="25000" min="0" step="any" required>
+                                    </div>
+                                    <div class="md:col-span-3">
+                                        <label class="block text-sm font-medium text-gray-700">Link Repuesto (Opcional, no visible en PDF):</label>
+                                        <input type="url" name="itemLink[]" class="input-field text-sm py-2" placeholder="https://ejemplo.com/repuesto">
+                                    </div>
+                                    <div class="md:col-span-1 flex justify-end">
+                                        <button type="button" class="btn-danger btn-sm mt-1 md:mt-0" onclick="this.closest('.item-presupuesto').remove(); calcularTotalPresupuesto();">Eliminar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="btnAgregarItem" class="mt-4 btn btn-secondary text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                            Agregar Item
+                        </button>
+                    </fieldset>
+
+                    <div>
+                        <label for="presupuestoTotal" class="block text-sm font-medium text-gray-700">Total Presupuesto:</label>
+                        <input type="text" id="presupuestoTotal" name="presupuestoTotal" class="input-field bg-gray-100" readonly placeholder="$0">
+                    </div>
+
+                    <div>
+                        <label for="presupuestoNotas" class="block text-sm font-medium text-gray-700">Notas Adicionales:</label>
+                        <textarea id="presupuestoNotas" name="presupuestoNotas" rows="3" class="input-field"></textarea>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="submit" id="btnSubmitPresupuesto" class="btn btn-primary flex-grow sm:flex-grow-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" /></svg>
+                            Guardar Presupuesto
+                        </button>
+                        <button type="button" id="btnGenerarPDFDesdeForm" class="btn btn-secondary flex-grow sm:flex-grow-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" /></svg>
+                            Generar PDF
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="my-6">
+                    <label for="filtroEstadoPresupuesto" class="block text-sm font-medium text-gray-700 mb-1">Filtrar por Estado:</label>
+                    <select id="filtroEstadoPresupuesto" class="input-field py-2 w-full md:w-1/3">
+                        <option value="todos">Todos los Estados</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Aceptado">Aceptado</option>
+                        <option value="Rechazado">Rechazado</option>
+                        <option value="En Proceso">En Proceso</option>
+                        <option value="Completado">Completado</option>
+                    </select>
+                </div>
+
+                <h3 class="text-xl font-semibold mb-4 text-gray-700">Listado de Presupuestos</h3>
+                <div class="overflow-x-auto rounded-lg shadow">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nº</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehículo</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaPresupuestos" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section id="datos" class="tab-content card">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-700">Gestión de Datos (LocalStorage)</h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-700">Exportar Datos</h3>
+                        <p class="text-sm text-gray-600 mb-2">Copia estos datos para transferirlos a otro dispositivo o como respaldo.</p>
+                        <button id="btnExportarDatos" class="btn btn-secondary">Mostrar Datos para Exportar</button>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-700">Importar Datos</h3>
+                        <p class="text-sm text-gray-600 mb-2">Pega aquí los datos en formato JSON para cargarlos en la aplicación. <strong class="text-red-500">¡Atención! Esto reemplazará los datos actuales.</strong></p>
+                        <textarea id="jsonParaImportar" rows="8" class="input-field w-full" placeholder="Pega aquí el JSON exportado..."></textarea>
+                        <button id="btnImportarDatos" class="btn btn-primary mt-2">Importar Datos</button>
+                    </div>
+                     <div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-700">Eliminar Todos los Datos Locales</h3>
+                        <p class="text-sm text-gray-600 mb-2"><strong class="text-red-500">¡Cuidado!</strong> Esta acción eliminará permanentemente todos los clientes, vehículos y presupuestos guardados en el almacenamiento local de este navegador.</p>
+                        <button id="btnEliminarTodosLosDatos" class="btn btn-danger">Eliminar Todos los Datos</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="exportModal" class="modal">
+        <div class="modal-content modal-content-sm">
+            <span class="close-button" id="closeExportModal">&times;</span>
+            <h3 class="text-xl font-semibold mb-4">Datos Exportados (JSON)</h3>
+            <p class="text-sm text-gray-600 mb-2">Copia el siguiente texto:</p>
+            <textarea id="jsonExportado" rows="10" class="input-field w-full" readonly></textarea>
+            <button id="btnCopiarJson" class="btn btn-primary mt-4">Copiar al Portapapeles</button>
+        </div>
+    </div>
+
+    <div id="imagenesVehiculoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeImagenesVehiculoModal">&times;</span>
+            <h3 class="text-xl font-semibold mb-4" id="modalTituloImagenesVehiculo">Imágenes del Vehículo</h3>
+            <div id="imagenesVehiculoModalContent" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 overflow-y-auto max-h-[70vh]">
+                </div>
+            <p id="noImagenesVehiculo" class="text-center text-gray-500 mt-4 hidden">No hay imágenes para este vehículo.</p>
+        </div>
+    </div>
+
+
+    <div id="messageBox" class="message-box"></div>
+
+    <script>
+        // --- Constantes para LocalStorage ---
+        const LS_CLIENTES_KEY = 'taller_clientes_v3'; 
+        const LS_VEHICULOS_KEY = 'taller_vehiculos_v3'; 
+        const LS_PRESUPUESTOS_KEY = 'taller_presupuestos_v3'; 
+        const LS_PROXIMO_NUMERO_PRESUPUESTO_KEY = 'taller_proximo_numero_presupuesto_v3';
+
+        // --- Estado de la aplicación (Arrays de datos) ---
+        let clientes = [];
+        let vehiculos = []; 
+        let presupuestos = []; 
+        let proximoNumeroPresupuesto = 1;
+        let currentVehiculoImagenes = []; 
+
+        // --- Elementos del DOM (Selección inicial) ---
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const messageBox = document.getElementById('messageBox');
+
+        const formCliente = document.getElementById('formCliente');
+        const listaClientes = document.getElementById('listaClientes');
+        const clienteEditIndexInput = document.getElementById('clienteEditIndex');
+        const btnSubmitCliente = document.getElementById('btnSubmitCliente');
+        const clienteTelefonoNumInput = document.getElementById('clienteTelefonoNum');
+
+        const formVehiculo = document.getElementById('formVehiculo');
+        const listaVehiculos = document.getElementById('listaVehiculos');
+        const vehiculoEditIndexInput = document.getElementById('vehiculoEditIndex');
+        const btnSubmitVehiculo = document.getElementById('btnSubmitVehiculo');
+        const vehiculoImagenesInput = document.getElementById('vehiculoImagenes');
+        const vehiculoImagenesPreview = document.getElementById('vehiculoImagenesPreview');
+        
+        const formPresupuesto = document.getElementById('formPresupuesto');
+        const itemsPresupuestoContainer = document.getElementById('itemsPresupuesto');
+        const btnAgregarItem = document.getElementById('btnAgregarItem');
+        const presupuestoTotalInput = document.getElementById('presupuestoTotal');
+        const listaPresupuestos = document.getElementById('listaPresupuestos');
+        const presupuestoEditIndexInput = document.getElementById('presupuestoEditIndex');
+        const btnSubmitPresupuesto = document.getElementById('btnSubmitPresupuesto');
+        const btnGenerarPDFDesdeForm = document.getElementById('btnGenerarPDFDesdeForm');
+        const filtroEstadoPresupuestoSelect = document.getElementById('filtroEstadoPresupuesto');
+
+        const selectClienteVehiculo = document.getElementById('vehiculoCliente');
+        const selectClientePresupuesto = document.getElementById('presupuestoCliente');
+        const selectVehiculoPresupuesto = document.getElementById('presupuestoVehiculo');
+
+        const btnExportarDatos = document.getElementById('btnExportarDatos');
+        const jsonParaImportarTextarea = document.getElementById('jsonParaImportar');
+        const btnImportarDatos = document.getElementById('btnImportarDatos');
+        const btnEliminarTodosLosDatos = document.getElementById('btnEliminarTodosLosDatos');
+
+        const exportModal = document.getElementById('exportModal');
+        const jsonExportadoTextarea = document.getElementById('jsonExportado');
+        const closeExportModalButton = document.getElementById('closeExportModal');
+        const btnCopiarJson = document.getElementById('btnCopiarJson');
+
+        const imagenesVehiculoModal = document.getElementById('imagenesVehiculoModal');
+        const closeImagenesVehiculoModalButton = document.getElementById('closeImagenesVehiculoModal');
+        const imagenesVehiculoModalContent = document.getElementById('imagenesVehiculoModalContent');
+        const modalTituloImagenesVehiculo = document.getElementById('modalTituloImagenesVehiculo');
+        const noImagenesVehiculoMsg = document.getElementById('noImagenesVehiculo');
+
+
+        // --- Funciones de LocalStorage ---
+        function cargarDatosDesdeLocalStorage() {
+            const clientesGuardados = localStorage.getItem(LS_CLIENTES_KEY);
+            const vehiculosGuardados = localStorage.getItem(LS_VEHICULOS_KEY);
+            const presupuestosGuardados = localStorage.getItem(LS_PRESUPUESTOS_KEY);
+            const proximoNumeroGuardado = localStorage.getItem(LS_PROXIMO_NUMERO_PRESUPUESTO_KEY);
+
+            try {
+                if (clientesGuardados) clientes = JSON.parse(clientesGuardados);
+                if (vehiculosGuardados) vehiculos = JSON.parse(vehiculosGuardados).map(v => ({ ...v, imagenes: v.imagenes || [] }));
+                if (presupuestosGuardados) presupuestos = JSON.parse(presupuestosGuardados).map(p => ({ ...p, estado: p.estado || ESTADOS_PRESUPUESTO.PENDIENTE }));
+            } catch(e) {
+                console.error("Error parsing data from localStorage:", e);
+                showMessage("Error al cargar datos guardados. Podrían estar corruptos.", "error", 5000);
+            }
+            
+            proximoNumeroPresupuesto = proximoNumeroGuardado ? parseInt(proximoNumeroGuardado) : 1;
+            if (isNaN(proximoNumeroPresupuesto) || proximoNumeroPresupuesto < 1) {
+                 proximoNumeroPresupuesto = presupuestos.length > 0 ? Math.max(0, ...presupuestos.map(p => parseInt(p.numero))) + 1 : 1;
+            }
+        }
+
+        function guardarClientesEnLocalStorage() {
+            localStorage.setItem(LS_CLIENTES_KEY, JSON.stringify(clientes));
+        }
+        function guardarVehiculosEnLocalStorage() {
+            localStorage.setItem(LS_VEHICULOS_KEY, JSON.stringify(vehiculos));
+        }
+        function guardarPresupuestosEnLocalStorage() {
+            localStorage.setItem(LS_PRESUPUESTOS_KEY, JSON.stringify(presupuestos));
+            localStorage.setItem(LS_PROXIMO_NUMERO_PRESUPUESTO_KEY, proximoNumeroPresupuesto.toString());
+        }
+        function guardarTodosLosDatos() {
+            guardarClientesEnLocalStorage();
+            guardarVehiculosEnLocalStorage();
+            guardarPresupuestosEnLocalStorage();
+        }
+
+        // --- Navegación por Pestañas ---
+        tabLinks.forEach(link => {
+            link.addEventListener('click', event => {
+                event.preventDefault();
+                const tabId = link.dataset.tab;
+                tabContents.forEach(content => content.classList.remove('active'));
+                tabLinks.forEach(l => l.classList.remove('active-tab', 'border-gray-300', 'border-l', 'border-t', 'border-r'));
+                tabLinks.forEach(l => l.classList.add('hover:text-blue-800'));
+                document.getElementById(tabId).classList.add('active');
+                link.classList.add('active-tab', 'border-gray-300', 'border-l', 'border-t', 'border-r');
+                link.classList.remove('hover:text-blue-800');
+            });
+        });
+
+        // --- Funcionalidad básica para mostrar mensajes ---
+        function showMessage(message, type = 'success', duration = 3000) {
+            messageBox.textContent = message;
+            messageBox.className = 'message-box show'; 
+            if (type === 'error') messageBox.classList.add('error');
+            else if (type === 'info') messageBox.classList.add('info');
+            else messageBox.classList.remove('error', 'info');
+
+            setTimeout(() => messageBox.classList.remove('show'), duration);
+        }
+
+        // --- Lógica de Clientes ---
+        function renderClientes() {
+            listaClientes.innerHTML = ''; 
+            [selectClienteVehiculo, selectClientePresupuesto].forEach(select => {
+                const firstOption = select.options[0];
+                select.innerHTML = '';
+                if (firstOption) select.appendChild(firstOption.cloneNode(true));
+            });
+
+            clientes.forEach((cliente, index) => {
+                const row = listaClientes.insertRow();
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${cliente.nombre}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${cliente.telefonoCompleto || 'N/A'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${cliente.email || 'N/A'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-indigo-600 hover:text-indigo-900 mr-2 btn-sm" onclick="cargarClienteParaEditar(${index})">Editar</button>
+                        <button class="text-red-600 hover:text-red-900 btn-sm" onclick="eliminarCliente(${index})">Eliminar</button>
+                    </td>
+                `;
+                const option = document.createElement('option');
+                option.value = cliente.id; 
+                option.textContent = cliente.nombre;
+                selectClienteVehiculo.appendChild(option.cloneNode(true));
+                selectClientePresupuesto.appendChild(option.cloneNode(true));
+            });
+            if(formVehiculo.vehiculoCliente.dataset.selectedValue && clientes.some(c => c.id === formVehiculo.vehiculoCliente.dataset.selectedValue)) {
+                 formVehiculo.vehiculoCliente.value = formVehiculo.vehiculoCliente.dataset.selectedValue;
+            }
+            if(formPresupuesto.presupuestoCliente.dataset.selectedValue && clientes.some(c => c.id === formPresupuesto.presupuestoCliente.dataset.selectedValue)) {
+                 formPresupuesto.presupuestoCliente.value = formPresupuesto.presupuestoCliente.dataset.selectedValue;
+                 filtrarVehiculosParaPresupuesto(); 
+            }
+        }
+        
+        formCliente.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const nombre = this.clienteNombre.value;
+            const telefonoNum = this.clienteTelefonoNum.value;
+            const email = this.clienteEmail.value;
+            const direccion = this.clienteDireccion.value;
+            const editIndex = parseInt(clienteEditIndexInput.value);
+
+            if (!/^\d{8}$/.test(telefonoNum)) {
+                showMessage('El número de teléfono debe contener exactamente 8 dígitos.', 'error');
+                return;
+            }
+            const telefonoCompleto = `+569${telefonoNum}`;
+
+            if (editIndex > -1 && clientes[editIndex]) { 
+                clientes[editIndex] = { ...clientes[editIndex], nombre, telefonoNum, telefonoCompleto, email, direccion };
+                showMessage('Cliente actualizado con éxito.');
+            } else { 
+                const nuevoCliente = { id: `cliente_${Date.now()}`, nombre, telefonoNum, telefonoCompleto, email, direccion };
+                clientes.push(nuevoCliente);
+                showMessage('Cliente agregado con éxito.');
+            }
+            
+            clienteEditIndexInput.value = "-1"; 
+            btnSubmitCliente.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg> Agregar Cliente';
+            this.reset();
+            guardarClientesEnLocalStorage();
+            renderTodo();
+        });
+
+        function cargarClienteParaEditar(index) {
+            const cliente = clientes[index];
+            if (!cliente) return;
+            formCliente.clienteNombre.value = cliente.nombre;
+            formCliente.clienteTelefonoNum.value = cliente.telefonoNum || (cliente.telefonoCompleto ? cliente.telefonoCompleto.replace('+569', '') : '');
+            formCliente.clienteEmail.value = cliente.email || '';
+            formCliente.clienteDireccion.value = cliente.direccion || '';
+            clienteEditIndexInput.value = index;
+            btnSubmitCliente.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg> Actualizar Cliente';
+            if (!document.getElementById('clientes').classList.contains('active')) {
+                tabLinks.forEach(link => { if(link.dataset.tab === 'clientes') link.click(); });
+            }
+            formCliente.clienteNombre.focus();
+        }
+
+        function eliminarCliente(index) {
+            const clienteAEliminar = clientes[index];
+            if (!clienteAEliminar) return;
+            if (confirm(`¿Está seguro de eliminar a ${clienteAEliminar.nombre}? Esto también eliminará sus vehículos y presupuestos asociados.`)) {
+                vehiculos = vehiculos.filter(v => v.clienteId !== clienteAEliminar.id);
+                presupuestos = presupuestos.filter(p => p.clienteId !== clienteAEliminar.id);
+                clientes.splice(index, 1);
+                guardarTodosLosDatos();
+                renderTodo();
+                showMessage('Cliente y sus datos asociados eliminados.', 'error');
+            }
+        }
+
+        // --- Lógica de Vehículos (con imágenes) ---
+        vehiculoImagenesInput.addEventListener('change', async (event) => {
+            vehiculoImagenesPreview.innerHTML = ''; 
+            currentVehiculoImagenes = []; 
+            const files = event.target.files;
+            if (files.length > 5) { 
+                showMessage('Puede seleccionar un máximo de 5 imágenes.', 'error');
+                vehiculoImagenesInput.value = ""; 
+                return;
+            }
+
+            for (const file of files) {
+                if (file.size > 2 * 1024 * 1024) { 
+                     showMessage(`La imagen "${file.name}" es demasiado grande (máx 2MB). Será omitida.`, 'error');
+                     continue; 
+                }
+                try {
+                    const dataUrl = await readFileAsDataURL(file);
+                    currentVehiculoImagenes.push({name: file.name, url: dataUrl});
+                    const imgPreviewDiv = document.createElement('div');
+                    imgPreviewDiv.className = 'image-preview-item';
+                    imgPreviewDiv.innerHTML = `<img src="${dataUrl}" alt="${file.name}"><span class="remove-img-btn" data-name="${file.name}" onclick="removerImagenPreview(this)">&times;</span>`;
+                    vehiculoImagenesPreview.appendChild(imgPreviewDiv);
+                } catch (error) {
+                    showMessage(`Error al procesar la imagen ${file.name}.`, 'error');
+                    console.error(error);
+                }
+            }
+        });
+        
+        function removerImagenPreview(element) {
+            const nameToRemove = element.dataset.name;
+            currentVehiculoImagenes = currentVehiculoImagenes.filter(img => img.name !== nameToRemove);
+            element.parentElement.remove();
+        }
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        function renderVehiculos() {
+            listaVehiculos.innerHTML = '';
+            const firstOptionVehiculoPresupuesto = selectVehiculoPresupuesto.options[0];
+            selectVehiculoPresupuesto.innerHTML = '';
+            if(firstOptionVehiculoPresupuesto) selectVehiculoPresupuesto.appendChild(firstOptionVehiculoPresupuesto.cloneNode(true));
+
+            vehiculos.forEach((vehiculo, index) => {
+                const row = listaVehiculos.insertRow();
+                const clienteObj = clientes.find(c => c.id === vehiculo.clienteId);
+                row.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">${vehiculo.patente}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${vehiculo.marca}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${vehiculo.modelo}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${vehiculo.ano}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${clienteObj ? clienteObj.nombre : 'Cliente no encontrado'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium space-x-1">
+                        <button class="text-indigo-600 hover:text-indigo-900 btn-sm" onclick="cargarVehiculoParaEditar(${index})">Editar</button>
+                        <button class="btn-info btn-sm" onclick="mostrarImagenesVehiculo(${index})">Imágenes (${vehiculo.imagenes ? vehiculo.imagenes.length : 0})</button>
+                        <button class="text-red-600 hover:text-red-900 btn-sm" onclick="eliminarVehiculo(${index})">Eliminar</button>
+                    </td>
+                `;
+            });
+            poblarSelectVehiculosPresupuestoGlobal();
+            if(formPresupuesto.presupuestoVehiculo.dataset.selectedValue && vehiculos.some(v => v.id === formPresupuesto.presupuestoVehiculo.dataset.selectedValue)) {
+                 formPresupuesto.presupuestoVehiculo.value = formPresupuesto.presupuestoVehiculo.dataset.selectedValue;
+            }
+        }
+
+        function poblarSelectVehiculosPresupuestoGlobal() {
+            const firstOption = selectVehiculoPresupuesto.options[0];
+            selectVehiculoPresupuesto.innerHTML = '';
+            if (firstOption) selectVehiculoPresupuesto.appendChild(firstOption.cloneNode(true));
+            vehiculos.forEach(vehiculo => {
+                const option = document.createElement('option');
+                option.value = vehiculo.id;
+                option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.patente})`;
+                option.dataset.clienteId = vehiculo.clienteId;
+                selectVehiculoPresupuesto.appendChild(option);
+            });
+        }
+
+        formVehiculo.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const clienteId = this.vehiculoCliente.value;
+            this.vehiculoCliente.dataset.selectedValue = clienteId;
+
+            const vehiculoData = {
+                clienteId: clienteId,
+                marca: this.vehiculoMarca.value,
+                modelo: this.vehiculoModelo.value,
+                ano: this.vehiculoAno.value,
+                patente: this.vehiculoPatente.value,
+                vin: this.vehiculoVin.value,
+                imagenes: [...currentVehiculoImagenes] 
+            };
+            const editIndex = parseInt(vehiculoEditIndexInput.value);
+
+            if (editIndex > -1 && vehiculos[editIndex]) {
+                const imagenesExistentes = vehiculos[editIndex].imagenes || [];
+                vehiculos[editIndex] = { 
+                    ...vehiculos[editIndex], 
+                    ...vehiculoData,
+                    imagenes: currentVehiculoImagenes.length > 0 ? currentVehiculoImagenes : imagenesExistentes
+                }; 
+                showMessage('Vehículo actualizado con éxito.');
+            } else {
+                vehiculos.push({ id: `vehiculo_${Date.now()}`, ...vehiculoData });
+                showMessage('Vehículo agregado con éxito.');
+            }
+            
+            vehiculoEditIndexInput.value = "-1";
+            btnSubmitVehiculo.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg> Agregar Vehículo';
+            this.reset();
+            vehiculoImagenesPreview.innerHTML = ''; 
+            currentVehiculoImagenes = []; 
+            this.vehiculoCliente.dataset.selectedValue = ""; 
+            guardarVehiculosEnLocalStorage();
+            renderTodo();
+        });
+        
+        function cargarVehiculoParaEditar(index) {
+            const vehiculo = vehiculos[index];
+            if (!vehiculo) return;
+            formVehiculo.vehiculoCliente.value = vehiculo.clienteId;
+            formVehiculo.vehiculoMarca.value = vehiculo.marca;
+            formVehiculo.vehiculoModelo.value = vehiculo.modelo;
+            formVehiculo.vehiculoAno.value = vehiculo.ano;
+            formVehiculo.vehiculoPatente.value = vehiculo.patente;
+            formVehiculo.vehiculoVin.value = vehiculo.vin || '';
+            vehiculoEditIndexInput.value = index;
+            
+            vehiculoImagenesPreview.innerHTML = '';
+            currentVehiculoImagenes = vehiculo.imagenes ? [...vehiculo.imagenes] : []; 
+            currentVehiculoImagenes.forEach(img => {
+                const imgPreviewDiv = document.createElement('div');
+                imgPreviewDiv.className = 'image-preview-item';
+                imgPreviewDiv.innerHTML = `<img src="${img.url}" alt="${img.name}"><span class="remove-img-btn" data-name="${img.name}" onclick="removerImagenPreview(this)">&times;</span>`;
+                vehiculoImagenesPreview.appendChild(imgPreviewDiv);
+            });
+            vehiculoImagenesInput.value = ""; 
+
+            btnSubmitVehiculo.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg> Actualizar Vehículo';
+            if (!document.getElementById('vehiculos').classList.contains('active')) {
+                tabLinks.forEach(link => { if(link.dataset.tab === 'vehiculos') link.click(); });
+            }
+            formVehiculo.vehiculoMarca.focus();
+        }
+
+        function eliminarVehiculo(index) {
+            const vehiculoAEliminar = vehiculos[index];
+            if (!vehiculoAEliminar) return;
+            if (confirm(`¿Está seguro de eliminar el vehículo ${vehiculoAEliminar.marca} ${vehiculoAEliminar.modelo} (${vehiculoAEliminar.patente})? Esto también eliminará sus presupuestos asociados.`)) {
+                presupuestos = presupuestos.filter(p => p.vehiculoId !== vehiculoAEliminar.id);
+                vehiculos.splice(index, 1);
+                guardarVehiculosEnLocalStorage();
+                guardarPresupuestosEnLocalStorage(); 
+                renderTodo();
+                showMessage('Vehículo y sus presupuestos asociados eliminados.', 'error');
+            }
+        }
+
+        function mostrarImagenesVehiculo(index) {
+            const vehiculo = vehiculos[index];
+            if (!vehiculo) return;
+            modalTituloImagenesVehiculo.textContent = `Imágenes de: ${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.patente})`;
+            imagenesVehiculoModalContent.innerHTML = ''; 
+            if (vehiculo.imagenes && vehiculo.imagenes.length > 0) {
+                noImagenesVehiculoMsg.classList.add('hidden');
+                vehiculo.imagenes.forEach(imgData => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imgData.url;
+                    imgElement.alt = imgData.name || "Imagen del vehículo";
+                    imagenesVehiculoModalContent.appendChild(imgElement);
+                });
+            } else {
+                noImagenesVehiculoMsg.classList.remove('hidden');
+            }
+            imagenesVehiculoModal.style.display = "block";
+        }
+
+        closeImagenesVehiculoModalButton.onclick = function() {
+            imagenesVehiculoModal.style.display = "none";
+        }
+
+
+        // --- Lógica de Presupuestos (con estados) ---
+        const ESTADOS_PRESUPUESTO = {
+            PENDIENTE: 'Pendiente',
+            ACEPTADO: 'Aceptado',
+            RECHAZADO: 'Rechazado',
+            EN_PROCESO: 'En Proceso',
+            COMPLETADO: 'Completado'
+        };
+
+        function getEstadoClass(estado) {
+            switch (estado) {
+                case ESTADOS_PRESUPUESTO.PENDIENTE: return 'estado-pendiente';
+                case ESTADOS_PRESUPUESTO.ACEPTADO: return 'estado-aceptado';
+                case ESTADOS_PRESUPUESTO.RECHAZADO: return 'estado-rechazado';
+                case ESTADOS_PRESUPUESTO.EN_PROCESO: return 'estado-en-proceso';
+                case ESTADOS_PRESUPUESTO.COMPLETADO: return 'estado-completado';
+                default: return 'text-gray-700';
+            }
+        }
+        
+        filtroEstadoPresupuestoSelect.addEventListener('change', renderPresupuestos);
+
+        function renderPresupuestos() {
+            listaPresupuestos.innerHTML = '';
+            const filtroEstado = filtroEstadoPresupuestoSelect.value;
+
+            const presupuestosFiltrados = presupuestos.filter(p => {
+                return filtroEstado === 'todos' || p.estado === filtroEstado;
+            });
+
+            const presupuestosOrdenados = [...presupuestosFiltrados].sort((a, b) => parseInt(b.numero) - parseInt(a.numero)); 
+            
+            presupuestosOrdenados.forEach((presupuesto) => {
+                const originalIndex = presupuestos.findIndex(p => p.numero === presupuesto.numero);
+
+                const row = listaPresupuestos.insertRow();
+                const clienteObj = clientes.find(c => c.id === presupuesto.clienteId);
+                const vehiculoObj = vehiculos.find(v => v.id === presupuesto.vehiculoId);
+                
+                let botonesEstadoHtml = '';
+                if (presupuesto.estado === ESTADOS_PRESUPUESTO.PENDIENTE) {
+                    botonesEstadoHtml += `<button class="btn-success btn-sm" onclick="cambiarEstadoPresupuesto(${originalIndex}, '${ESTADOS_PRESUPUESTO.ACEPTADO}')">Aceptar</button> `;
+                    botonesEstadoHtml += `<button class="btn-danger btn-sm" onclick="cambiarEstadoPresupuesto(${originalIndex}, '${ESTADOS_PRESUPUESTO.RECHAZADO}')">Rechazar</button> `;
+                } else if (presupuesto.estado === ESTADOS_PRESUPUESTO.ACEPTADO) {
+                    botonesEstadoHtml += `<button class="btn-warning btn-sm" onclick="cambiarEstadoPresupuesto(${originalIndex}, '${ESTADOS_PRESUPUESTO.EN_PROCESO}')">Iniciar Trabajo</button> `;
+                } else if (presupuesto.estado === ESTADOS_PRESUPUESTO.EN_PROCESO) {
+                    botonesEstadoHtml += `<button class="btn-success btn-sm" onclick="cambiarEstadoPresupuesto(${originalIndex}, '${ESTADOS_PRESUPUESTO.COMPLETADO}')">Completar</button> `;
+                }
+
+
+                row.innerHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">${String(presupuesto.numero).padStart(3, '0')}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${clienteObj ? clienteObj.nombre : 'N/A'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${vehiculoObj ? `${vehiculoObj.marca} ${vehiculoObj.modelo} (${vehiculoObj.patente})` : 'N/A'}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">${presupuesto.fecha}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">$${presupuesto.total.toLocaleString('es-CL')}</td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm"><span class="${getEstadoClass(presupuesto.estado)}">${presupuesto.estado}</span></td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium space-y-1 md:space-y-0 md:space-x-1 flex flex-col md:flex-row items-start">
+                        <button class="text-indigo-600 hover:text-indigo-900 btn-sm" onclick="cargarPresupuestoParaVer(${originalIndex})">Ver/Editar</button>
+                        <button class="btn-whatsapp btn-sm" onclick="enviarPresupuestoWhatsApp(${originalIndex})">WhatsApp</button>
+                        ${botonesEstadoHtml}
+                        <button class="text-red-600 hover:text-red-900 btn-sm" onclick="eliminarPresupuesto(${originalIndex})">Eliminar</button>
+                    </td>
+                `;
+            });
+        }
+
+        function cambiarEstadoPresupuesto(indexOriginal, nuevoEstado) {
+            if (presupuestos[indexOriginal]) {
+                presupuestos[indexOriginal].estado = nuevoEstado;
+                guardarPresupuestosEnLocalStorage();
+                renderPresupuestos();
+                showMessage(`Presupuesto N°${presupuestos[indexOriginal].numero} actualizado a: ${nuevoEstado}`, 'info');
+            }
+        }
+        
+        function limpiarFormularioPresupuesto() {
+            formPresupuesto.reset();
+            presupuestoEditIndexInput.value = "-1";
+            itemsPresupuestoContainer.innerHTML = `
+                <div class="item-presupuesto bg-gray-50 p-3 rounded-md border border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-end">
+                        <div class="md:col-span-4">
+                            <label class="block text-sm font-medium text-gray-700">Descripción:</label>
+                            <input type="text" name="itemDescripcion[]" class="input-field text-sm py-2" placeholder="Ej: Cambio de aceite" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Cantidad:</label>
+                            <input type="number" name="itemCantidad[]" class="input-field text-sm py-2" value="1" min="1" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Precio Unit.:</label>
+                            <input type="number" name="itemPrecio[]" class="input-field text-sm py-2" placeholder="25000" min="0" step="any" required>
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-sm font-medium text-gray-700">Link Repuesto (Opcional):</label>
+                            <input type="url" name="itemLink[]" class="input-field text-sm py-2" placeholder="https://ejemplo.com/repuesto">
+                        </div>
+                        <div class="md:col-span-1 flex justify-end">
+                             <button type="button" class="btn-danger btn-sm mt-1 md:mt-0" onclick="this.closest('.item-presupuesto').remove(); calcularTotalPresupuesto();">Eliminar</button>
+                        </div>
+                    </div>
+                </div>`;
+            addEventListenersToItems();
+            calcularTotalPresupuesto();
+            btnSubmitPresupuesto.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" /></svg> Guardar Presupuesto';
+            formPresupuesto.presupuestoCliente.dataset.selectedValue = "";
+            formPresupuesto.presupuestoVehiculo.dataset.selectedValue = "";
+            selectClientePresupuesto.value = "";
+            selectVehiculoPresupuesto.innerHTML = '<option value="">Seleccione un vehículo...</option>'; 
+        }
+
+        btnAgregarItem.addEventListener('click', () => {
+            const newItemHtml = `
+                <div class="item-presupuesto bg-gray-50 p-3 rounded-md border border-gray-200 mt-2">
+                     <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-end">
+                        <div class="md:col-span-4">
+                            <label class="block text-sm font-medium text-gray-700">Descripción:</label>
+                            <input type="text" name="itemDescripcion[]" class="input-field text-sm py-2" placeholder="Ej: Pastillas de freno" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Cantidad:</label>
+                            <input type="number" name="itemCantidad[]" class="input-field text-sm py-2" value="1" min="1" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Precio Unit.:</label>
+                            <input type="number" name="itemPrecio[]" class="input-field text-sm py-2" placeholder="30000" min="0" step="any" required>
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-sm font-medium text-gray-700">Link Repuesto (Opcional):</label>
+                            <input type="url" name="itemLink[]" class="input-field text-sm py-2" placeholder="https://ejemplo.com/repuesto">
+                        </div>
+                        <div class="md:col-span-1 flex justify-end">
+                             <button type="button" class="btn-danger btn-sm mt-1 md:mt-0" onclick="this.closest('.item-presupuesto').remove(); calcularTotalPresupuesto();">Eliminar</button>
+                        </div>
+                    </div>
+                </div>`;
+            itemsPresupuestoContainer.insertAdjacentHTML('beforeend', newItemHtml);
+            addEventListenersToItems();
+            calcularTotalPresupuesto();
+        });
+
+        function calcularTotalPresupuesto() {
+            let total = 0;
+            const items = itemsPresupuestoContainer.querySelectorAll('.item-presupuesto');
+            items.forEach(item => {
+                const cantidad = parseFloat(item.querySelector('input[name="itemCantidad[]"]').value) || 0;
+                const precio = parseFloat(item.querySelector('input[name="itemPrecio[]"]').value) || 0;
+                total += cantidad * precio;
+            });
+            presupuestoTotalInput.value = `$${total.toLocaleString('es-CL')}`;
+        }
+        
+        function addEventListenersToItems() {
+            const inputsCantidadPrecio = itemsPresupuestoContainer.querySelectorAll('input[name="itemCantidad[]"], input[name="itemPrecio[]"]');
+            inputsCantidadPrecio.forEach(input => {
+                input.removeEventListener('input', calcularTotalPresupuesto); 
+                input.addEventListener('input', calcularTotalPresupuesto);
+            });
+        }
+        
+        selectClientePresupuesto.addEventListener('change', function() {
+            this.dataset.selectedValue = this.value; 
+            filtrarVehiculosParaPresupuesto();
+        });
+
+        function filtrarVehiculosParaPresupuesto() {
+            const selectedClienteId = selectClientePresupuesto.value;
+            const firstOption = selectVehiculoPresupuesto.options[0];
+            selectVehiculoPresupuesto.innerHTML = ''; 
+            if(firstOption) selectVehiculoPresupuesto.appendChild(firstOption.cloneNode(true)); 
+
+            vehiculos.forEach(vehiculo => {
+                if (vehiculo.clienteId === selectedClienteId) {
+                    const option = document.createElement('option');
+                    option.value = vehiculo.id;
+                    option.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.patente})`;
+                    selectVehiculoPresupuesto.appendChild(option);
+                }
+            });
+            if (selectVehiculoPresupuesto.dataset.selectedValue) {
+                const vehiculoExisteEnFiltrados = Array.from(selectVehiculoPresupuesto.options).some(opt => opt.value === selectVehiculoPresupuesto.dataset.selectedValue);
+                if (vehiculoExisteEnFiltrados) {
+                    selectVehiculoPresupuesto.value = selectVehiculoPresupuesto.dataset.selectedValue;
+                } else {
+                     selectVehiculoPresupuesto.dataset.selectedValue = ""; 
+                }
+            } else {
+                selectVehiculoPresupuesto.value = ""; 
+            }
+        }
+        
+        selectVehiculoPresupuesto.addEventListener('change', function() {
+            this.dataset.selectedValue = this.value; 
+        });
+
+        formPresupuesto.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const itemsData = [];
+            const itemElements = itemsPresupuestoContainer.querySelectorAll('.item-presupuesto');
+            itemElements.forEach(itemEl => {
+                itemsData.push({
+                    descripcion: itemEl.querySelector('input[name="itemDescripcion[]"]').value,
+                    cantidad: parseInt(itemEl.querySelector('input[name="itemCantidad[]"]').value),
+                    precio: parseFloat(itemEl.querySelector('input[name="itemPrecio[]"]').value),
+                    link: itemEl.querySelector('input[name="itemLink[]"]').value || '' 
+                });
+            });
+
+            const clienteId = this.presupuestoCliente.value;
+            const vehiculoId = this.presupuestoVehiculo.value;
+            this.presupuestoCliente.dataset.selectedValue = clienteId;
+            this.presupuestoVehiculo.dataset.selectedValue = vehiculoId;
+
+            const editIndex = parseInt(presupuestoEditIndexInput.value);
+            let numeroPresupuestoActual;
+            let estadoActual;
+
+
+            if (editIndex > -1 && presupuestos[editIndex]) { 
+                numeroPresupuestoActual = presupuestos[editIndex].numero; 
+                estadoActual = presupuestos[editIndex].estado; 
+                presupuestos[editIndex] = {
+                    ...presupuestos[editIndex],
+                    clienteId: clienteId,
+                    vehiculoId: vehiculoId,
+                    fecha: new Date().toLocaleDateString('es-CL'), 
+                    total: parseFloat(presupuestoTotalInput.value.replace(/\$|\./g, '').replace(',', '.')),
+                    items: itemsData,
+                    notas: this.presupuestoNotas.value,
+                    estado: estadoActual 
+                };
+                showMessage('Presupuesto actualizado con éxito.');
+            } else { 
+                numeroPresupuestoActual = String(proximoNumeroPresupuesto++).padStart(3, '0');
+                estadoActual = ESTADOS_PRESUPUESTO.PENDIENTE; 
+                const nuevoPresupuesto = {
+                    numero: numeroPresupuestoActual,
+                    clienteId: clienteId,
+                    vehiculoId: vehiculoId,
+                    fecha: new Date().toLocaleDateString('es-CL'),
+                    total: parseFloat(presupuestoTotalInput.value.replace(/\$|\./g, '').replace(',', '.')),
+                    items: itemsData,
+                    notas: this.presupuestoNotas.value,
+                    estado: estadoActual
+                };
+                presupuestos.push(nuevoPresupuesto);
+                showMessage('Presupuesto guardado con éxito.');
+            }
+            
+            limpiarFormularioPresupuesto();
+            guardarPresupuestosEnLocalStorage();
+            renderPresupuestos();
+        });
+
+        function cargarPresupuestoParaVer(indexOriginal) { 
+            const presupuesto = presupuestos[indexOriginal]; 
+            if (!presupuesto) return;
+            
+            formPresupuesto.presupuestoCliente.value = presupuesto.clienteId;
+            formPresupuesto.presupuestoCliente.dataset.selectedValue = presupuesto.clienteId;
+            filtrarVehiculosParaPresupuesto(); 
+            formPresupuesto.presupuestoVehiculo.value = presupuesto.vehiculoId; 
+            formPresupuesto.presupuestoVehiculo.dataset.selectedValue = presupuesto.vehiculoId;
+
+
+            itemsPresupuestoContainer.innerHTML = '';
+            presupuesto.items.forEach(item => {
+                 const newItemHtml = `
+                <div class="item-presupuesto bg-gray-50 p-3 rounded-md border border-gray-200 mt-2">
+                     <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-end">
+                        <div class="md:col-span-4">
+                            <label class="block text-sm font-medium text-gray-700">Descripción:</label>
+                            <input type="text" name="itemDescripcion[]" class="input-field text-sm py-2" value="${item.descripcion}" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Cantidad:</label>
+                            <input type="number" name="itemCantidad[]" class="input-field text-sm py-2" value="${item.cantidad}" min="1" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700">Precio Unit.:</label>
+                            <input type="number" name="itemPrecio[]" class="input-field text-sm py-2" value="${item.precio}" min="0" step="any" required>
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-sm font-medium text-gray-700">Link Repuesto (Opcional):</label>
+                            <input type="url" name="itemLink[]" class="input-field text-sm py-2" value="${item.link || ''}">
+                        </div>
+                        <div class="md:col-span-1 flex justify-end">
+                             <button type="button" class="btn-danger btn-sm mt-1 md:mt-0" onclick="this.closest('.item-presupuesto').remove(); calcularTotalPresupuesto();">Eliminar</button>
+                        </div>
+                    </div>
+                </div>`;
+                itemsPresupuestoContainer.insertAdjacentHTML('beforeend', newItemHtml);
+            });
+            addEventListenersToItems();
+            calcularTotalPresupuesto();
+
+            formPresupuesto.presupuestoNotas.value = presupuesto.notas || '';
+            presupuestoEditIndexInput.value = indexOriginal; 
+            btnSubmitPresupuesto.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg> Actualizar Presupuesto';
+            
+            if (!document.getElementById('presupuestos').classList.contains('active')) {
+                tabLinks.forEach(link => { if(link.dataset.tab === 'presupuestos') link.click(); });
+            }
+            formPresupuesto.presupuestoCliente.focus();
+        }
+
+        function eliminarPresupuesto(indexOriginal) { 
+             if (!presupuestos[indexOriginal]) return;
+             if (confirm(`¿Está seguro de eliminar el presupuesto Nº${presupuestos[indexOriginal].numero}?`)) {
+                presupuestos.splice(indexOriginal, 1);
+                guardarPresupuestosEnLocalStorage();
+                renderPresupuestos();
+                showMessage('Presupuesto eliminado.', 'error');
+            }
+        }
+        
+        // --- Generación de PDF ---
+        btnGenerarPDFDesdeForm.addEventListener('click', () => {
+            const clienteId = formPresupuesto.presupuestoCliente.value;
+            const vehiculoId = formPresupuesto.presupuestoVehiculo.value;
+            const cliente = clientes.find(c => c.id === clienteId);
+            const vehiculo = vehiculos.find(v => v.id === vehiculoId);
+
+            if (!cliente || !vehiculo) {
+                showMessage("Por favor, seleccione un cliente y un vehículo válidos para generar el PDF.", "error");
+                return;
+            }
+
+            const itemsData = [];
+            const itemElements = itemsPresupuestoContainer.querySelectorAll('.item-presupuesto');
+            itemElements.forEach(itemEl => {
+                itemsData.push({ 
+                    descripcion: itemEl.querySelector('input[name="itemDescripcion[]"]').value,
+                    cantidad: parseInt(itemEl.querySelector('input[name="itemCantidad[]"]').value),
+                    precio: parseFloat(itemEl.querySelector('input[name="itemPrecio[]"]').value)
+                });
+            });
+            
+            const editIndexVal = presupuestoEditIndexInput.value;
+            let numeroPresupuestoForm = "NUEVO";
+            let fechaPresupuestoForm = new Date().toLocaleDateString('es-CL');
+
+            if (editIndexVal !== "-1" && presupuestos[editIndexVal]) {
+                numeroPresupuestoForm = presupuestos[editIndexVal].numero;
+                fechaPresupuestoForm = presupuestos[editIndexVal].fecha;
+            }
+
+            const presupuestoActualParaPDF = {
+                numero: numeroPresupuestoForm,
+                fecha: fechaPresupuestoForm,
+                total: parseFloat(presupuestoTotalInput.value.replace(/\$|\./g, '').replace(',', '.')),
+                items: itemsData, 
+                notas: formPresupuesto.presupuestoNotas.value,
+                clienteId: clienteId,
+                vehiculoId: vehiculoId
+            };
+            generarPresupuestoPDF(presupuestoActualParaPDF);
+        });
+
+
+        function generarPresupuestoPDF(presupuestoData) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const cliente = clientes.find(c => c.id === presupuestoData.clienteId);
+            const vehiculo = vehiculos.find(v => v.id === presupuestoData.vehiculoId);
+
+            if (!cliente || !vehiculo) {
+                showMessage("Datos de cliente o vehículo no encontrados para el PDF.", "error");
+                return;
+            }
+
+            doc.setFontSize(18);
+            doc.text("COTIZACIÓN DE SERVICIO AUTOMOTRIZ", 105, 20, null, null, "center");
+            doc.setFontSize(12);
+            doc.text(`Número de Cotización: ${String(presupuestoData.numero).padStart(3, '0')}`, 105, 30, null, null, "center");
+            doc.text(`Fecha: ${presupuestoData.fecha}`, 105, 35, null, null, "center");
+
+            doc.setFontSize(10);
+            doc.text("Nombre del Taller: Taller AutoGestión Local", 15, 45); 
+            doc.text("Dirección: Tu Dirección Aquí", 15, 50);
+            doc.text("Teléfono: +569XXXXXXXX", 15, 55);
+            doc.text("Email: tuemail@ejemplo.com", 15, 60);
+            doc.line(15, 65, 195, 65); 
+
+            doc.setFontSize(12);
+            doc.text("Datos del Cliente:", 15, 75);
+            doc.setFontSize(10);
+            doc.text(`Nombre: ${cliente.nombre}`, 15, 82);
+            doc.text(`Teléfono: ${cliente.telefonoCompleto || 'N/A'}`, 15, 87);
+            doc.text(`Email: ${cliente.email || 'N/A'}`, 15, 92);
+            doc.text(`Dirección: ${cliente.direccion || 'N/A'}`, 15, 97);
+
+            doc.setFontSize(12);
+            doc.text("Datos del Vehículo:", 105, 75);
+            doc.setFontSize(10);
+            doc.text(`Marca: ${vehiculo.marca}`, 105, 82);
+            doc.text(`Modelo: ${vehiculo.modelo}`, 105, 87);
+            doc.text(`Año: ${vehiculo.ano}`, 105, 92);
+            doc.text(`Patente: ${vehiculo.patente}`, 105, 97);
+            doc.text(`VIN: ${vehiculo.vin || 'N/A'}`, 105, 102);
+            doc.line(15, 107, 195, 107); 
+
+            doc.setFontSize(12);
+            doc.text("Detalle de Servicios / Repuestos:", 15, 117);
+            
+            const tableColumn = ["Descripción", "Cant.", "P. Unit.", "Subtotal"]; 
+            const tableRows = [];
+
+            presupuestoData.items.forEach(item => {
+                const subtotal = item.cantidad * item.precio;
+                const itemRow = [
+                    item.descripcion,
+                    item.cantidad,
+                    `$${item.precio.toLocaleString('es-CL')}`,
+                    `$${subtotal.toLocaleString('es-CL')}`
+                ];
+                tableRows.push(itemRow);
+            });
+
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 122,
+                theme: 'grid',
+                headStyles: { fillColor: [22, 160, 133] }, 
+                styles: { fontSize: 9, cellPadding: 2 },
+                columnStyles: {
+                    0: { cellWidth: 85 }, 
+                    1: { cellWidth: 20, halign: 'right' }, 
+                    2: { cellWidth: 35, halign: 'right' }, 
+                    3: { cellWidth: 35, halign: 'right' }  
+                }
+            });
+            
+            let finalY = doc.lastAutoTable.finalY || 150; 
+
+            if (presupuestoData.notas) {
+                doc.setFontSize(10);
+                doc.text("Notas Adicionales:", 15, finalY + 10);
+                const notasLines = doc.splitTextToSize(presupuestoData.notas, 180); 
+                doc.text(notasLines, 15, finalY + 15);
+                finalY += 5 * notasLines.length + 5; 
+            }
+
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(`TOTAL PRESUPUESTO: $${presupuestoData.total.toLocaleString('es-CL')}`, 195, finalY + 10, null, null, "right");
+            doc.setFont(undefined, 'normal');
+
+            doc.setFontSize(8);
+            doc.text("Cotización válida por 15 días. Precios sujetos a cambio sin previo aviso según disponibilidad de repuestos.", 105, doc.internal.pageSize.height - 10, null, null, "center");
+
+            // Cambio para iOS: Abrir en nueva ventana en lugar de descargar directamente.
+            // El nombre del archivo se pierde con este método, pero es más compatible.
+            doc.output('dataurlnewwindow'); 
+            // doc.save(`Cotizacion_${String(presupuestoData.numero).padStart(3, '0')}_${cliente.nombre.replace(/\s/g, '_')}.pdf`); // Método anterior
+            showMessage("PDF generado y abriendo en nueva pestaña...", "success");
+        }
+
+
+        // --- Enviar por WhatsApp ---
+        function enviarPresupuestoWhatsApp(indexOriginal) {
+            const presupuesto = presupuestos[indexOriginal];
+            if (!presupuesto) {
+                showMessage("Presupuesto no encontrado.", "error");
+                return;
+            }
+            const cliente = clientes.find(c => c.id === presupuesto.clienteId);
+            if (!cliente || !cliente.telefonoCompleto) { 
+                showMessage("Número de teléfono del cliente no encontrado o inválido.", "error");
+                return;
+            }
+
+            const numeroCompletoSinMas = cliente.telefonoCompleto.replace('+', ''); 
+            
+            let mensajeItems = "";
+            presupuesto.items.forEach(item => {
+                mensajeItems += `\n- ${item.descripcion} (x${item.cantidad}): $${(item.cantidad * item.precio).toLocaleString('es-CL')}`;
+            });
+
+            const mensaje = `Estimado/a ${cliente.nombre},\n\nLe adjuntamos su cotización N° ${String(presupuesto.numero).padStart(3, '0')} de nuestro taller:\n` +
+                            `${mensajeItems}\n\n` +
+                            `*Total: $${presupuesto.total.toLocaleString('es-CL')}*\n` +
+                            `*Estado actual: ${presupuesto.estado}*\n\n` +
+                            `${presupuesto.notas ? 'Notas: ' + presupuesto.notas + '\n\n' : ''}` +
+                            `¡Gracias por su preferencia!`;
+            
+            const urlWhatsApp = `https://wa.me/${numeroCompletoSinMas}?text=${encodeURIComponent(mensaje)}`;
+            window.open(urlWhatsApp, '_blank');
+            showMessage("Preparando mensaje de WhatsApp...", "info");
+        }
+
+
+        // --- Lógica de Datos (Importar/Exportar) ---
+        btnExportarDatos.addEventListener('click', () => {
+            const datosCompletos = {
+                clientes: clientes,
+                vehiculos: vehiculos,
+                presupuestos: presupuestos,
+                proximoNumeroPresupuesto: proximoNumeroPresupuesto
+            };
+            const jsonString = JSON.stringify(datosCompletos, null, 2); 
+            jsonExportadoTextarea.value = jsonString;
+            exportModal.style.display = "block";
+        });
+
+        closeExportModalButton.onclick = function() {
+            exportModal.style.display = "none";
+        }
+        btnCopiarJson.addEventListener('click', () => {
+            jsonExportadoTextarea.select();
+            try {
+                document.execCommand('copy');
+                showMessage('JSON copiado al portapapeles.', 'info');
+            } catch (err) {
+                showMessage('Error al copiar. Por favor, copie manualmente.', 'error');
+            }
+        });
+
+        window.onclick = function(event) { 
+            if (event.target == exportModal) {
+                exportModal.style.display = "none";
+            }
+            if (event.target == imagenesVehiculoModal) {
+                imagenesVehiculoModal.style.display = "none";
+            }
+        }
+
+        btnImportarDatos.addEventListener('click', () => {
+            const jsonString = jsonParaImportarTextarea.value;
+            if (!jsonString.trim()) {
+                showMessage('No hay datos JSON para importar.', 'error');
+                return;
+            }
+            try {
+                const datosImportados = JSON.parse(jsonString);
+                if (confirm("¿Está seguro de importar estos datos? Los datos actuales serán reemplazados.")) {
+                    clientes = (datosImportados.clientes || []).map(c => ({...c, id: c.id || `cliente_${Date.now()}_${Math.random()}`}));
+                    vehiculos = (datosImportados.vehiculos || []).map(v => ({...v, id: v.id || `vehiculo_${Date.now()}_${Math.random()}`, imagenes: v.imagenes || []}));
+                    presupuestos = (datosImportados.presupuestos || []).map(p => ({...p, estado: p.estado || ESTADOS_PRESUPUESTO.PENDIENTE}));
+                    proximoNumeroPresupuesto = parseInt(datosImportados.proximoNumeroPresupuesto) || 1;
+                    if (isNaN(proximoNumeroPresupuesto) || proximoNumeroPresupuesto < 1) {
+                        proximoNumeroPresupuesto = presupuestos.length > 0 ? Math.max(0, ...presupuestos.map(p => parseInt(p.numero))) + 1 : 1;
+                    }
+                    
+                    guardarTodosLosDatos();
+                    renderTodo();
+                    jsonParaImportarTextarea.value = ''; 
+                    showMessage('Datos importados con éxito.', 'success');
+                }
+            } catch (error) {
+                showMessage('Error al parsear el JSON. Verifique el formato.', 'error', 5000);
+                console.error("Error importando JSON:", error);
+            }
+        });
+        
+        btnEliminarTodosLosDatos.addEventListener('click', () => {
+            if (confirm("¿ESTÁ ABSOLUTAMENTE SEGURO? Esta acción es irreversible y borrará TODOS los clientes, vehículos y presupuestos guardados localmente.")) {
+                if (confirm("CONFIRMACIÓN FINAL: ¿Realmente desea eliminar todos los datos?")) {
+                    localStorage.removeItem(LS_CLIENTES_KEY);
+                    localStorage.removeItem(LS_VEHICULOS_KEY);
+                    localStorage.removeItem(LS_PRESUPUESTOS_KEY);
+                    localStorage.removeItem(LS_PROXIMO_NUMERO_PRESUPUESTO_KEY);
+                    
+                    clientes = [];
+                    vehiculos = [];
+                    presupuestos = [];
+                    proximoNumeroPresupuesto = 1;
+                    
+                    renderTodo();
+                    showMessage('Todos los datos locales han sido eliminados.', 'error', 5000);
+                }
+            }
+        });
+        
+        // --- Inicialización ---
+        function renderTodo() {
+            renderClientes(); 
+            renderVehiculos(); 
+            renderPresupuestos(); 
+            limpiarFormularioPresupuesto(); 
+            limpiarFormularioVehiculo();
+        }
+        
+        function limpiarFormularioVehiculo() {
+            formVehiculo.reset();
+            vehiculoEditIndexInput.value = "-1";
+            vehiculoImagenesPreview.innerHTML = '';
+            currentVehiculoImagenes = [];
+            formVehiculo.vehiculoCliente.dataset.selectedValue = "";
+             btnSubmitVehiculo.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg> Agregar Vehículo';
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarDatosDesdeLocalStorage();
+            renderTodo();
+            addEventListenersToItems(); 
+            calcularTotalPresupuesto(); 
+
+            clienteTelefonoNumInput.addEventListener('input', function (e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+
+    </script>
+</body>
+</html>
+
