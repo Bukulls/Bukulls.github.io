@@ -12,7 +12,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
+            background-color: #f3f4f6; /* Light gray background - ORIGINAL */
         }
         .tab-content {
             display: none;
@@ -26,34 +26,30 @@
         .btn-sm {
             @apply px-3 py-1 text-xs rounded-md shadow-sm; /* Botones más pequeños para acciones en tablas */
         }
-        .btn-primary {
+        .btn-primary { /* ORIGINAL */
             @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
         }
-        .btn-secondary {
+        .btn-secondary { /* ORIGINAL */
             @apply bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500;
         }
-        .btn-danger {
+        .btn-danger { /* ORIGINAL */
             @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
         }
-        .btn-success {
+        .btn-success { /* ORIGINAL */
             @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
         }
-        .btn-warning {
+        .btn-warning { /* ORIGINAL */
             @apply bg-yellow-500 text-black hover:bg-yellow-600 focus:ring-yellow-400;
         }
-        .btn-info {
+        .btn-info { /* ORIGINAL */
             @apply bg-sky-500 text-white hover:bg-sky-600 focus:ring-sky-400;
         }
-        .btn-whatsapp {
-            @apply bg-green-500 text-white hover:bg-green-600 focus:ring-green-400;
-        }
-        .input-field {
+        .input-field { /* ORIGINAL */
             @apply mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
         }
-        .card {
+        .card { /* ORIGINAL */
             @apply bg-white shadow-xl rounded-xl p-6 md:p-8;
         }
-        /* Custom scrollbar for better aesthetics */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -69,7 +65,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
-        /* Styling for message box */
         .message-box {
             position: fixed;
             top: 20px;
@@ -79,7 +74,7 @@
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            z-index: 1050; /* Ensure it's above modal */
+            z-index: 1050;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
             max-width: 300px;
@@ -88,35 +83,34 @@
             opacity: 1;
         }
         .message-box.error {
-            background-color: #f44336; /* Red for errors */
+            background-color: #f44336;
         }
         .message-box.info {
-            background-color: #2196F3; /* Blue for info */
+            background-color: #2196F3;
         }
-        /* Modal styles */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1001; /* Sit on top */
+            display: none;
+            position: fixed;
+            z-index: 1001;
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
         }
-        .modal-content {
+        .modal-content { 
             background-color: #fefefe;
-            margin: 5% auto; /* 5% from the top and centered */
+            color: #333; 
+            margin: 5% auto; 
             padding: 20px;
             border: 1px solid #888;
-            width: 90%; /* Could be more or less, depending on screen size */
-            max-width: 800px; /* Max width for image modal */
+            width: 90%; 
+            max-width: 800px; 
             border-radius: 10px;
             position: relative;
         }
-        .modal-content-sm { /* For export modal */
+        .modal-content-sm {
              margin: 10% auto;
              max-width: 700px;
         }
@@ -135,19 +129,19 @@
             text-decoration: none;
             cursor: pointer;
         }
-        .phone-input-group {
+        .phone-input-group { 
             @apply flex items-center mt-1;
         }
-        .phone-prefix {
+        .phone-prefix { 
             @apply px-3 py-3 border border-r-0 border-gray-300 bg-gray-100 text-gray-600 rounded-l-lg sm:text-sm;
         }
-        .phone-number-input {
+        .phone-number-input { 
             @apply block w-full px-4 py-3 border border-gray-300 rounded-r-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
         }
-        .image-preview-container {
+        .image-preview-container { 
             @apply mt-2 flex flex-wrap gap-2;
         }
-        .image-preview-item {
+        .image-preview-item { 
             @apply relative border border-gray-300 rounded-md p-1;
         }
         .image-preview-item img {
@@ -162,10 +156,34 @@
         .estado-en-proceso { @apply bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs; }
         .estado-completado { @apply bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs; }
 
-        #imagenesVehiculoModalContent img {
+        #imagenesVehiculoModalContent img { 
             @apply w-full h-auto object-contain mb-2 rounded-md shadow-md;
-            max-height: 70vh; /* Max height for images in modal */
+            max-height: 70vh; 
         }
+        nav ul .nav-link-item { /* Nueva clase para enlaces de navegación que no son 'tab-link' JS */
+            @apply inline-block py-3 px-6 font-semibold rounded-t-lg bg-gray-100 hover:bg-gray-200 text-blue-600 hover:text-blue-800;
+        }
+        nav ul .tab-link.active-tab {
+            @apply bg-white border-l border-t border-r border-gray-300 text-blue-600;
+            /* Quitar hover para la activa, ya que está seleccionada */
+        }
+        nav ul .tab-link:not(.active-tab) { /* Para las pestañas JS inactivas */
+            @apply bg-gray-100 hover:bg-gray-200;
+        }
+
+        .text-gray-700 { color: #4a5568; } 
+
+        table thead.bg-gray-100 { background-color: #f3f4f6; } 
+        table th.text-gray-500 { color: #6b7280; } 
+        table tbody.bg-white { background-color: #ffffff; } 
+        table tbody.divide-gray-200 { border-color: #e5e7eb; } 
+        table td.text-gray-900 { color: #1f2937; } 
+        table td.text-gray-500 { color: #6b7280; } 
+        table td .text-indigo-600 { color: #4f46e5; } 
+        table td .text-indigo-600:hover { color: #4338ca; }
+        table td .text-red-600 { color: #dc2626; } 
+        table td .text-red-600:hover { color: #b91c1c; }
+
     </style>
 </head>
 <body class="antialiased text-gray-800">
@@ -179,25 +197,31 @@
         <nav class="mb-8">
             <ul class="flex flex-wrap justify-center border-b border-gray-300">
                 <li class="-mb-px mr-1">
-                    <a class="bg-white inline-block py-3 px-6 text-blue-600 hover:text-blue-800 font-semibold rounded-t-lg border-l border-t border-r border-gray-300 tab-link active-tab" href="#" data-tab="clientes">
+                    <a class="nav-link-item tab-link active-tab" href="#" data-tab="clientes">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" /></svg>
                         Clientes
                     </a>
                 </li>
                 <li class="mr-1">
-                    <a class="bg-white inline-block py-3 px-6 text-blue-600 hover:text-blue-800 font-semibold rounded-t-lg tab-link" href="#" data-tab="vehiculos">
+                    <a class="nav-link-item tab-link" href="#" data-tab="vehiculos">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM2 10a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2zm3 1a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1-4a1 1 0 100 2h6a1 1 0 100-2H6z" clip-rule="evenodd" /></svg>
                         Vehículos
                     </a>
                 </li>
                 <li class="mr-1">
-                    <a class="bg-white inline-block py-3 px-6 text-blue-600 hover:text-blue-800 font-semibold rounded-t-lg tab-link" href="#" data-tab="presupuestos">
+                    <a class="nav-link-item tab-link" href="#" data-tab="presupuestos">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 100 4v2a2 2 0 01-2 2H4a2 2 0 01-2-2v-2a2 2 0 100-4V6z" /></svg>
                         Presupuestos
                     </a>
                 </li>
                 <li class="mr-1">
-                    <a class="bg-white inline-block py-3 px-6 text-blue-600 hover:text-blue-800 font-semibold rounded-t-lg tab-link" href="#" data-tab="datos">
+                    <a class="nav-link-item" href="manuales.html"> <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75zM4 8a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75A.75.75 0 014 8zm0 5.5a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" /> <path d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h14a1 1 0 001-1V4a1 1 0 00-1-1H3zm12 1.5a.5.5 0 00-.5-.5H4.5a.5.5 0 000 1h10a.5.5 0 00.5-.5zm0 3a.5.5 0 00-.5-.5H4.5a.5.5 0 000 1h10a.5.5 0 00.5-.5zm0 3a.5.5 0 00-.5-.5H4.5a.5.5 0 000 1h10a.5.5 0 00.5-.5zm0 3a.5.5 0 00-.5-.5h-10a.5.5 0 000 1h10a.5.5 0 00.5-.5z" /> </svg>
+                        Manuales
+                    </a>
+                </li>
+                <li class="mr-1">
+                    <a class="nav-link-item tab-link" href="#" data-tab="datos">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                         Datos
                     </a>
@@ -247,7 +271,7 @@
                             </tr>
                         </thead>
                         <tbody id="listaClientes" class="bg-white divide-y divide-gray-200">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </section>
@@ -260,7 +284,7 @@
                         <label for="vehiculoCliente" class="block text-sm font-medium text-gray-700">Cliente Asociado:</label>
                         <select id="vehiculoCliente" name="vehiculoCliente" class="input-field" required>
                             <option value="">Seleccione un cliente...</option>
-                            </select>
+                         </select>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -288,7 +312,7 @@
                         <label for="vehiculoImagenes" class="block text-sm font-medium text-gray-700">Imágenes del Vehículo (Opcional, para detalles):</label>
                         <input type="file" id="vehiculoImagenes" name="vehiculoImagenes" class="input-field" multiple accept="image/*">
                         <div id="vehiculoImagenesPreview" class="image-preview-container">
-                            </div>
+                        </div>
                         <p class="text-xs text-gray-500 mt-1">Nota: Las imágenes se guardan localmente. Evite archivos muy grandes o muchas imágenes para no exceder el límite de almacenamiento del navegador.</p>
                     </div>
                     <button type="submit" id="btnSubmitVehiculo" class="btn btn-primary w-full sm:w-auto">
@@ -311,7 +335,7 @@
                             </tr>
                         </thead>
                         <tbody id="listaVehiculos" class="bg-white divide-y divide-gray-200">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </section>
@@ -324,13 +348,13 @@
                         <label for="presupuestoCliente" class="block text-sm font-medium text-gray-700">Cliente:</label>
                         <select id="presupuestoCliente" name="presupuestoCliente" class="input-field" required>
                             <option value="">Seleccione un cliente...</option>
-                            </select>
+                        </select>
                     </div>
                     <div>
                         <label for="presupuestoVehiculo" class="block text-sm font-medium text-gray-700">Vehículo (filtrado por cliente):</label>
                         <select id="presupuestoVehiculo" name="presupuestoVehiculo" class="input-field" required>
                             <option value="">Seleccione un vehículo...</option>
-                            </select>
+                        </select>
                     </div>
 
                     <fieldset class="border border-gray-300 p-4 rounded-lg">
@@ -366,6 +390,18 @@
                         </button>
                     </fieldset>
 
+                    <fieldset class="border border-gray-300 p-4 rounded-lg mt-6">
+                        <legend class="text-lg font-medium text-gray-700 px-2">Mano de Obra</legend>
+                        <div>
+                            <label for="presupuestoManoDeObraDescripcion" class="block text-sm font-medium text-gray-700">Descripción Mano de Obra:</label>
+                            <textarea id="presupuestoManoDeObraDescripcion" name="presupuestoManoDeObraDescripcion" rows="3" class="input-field" placeholder="Ej: Diagnóstico y revisión general, Ajuste de..."></textarea>
+                        </div>
+                        <div class="mt-4">
+                            <label for="presupuestoManoDeObraMonto" class="block text-sm font-medium text-gray-700">Monto Mano de Obra:</label>
+                            <input type="number" id="presupuestoManoDeObraMonto" name="presupuestoManoDeObraMonto" class="input-field" placeholder="30000" min="0" step="any">
+                        </div>
+                    </fieldset>
+
                     <div>
                         <label for="presupuestoTotal" class="block text-sm font-medium text-gray-700">Total Presupuesto:</label>
                         <input type="text" id="presupuestoTotal" name="presupuestoTotal" class="input-field bg-gray-100" readonly placeholder="$0">
@@ -383,6 +419,10 @@
                         <button type="button" id="btnGenerarPDFDesdeForm" class="btn btn-secondary flex-grow sm:flex-grow-0">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" /></svg>
                             Generar PDF
+                        </button>
+                        <button type="button" id="btnEnviarWhatsAppDesdeForm" class="btn btn-secondary flex-grow sm:flex-grow-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.451 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                            Enviar por WhatsApp
                         </button>
                     </div>
                 </form>
@@ -414,7 +454,7 @@
                             </tr>
                         </thead>
                         <tbody id="listaPresupuestos" class="bg-white divide-y divide-gray-200">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </section>
@@ -460,7 +500,7 @@
             <span class="close-button" id="closeImagenesVehiculoModal">&times;</span>
             <h3 class="text-xl font-semibold mb-4" id="modalTituloImagenesVehiculo">Imágenes del Vehículo</h3>
             <div id="imagenesVehiculoModalContent" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 overflow-y-auto max-h-[70vh]">
-                </div>
+            </div>
             <p id="noImagenesVehiculo" class="text-center text-gray-500 mt-4 hidden">No hay imágenes para este vehículo.</p>
         </div>
     </div>
@@ -470,10 +510,10 @@
 
     <script>
         // --- Constantes para LocalStorage ---
-        const LS_CLIENTES_KEY = 'taller_clientes_v3'; 
-        const LS_VEHICULOS_KEY = 'taller_vehiculos_v3'; 
-        const LS_PRESUPUESTOS_KEY = 'taller_presupuestos_v3'; 
-        const LS_PROXIMO_NUMERO_PRESUPUESTO_KEY = 'taller_proximo_numero_presupuesto_v3';
+        const LS_CLIENTES_KEY = 'taller_clientes_v4_original'; 
+        const LS_VEHICULOS_KEY = 'taller_vehiculos_v4_original';
+        const LS_PRESUPUESTOS_KEY = 'taller_presupuestos_v4_original';
+        const LS_PROXIMO_NUMERO_PRESUPUESTO_KEY = 'taller_proximo_numero_presupuesto_v4_original';
 
         // --- Estado de la aplicación (Arrays de datos) ---
         let clientes = [];
@@ -483,7 +523,8 @@
         let currentVehiculoImagenes = []; 
 
         // --- Elementos del DOM (Selección inicial) ---
-        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabLinks = document.querySelectorAll('.tab-link'); // Para pestañas JS
+        const navLinks = document.querySelectorAll('.nav-link-item'); // Todos los items de nav
         const tabContents = document.querySelectorAll('.tab-content');
         const messageBox = document.getElementById('messageBox');
 
@@ -509,6 +550,10 @@
         const btnSubmitPresupuesto = document.getElementById('btnSubmitPresupuesto');
         const btnGenerarPDFDesdeForm = document.getElementById('btnGenerarPDFDesdeForm');
         const filtroEstadoPresupuestoSelect = document.getElementById('filtroEstadoPresupuesto');
+        const presupuestoManoDeObraDescripcionInput = document.getElementById('presupuestoManoDeObraDescripcion');
+        const presupuestoManoDeObraMontoInput = document.getElementById('presupuestoManoDeObraMonto');
+        const btnEnviarWhatsAppDesdeForm = document.getElementById('btnEnviarWhatsAppDesdeForm');
+
 
         const selectClienteVehiculo = document.getElementById('vehiculoCliente');
         const selectClientePresupuesto = document.getElementById('presupuestoCliente');
@@ -541,7 +586,12 @@
             try {
                 if (clientesGuardados) clientes = JSON.parse(clientesGuardados);
                 if (vehiculosGuardados) vehiculos = JSON.parse(vehiculosGuardados).map(v => ({ ...v, imagenes: v.imagenes || [] }));
-                if (presupuestosGuardados) presupuestos = JSON.parse(presupuestosGuardados).map(p => ({ ...p, estado: p.estado || ESTADOS_PRESUPUESTO.PENDIENTE }));
+                if (presupuestosGuardados) presupuestos = JSON.parse(presupuestosGuardados).map(p => ({ 
+                    ...p, 
+                    estado: p.estado || ESTADOS_PRESUPUESTO.PENDIENTE,
+                    manoDeObraDescripcion: p.manoDeObraDescripcion || '',
+                    manoDeObraMonto: p.manoDeObraMonto || 0
+                }));
             } catch(e) {
                 console.error("Error parsing data from localStorage:", e);
                 showMessage("Error al cargar datos guardados. Podrían estar corruptos.", "error", 5000);
@@ -570,18 +620,29 @@
         }
 
         // --- Navegación por Pestañas ---
-        tabLinks.forEach(link => {
+        // Solo los que son tab-link (para JS)
+        document.querySelectorAll('.tab-link').forEach(link => {
             link.addEventListener('click', event => {
                 event.preventDefault();
                 const tabId = link.dataset.tab;
+                if (!tabId) return; // Si no es una pestaña JS, no hacer nada aquí
+
                 tabContents.forEach(content => content.classList.remove('active'));
-                tabLinks.forEach(l => l.classList.remove('active-tab', 'border-gray-300', 'border-l', 'border-t', 'border-r'));
-                tabLinks.forEach(l => l.classList.add('hover:text-blue-800'));
+                
+                // Actualizar estilo de todas las pestañas de navegación
+                document.querySelectorAll('.nav-link-item').forEach(l => {
+                    l.classList.remove('active-tab', 'border-gray-300', 'border-l', 'border-t', 'border-r', 'bg-white');
+                    if (l.classList.contains('tab-link')) { // Solo aplicar estilo inactivo a las pestañas JS
+                         l.classList.add('bg-gray-100', 'hover:bg-gray-200');
+                    }
+                });
+                
                 document.getElementById(tabId).classList.add('active');
-                link.classList.add('active-tab', 'border-gray-300', 'border-l', 'border-t', 'border-r');
-                link.classList.remove('hover:text-blue-800');
+                link.classList.add('active-tab', 'border-gray-300', 'border-l', 'border-t', 'border-r', 'bg-white');
+                link.classList.remove('bg-gray-100', 'hover:bg-gray-200');
             });
         });
+
 
         // --- Funcionalidad básica para mostrar mensajes ---
         function showMessage(message, type = 'success', duration = 3000) {
@@ -589,8 +650,7 @@
             messageBox.className = 'message-box show'; 
             if (type === 'error') messageBox.classList.add('error');
             else if (type === 'info') messageBox.classList.add('info');
-            else messageBox.classList.remove('error', 'info');
-
+            else messageBox.classList.remove('error', 'info'); 
             setTimeout(() => messageBox.classList.remove('show'), duration);
         }
 
@@ -669,7 +729,7 @@
             clienteEditIndexInput.value = index;
             btnSubmitCliente.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg> Actualizar Cliente';
             if (!document.getElementById('clientes').classList.contains('active')) {
-                tabLinks.forEach(link => { if(link.dataset.tab === 'clientes') link.click(); });
+                 document.querySelector('.nav-link-item[data-tab="clientes"]').click();
             }
             formCliente.clienteNombre.focus();
         }
@@ -700,8 +760,8 @@
 
             for (const file of files) {
                 if (file.size > 2 * 1024 * 1024) { 
-                     showMessage(`La imagen "${file.name}" es demasiado grande (máx 2MB). Será omitida.`, 'error');
-                     continue; 
+                    showMessage(`La imagen "${file.name}" es demasiado grande (máx 2MB). Será omitida.`, 'error');
+                    continue; 
                 }
                 try {
                     const dataUrl = await readFileAsDataURL(file);
@@ -835,7 +895,7 @@
 
             btnSubmitVehiculo.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg> Actualizar Vehículo';
             if (!document.getElementById('vehiculos').classList.contains('active')) {
-                tabLinks.forEach(link => { if(link.dataset.tab === 'vehiculos') link.click(); });
+                document.querySelector('.nav-link-item[data-tab="vehiculos"]').click();
             }
             formVehiculo.vehiculoMarca.focus();
         }
@@ -886,14 +946,14 @@
             COMPLETADO: 'Completado'
         };
 
-        function getEstadoClass(estado) {
+        function getEstadoClass(estado) { 
             switch (estado) {
                 case ESTADOS_PRESUPUESTO.PENDIENTE: return 'estado-pendiente';
                 case ESTADOS_PRESUPUESTO.ACEPTADO: return 'estado-aceptado';
                 case ESTADOS_PRESUPUESTO.RECHAZADO: return 'estado-rechazado';
                 case ESTADOS_PRESUPUESTO.EN_PROCESO: return 'estado-en-proceso';
                 case ESTADOS_PRESUPUESTO.COMPLETADO: return 'estado-completado';
-                default: return 'text-gray-700';
+                default: return 'text-gray-700'; 
             }
         }
         
@@ -936,7 +996,6 @@
                     <td class="px-4 py-3 whitespace-nowrap text-sm"><span class="${getEstadoClass(presupuesto.estado)}">${presupuesto.estado}</span></td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm font-medium space-y-1 md:space-y-0 md:space-x-1 flex flex-col md:flex-row items-start">
                         <button class="text-indigo-600 hover:text-indigo-900 btn-sm" onclick="cargarPresupuestoParaVer(${originalIndex})">Ver/Editar</button>
-                        <button class="btn-whatsapp btn-sm" onclick="enviarPresupuestoWhatsApp(${originalIndex})">WhatsApp</button>
                         ${botonesEstadoHtml}
                         <button class="text-red-600 hover:text-red-900 btn-sm" onclick="eliminarPresupuesto(${originalIndex})">Eliminar</button>
                     </td>
@@ -954,7 +1013,7 @@
         }
         
         function limpiarFormularioPresupuesto() {
-            formPresupuesto.reset();
+            formPresupuesto.reset(); 
             presupuestoEditIndexInput.value = "-1";
             itemsPresupuestoContainer.innerHTML = `
                 <div class="item-presupuesto bg-gray-50 p-3 rounded-md border border-gray-200">
@@ -1027,6 +1086,8 @@
                 const precio = parseFloat(item.querySelector('input[name="itemPrecio[]"]').value) || 0;
                 total += cantidad * precio;
             });
+            const manoDeObraMonto = parseFloat(presupuestoManoDeObraMontoInput.value) || 0;
+            total += manoDeObraMonto;
             presupuestoTotalInput.value = `$${total.toLocaleString('es-CL')}`;
         }
         
@@ -1078,7 +1139,7 @@
             const itemsData = [];
             const itemElements = itemsPresupuestoContainer.querySelectorAll('.item-presupuesto');
             itemElements.forEach(itemEl => {
-                itemsData.push({
+                itemsData.push({ 
                     descripcion: itemEl.querySelector('input[name="itemDescripcion[]"]').value,
                     cantidad: parseInt(itemEl.querySelector('input[name="itemCantidad[]"]').value),
                     precio: parseFloat(itemEl.querySelector('input[name="itemPrecio[]"]').value),
@@ -1090,6 +1151,8 @@
             const vehiculoId = this.presupuestoVehiculo.value;
             this.presupuestoCliente.dataset.selectedValue = clienteId;
             this.presupuestoVehiculo.dataset.selectedValue = vehiculoId;
+            const manoDeObraDescripcion = presupuestoManoDeObraDescripcionInput.value;
+            const manoDeObraMonto = parseFloat(presupuestoManoDeObraMontoInput.value) || 0;
 
             const editIndex = parseInt(presupuestoEditIndexInput.value);
             let numeroPresupuestoActual;
@@ -1107,6 +1170,8 @@
                     total: parseFloat(presupuestoTotalInput.value.replace(/\$|\./g, '').replace(',', '.')),
                     items: itemsData,
                     notas: this.presupuestoNotas.value,
+                    manoDeObraDescripcion: manoDeObraDescripcion,
+                    manoDeObraMonto: manoDeObraMonto,
                     estado: estadoActual 
                 };
                 showMessage('Presupuesto actualizado con éxito.');
@@ -1121,6 +1186,8 @@
                     total: parseFloat(presupuestoTotalInput.value.replace(/\$|\./g, '').replace(',', '.')),
                     items: itemsData,
                     notas: this.presupuestoNotas.value,
+                    manoDeObraDescripcion: manoDeObraDescripcion,
+                    manoDeObraMonto: manoDeObraMonto,
                     estado: estadoActual
                 };
                 presupuestos.push(nuevoPresupuesto);
@@ -1172,6 +1239,9 @@
                 itemsPresupuestoContainer.insertAdjacentHTML('beforeend', newItemHtml);
             });
             addEventListenersToItems();
+            
+            presupuestoManoDeObraDescripcionInput.value = presupuesto.manoDeObraDescripcion || '';
+            presupuestoManoDeObraMontoInput.value = presupuesto.manoDeObraMonto || 0;
             calcularTotalPresupuesto();
 
             formPresupuesto.presupuestoNotas.value = presupuesto.notas || '';
@@ -1179,7 +1249,7 @@
             btnSubmitPresupuesto.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg> Actualizar Presupuesto';
             
             if (!document.getElementById('presupuestos').classList.contains('active')) {
-                tabLinks.forEach(link => { if(link.dataset.tab === 'presupuestos') link.click(); });
+                document.querySelector('.nav-link-item[data-tab="presupuestos"]').click();
             }
             formPresupuesto.presupuestoCliente.focus();
         }
@@ -1196,14 +1266,20 @@
         
         // --- Generación de PDF ---
         btnGenerarPDFDesdeForm.addEventListener('click', () => {
+            const presupuestoData = getCurrentPresupuestoDataFromForm(true); 
+            if (!presupuestoData) return; 
+            generarPresupuestoPDF(presupuestoData);
+        });
+
+        function getCurrentPresupuestoDataFromForm(isForPdfOrWsp = false) {
             const clienteId = formPresupuesto.presupuestoCliente.value;
             const vehiculoId = formPresupuesto.presupuestoVehiculo.value;
             const cliente = clientes.find(c => c.id === clienteId);
             const vehiculo = vehiculos.find(v => v.id === vehiculoId);
 
             if (!cliente || !vehiculo) {
-                showMessage("Por favor, seleccione un cliente y un vehículo válidos para generar el PDF.", "error");
-                return;
+                showMessage("Por favor, seleccione un cliente y un vehículo válidos.", "error");
+                return null;
             }
 
             const itemsData = [];
@@ -1217,50 +1293,61 @@
             });
             
             const editIndexVal = presupuestoEditIndexInput.value;
-            let numeroPresupuestoForm = "NUEVO";
+            let numeroPresupuestoForm = "NUEVO"; 
             let fechaPresupuestoForm = new Date().toLocaleDateString('es-CL');
+            let estadoPresupuestoForm = ESTADOS_PRESUPUESTO.PENDIENTE;
 
-            if (editIndexVal !== "-1" && presupuestos[editIndexVal]) {
-                numeroPresupuestoForm = presupuestos[editIndexVal].numero;
-                fechaPresupuestoForm = presupuestos[editIndexVal].fecha;
+
+            if (editIndexVal !== "-1" && presupuestos[parseInt(editIndexVal)]) {
+                const existingPresupuesto = presupuestos[parseInt(editIndexVal)];
+                numeroPresupuestoForm = existingPresupuesto.numero;
+                fechaPresupuestoForm = existingPresupuesto.fecha;
+                estadoPresupuestoForm = existingPresupuesto.estado;
             }
 
-            const presupuestoActualParaPDF = {
+
+            return {
                 numero: numeroPresupuestoForm,
                 fecha: fechaPresupuestoForm,
                 total: parseFloat(presupuestoTotalInput.value.replace(/\$|\./g, '').replace(',', '.')),
                 items: itemsData, 
                 notas: formPresupuesto.presupuestoNotas.value,
                 clienteId: clienteId,
-                vehiculoId: vehiculoId
+                vehiculoId: vehiculoId,
+                manoDeObraDescripcion: presupuestoManoDeObraDescripcionInput.value,
+                manoDeObraMonto: parseFloat(presupuestoManoDeObraMontoInput.value) || 0,
+                estado: estadoPresupuestoForm, 
+                cliente: cliente,
+                vehiculo: vehiculo
             };
-            generarPresupuestoPDF(presupuestoActualParaPDF);
-        });
+        }
 
 
         function generarPresupuestoPDF(presupuestoData) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            const cliente = clientes.find(c => c.id === presupuestoData.clienteId);
-            const vehiculo = vehiculos.find(v => v.id === presupuestoData.vehiculoId);
+            const cliente = presupuestoData.cliente; 
+            const vehiculo = presupuestoData.vehiculo; 
 
-            if (!cliente || !vehiculo) {
-                showMessage("Datos de cliente o vehículo no encontrados para el PDF.", "error");
-                return;
-            }
+            const nombreTaller = "Taller AutoGestión Local";
+            const direccionTaller = "Tu Dirección Aquí, Ciudad";
+            const telefonoTaller = "+56 9 XXXX XXXX";
+            const emailTaller = "tuemail@ejemplo.com";
 
             doc.setFontSize(18);
+            doc.setTextColor(40, 40, 40); 
             doc.text("COTIZACIÓN DE SERVICIO AUTOMOTRIZ", 105, 20, null, null, "center");
             doc.setFontSize(12);
             doc.text(`Número de Cotización: ${String(presupuestoData.numero).padStart(3, '0')}`, 105, 30, null, null, "center");
             doc.text(`Fecha: ${presupuestoData.fecha}`, 105, 35, null, null, "center");
 
             doc.setFontSize(10);
-            doc.text("Nombre del Taller: Taller AutoGestión Local", 15, 45); 
-            doc.text("Dirección: Tu Dirección Aquí", 15, 50);
-            doc.text("Teléfono: +569XXXXXXXX", 15, 55);
-            doc.text("Email: tuemail@ejemplo.com", 15, 60);
+            doc.text(nombreTaller, 15, 45); 
+            doc.text(direccionTaller, 15, 50);
+            doc.text(`Teléfono: ${telefonoTaller}`, 15, 55);
+            doc.text(`Email: ${emailTaller}`, 15, 60);
+            doc.setDrawColor(150, 150, 150); 
             doc.line(15, 65, 195, 65); 
 
             doc.setFontSize(12);
@@ -1304,7 +1391,7 @@
                 startY: 122,
                 theme: 'grid',
                 headStyles: { fillColor: [22, 160, 133] }, 
-                styles: { fontSize: 9, cellPadding: 2 },
+                styles: { fontSize: 9, cellPadding: 2, textColor: [40,40,40], lineColor: [150,150,150], lineWidth: 0.1 },
                 columnStyles: {
                     0: { cellWidth: 85 }, 
                     1: { cellWidth: 20, halign: 'right' }, 
@@ -1315,39 +1402,63 @@
             
             let finalY = doc.lastAutoTable.finalY || 150; 
 
-            if (presupuestoData.notas) {
+            if (presupuestoData.manoDeObraMonto > 0) {
+                finalY += 5; 
                 doc.setFontSize(10);
-                doc.text("Notas Adicionales:", 15, finalY + 10);
-                const notasLines = doc.splitTextToSize(presupuestoData.notas, 180); 
-                doc.text(notasLines, 15, finalY + 15);
-                finalY += 5 * notasLines.length + 5; 
+                doc.setFont(undefined, 'bold');
+                doc.text("Mano de Obra:", 15, finalY);
+                doc.setFont(undefined, 'normal');
+
+                const manoDeObraDescText = presupuestoData.manoDeObraDescripcion || "Servicios generales de taller";
+                const descLines = doc.splitTextToSize(manoDeObraDescText, 130); 
+                doc.text(descLines, 15, finalY + 5);
+                
+                doc.text(`$${presupuestoData.manoDeObraMonto.toLocaleString('es-CL')}`, 195, finalY + 5 + (descLines.length > 1 ? (descLines.length-1)*4 : 0 ), null, null, "right"); 
+                finalY += (descLines.length * 4) + 5; 
             }
 
+
+            if (presupuestoData.notas) {
+                finalY += 5; 
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'bold');
+                doc.text("Notas Adicionales:", 15, finalY);
+                doc.setFont(undefined, 'normal');
+                const notasLines = doc.splitTextToSize(presupuestoData.notas, 180); 
+                doc.text(notasLines, 15, finalY + 5);
+                finalY += (notasLines.length * 4) + 5; 
+            }
+            
+            finalY += 10; 
             doc.setFontSize(14);
             doc.setFont(undefined, 'bold');
-            doc.text(`TOTAL PRESUPUESTO: $${presupuestoData.total.toLocaleString('es-CL')}`, 195, finalY + 10, null, null, "right");
+            doc.text(`TOTAL PRESUPUESTO: $${presupuestoData.total.toLocaleString('es-CL')}`, 195, finalY, null, null, "right");
             doc.setFont(undefined, 'normal');
 
             doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100); 
             doc.text("Cotización válida por 15 días. Precios sujetos a cambio sin previo aviso según disponibilidad de repuestos.", 105, doc.internal.pageSize.height - 10, null, null, "center");
 
-            // Cambio para iOS: Abrir en nueva ventana en lugar de descargar directamente.
-            // El nombre del archivo se pierde con este método, pero es más compatible.
             doc.output('dataurlnewwindow'); 
-            // doc.save(`Cotizacion_${String(presupuestoData.numero).padStart(3, '0')}_${cliente.nombre.replace(/\s/g, '_')}.pdf`); // Método anterior
             showMessage("PDF generado y abriendo en nueva pestaña...", "success");
         }
 
 
         // --- Enviar por WhatsApp ---
-        function enviarPresupuestoWhatsApp(indexOriginal) {
-            const presupuesto = presupuestos[indexOriginal];
-            if (!presupuesto) {
-                showMessage("Presupuesto no encontrado.", "error");
+        btnEnviarWhatsAppDesdeForm.addEventListener('click', () => {
+            const presupuestoData = getCurrentPresupuestoDataFromForm(true); 
+            if (!presupuestoData) return; 
+            enviarPresupuestoWhatsApp(presupuestoData);
+        });
+
+
+        function enviarPresupuestoWhatsApp(presupuesto) { 
+            if (!presupuesto || !presupuesto.cliente) {
+                showMessage("Datos del presupuesto o cliente no encontrados.", "error");
                 return;
             }
-            const cliente = clientes.find(c => c.id === presupuesto.clienteId);
-            if (!cliente || !cliente.telefonoCompleto) { 
+            const cliente = presupuesto.cliente;
+            if (!cliente.telefonoCompleto) { 
                 showMessage("Número de teléfono del cliente no encontrado o inválido.", "error");
                 return;
             }
@@ -1359,8 +1470,14 @@
                 mensajeItems += `\n- ${item.descripcion} (x${item.cantidad}): $${(item.cantidad * item.precio).toLocaleString('es-CL')}`;
             });
 
+            let mensajeManoDeObra = "";
+            if (presupuesto.manoDeObraMonto > 0) {
+                mensajeManoDeObra = `\n*Mano de Obra:* ${presupuesto.manoDeObraDescripcion || '-'}: $${presupuesto.manoDeObraMonto.toLocaleString('es-CL')}`;
+            }
+
             const mensaje = `Estimado/a ${cliente.nombre},\n\nLe adjuntamos su cotización N° ${String(presupuesto.numero).padStart(3, '0')} de nuestro taller:\n` +
-                            `${mensajeItems}\n\n` +
+                            `${mensajeItems}` +
+                            `${mensajeManoDeObra}\n\n` +
                             `*Total: $${presupuesto.total.toLocaleString('es-CL')}*\n` +
                             `*Estado actual: ${presupuesto.estado}*\n\n` +
                             `${presupuesto.notas ? 'Notas: ' + presupuesto.notas + '\n\n' : ''}` +
@@ -1418,7 +1535,12 @@
                 if (confirm("¿Está seguro de importar estos datos? Los datos actuales serán reemplazados.")) {
                     clientes = (datosImportados.clientes || []).map(c => ({...c, id: c.id || `cliente_${Date.now()}_${Math.random()}`}));
                     vehiculos = (datosImportados.vehiculos || []).map(v => ({...v, id: v.id || `vehiculo_${Date.now()}_${Math.random()}`, imagenes: v.imagenes || []}));
-                    presupuestos = (datosImportados.presupuestos || []).map(p => ({...p, estado: p.estado || ESTADOS_PRESUPUESTO.PENDIENTE}));
+                    presupuestos = (datosImportados.presupuestos || []).map(p => ({
+                        ...p, 
+                        estado: p.estado || ESTADOS_PRESUPUESTO.PENDIENTE,
+                        manoDeObraDescripcion: p.manoDeObraDescripcion || '',
+                        manoDeObraMonto: p.manoDeObraMonto || 0
+                    }));
                     proximoNumeroPresupuesto = parseInt(datosImportados.proximoNumeroPresupuesto) || 1;
                     if (isNaN(proximoNumeroPresupuesto) || proximoNumeroPresupuesto < 1) {
                         proximoNumeroPresupuesto = presupuestos.length > 0 ? Math.max(0, ...presupuestos.map(p => parseInt(p.numero))) + 1 : 1;
@@ -1478,13 +1600,20 @@
             renderTodo();
             addEventListenersToItems(); 
             calcularTotalPresupuesto(); 
+            presupuestoManoDeObraMontoInput.addEventListener('input', calcularTotalPresupuesto); 
+
 
             clienteTelefonoNumInput.addEventListener('input', function (e) {
                 this.value = this.value.replace(/[^0-9]/g, '');
             });
+             // Asegurarse de que la primera pestaña esté activa visualmente al cargar
+            const firstTabLink = document.querySelector('.nav-link-item.tab-link');
+            if (firstTabLink && firstTabLink.dataset.tab === "clientes") {
+                firstTabLink.classList.add('active-tab', 'border-gray-300', 'border-l', 'border-t', 'border-r', 'bg-white');
+                firstTabLink.classList.remove('bg-gray-100', 'hover:bg-gray-200');
+            }
         });
 
     </script>
 </body>
 </html>
-
