@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Manuales Automotrices</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Fondo gris claro */
+        }
+        .btn {
+            @apply px-4 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-opacity-50;
+        }
+        .btn-primary {
+            @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+        }
+        .btn-secondary {
+            @apply bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500;
+        }
+        .btn-danger {
+            @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+        }
+        .btn-info {
+            @apply bg-sky-500 text-white hover:bg-sky-600 focus:ring-sky-400;
+        }
+        .btn-sm {
+            @apply px-3 py-1 text-xs rounded-md shadow-sm;
+        }
+        .input-field {
+            @apply mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+        }
+        .card {
+            @apply bg-white shadow-xl rounded-xl p-6 md:p-8;
+        }
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5); /* Fondo semi-transparente */
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+        }
+        .message-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            z-index: 1050;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            max-width: 300px;
+        }
+        .message-box.show {
+            opacity: 1;
+        }
+        .message-box.success { background-color: #4CAF50; }
+        .message-box.error { background-color: #f44336; }
+        .message-box.info { background-color: #2196F3; }
+
+        /* Estilos para la tabla de manuales dentro de la tabla de vehículos */
+        .manuales-sub-table {
+            @apply mt-2 w-full text-sm;
+        }
+        .manuales-sub-table th, .manuales-sub-table td {
+            @apply border border-gray-200 px-2 py-1 text-left;
+        }
+        .manuales-sub-table th {
+            @apply bg-gray-50 font-medium;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 min-h-screen">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-700">Gestor de Manuales Automotrices</h1>
+        </header>
+
+        <main class="space-y-8">
+            <section class="card">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-700">Agregar Nuevo Vehículo</h2>
+                <form id="formAgregarVehiculo" class="space-y-4">
+                    <div>
+                        <label for="vehiculoMarca" class="block text-sm font-medium text-gray-700">Marca:</label>
+                        <input type="text" id="vehiculoMarca" name="vehiculoMarca" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="vehiculoModelo" class="block text-sm font-medium text-gray-700">Modelo:</label>
+                        <input type="text" id="vehiculoModelo" name="vehiculoModelo" class="input-field" required>
+                    </div>
+                    <div>
+                        <label for="vehiculoAno" class="block text-sm font-medium text-gray-700">Año:</label>
+                        <input type="number" id="vehiculoAno" name="vehiculoAno" class="input-field" min="1900" max="2099" step="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-full sm:w-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                        Guardar Vehículo
+                    </button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-700">Listado de Vehículos</h2>
+                <div class="overflow-x-auto rounded-lg shadow">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marca</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modelo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Año</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Manuales</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones Vehículo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaVehiculos" class="bg-white divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+                <p id="noVehiculosMensaje" class="mt-4 text-gray-500 hidden">No hay vehículos registrados.</p>
+            </section>
+        </main>
+    </div>
+
+    <div id="modalAgregarManual" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeModalAgregarManual">&times;</span>
+            <h3 class="text-xl font-semibold mb-4">Agregar Manual a Vehículo</h3>
+            <p class="mb-2 text-sm">Vehículo: <strong id="modalInfoVehiculo"></strong></p>
+            <form id="formAgregarManual" class="space-y-4">
+                <input type="hidden" id="modalVehiculoId" name="modalVehiculoId">
+                <div>
+                    <label for="manualFile" class="block text-sm font-medium text-gray-700">Archivo PDF del Manual:</label>
+                    <input type="file" id="manualFile" name="manualFile" class="input-field" accept="application/pdf" required>
+                    <p class="text-xs text-gray-500 mt-1">Límite recomendado: 5MB por archivo. Los archivos grandes pueden afectar el rendimiento.</p>
+                </div>
+                <button type="submit" class="btn btn-primary w-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6 2a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 3a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    Guardar Manual
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="messageBoxContainer" class="message-box"></div>
+
+    <script>
+        const LS_VEHICULOS_KEY = 'gestor_manuales_vehiculos_v1';
+        let vehiculos = [];
+
+        // Elementos del DOM
+        const formAgregarVehiculo = document.getElementById('formAgregarVehiculo');
+        const listaVehiculosBody = document.getElementById('listaVehiculos');
+        const noVehiculosMensaje = document.getElementById('noVehiculosMensaje');
+        
+        const modalAgregarManual = document.getElementById('modalAgregarManual');
+        const closeModalAgregarManualBtn = document.getElementById('closeModalAgregarManual');
+        const formAgregarManual = document.getElementById('formAgregarManual');
+        const modalInfoVehiculo = document.getElementById('modalInfoVehiculo');
+        const modalVehiculoIdInput = document.getElementById('modalVehiculoId');
+        const manualFileInput = document.getElementById('manualFile');
+        const messageBoxContainer = document.getElementById('messageBoxContainer');
+
+        // --- Funciones de Utilidad ---
+        function showMessage(message, type = 'success', duration = 3000) {
+            messageBoxContainer.textContent = message;
+            messageBoxContainer.className = 'message-box show'; // Reset classes
+            if (type === 'error') {
+                messageBoxContainer.classList.add('error');
+            } else if (type === 'info') {
+                messageBoxContainer.classList.add('info');
+            } else { // success by default
+                messageBoxContainer.classList.add('success');
+            }
+            setTimeout(() => {
+                messageBoxContainer.classList.remove('show');
+            }, duration);
+        }
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // --- Lógica de Vehículos ---
+        function cargarVehiculos() {
+            const vehiculosGuardados = localStorage.getItem(LS_VEHICULOS_KEY);
+            if (vehiculosGuardados) {
+                vehiculos = JSON.parse(vehiculosGuardados);
+            } else {
+                vehiculos = [];
+            }
+        }
+
+        function guardarVehiculosEnLocalStorage() {
+            localStorage.setItem(LS_VEHICULOS_KEY, JSON.stringify(vehiculos));
+        }
+
+        function renderVehiculos() {
+            listaVehiculosBody.innerHTML = ''; // Limpiar tabla
+            if (vehiculos.length === 0) {
+                noVehiculosMensaje.classList.remove('hidden');
+                return;
+            }
+            noVehiculosMensaje.classList.add('hidden');
+
+            vehiculos.forEach(vehiculo => {
+                const row = listaVehiculosBody.insertRow();
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${vehiculo.marca}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${vehiculo.modelo}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${vehiculo.ano}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" id="manuales-${vehiculo.id}">
+                        ${renderListaManualesParaVehiculo(vehiculo)}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="btn btn-info btn-sm mr-2" onclick="abrirModalAgregarManual('${vehiculo.id}')">Agregar Manual</button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarVehiculo('${vehiculo.id}')">Eliminar Vehículo</button>
+                    </td>
+                `;
+            });
+        }
+        
+        function renderListaManualesParaVehiculo(vehiculo) {
+            if (!vehiculo.manuales || vehiculo.manuales.length === 0) {
+                return '<span class="text-xs italic">Sin manuales</span>';
+            }
+            let htmlManuales = '<table class="manuales-sub-table">';
+            htmlManuales += '<thead><tr><th>Nombre Archivo</th><th>Acciones</th></tr></thead><tbody>';
+            vehiculo.manuales.forEach(manual => {
+                htmlManuales += `
+                    <tr>
+                        <td>${manual.pdfName}</td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm mr-1" onclick="verManual('${vehiculo.id}', '${manual.id}')">Ver</button>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarManual('${vehiculo.id}', '${manual.id}')">X</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            htmlManuales += '</tbody></table>';
+            return htmlManuales;
+        }
+
+
+        formAgregarVehiculo.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const marca = document.getElementById('vehiculoMarca').value.trim();
+            const modelo = document.getElementById('vehiculoModelo').value.trim();
+            const ano = document.getElementById('vehiculoAno').value;
+
+            if (!marca || !modelo || !ano) {
+                showMessage("Todos los campos del vehículo son obligatorios.", "error");
+                return;
+            }
+
+            const nuevoVehiculo = {
+                id: `vehiculo_${Date.now()}`,
+                marca,
+                modelo,
+                ano,
+                manuales: [] // Array para almacenar manuales asociados
+            };
+
+            vehiculos.push(nuevoVehiculo);
+            guardarVehiculosEnLocalStorage();
+            renderVehiculos();
+            showMessage("Vehículo agregado con éxito.", "success");
+            formAgregarVehiculo.reset();
+        });
+
+        function eliminarVehiculo(vehiculoId) {
+            if (confirm("¿Está seguro de que desea eliminar este vehículo y todos sus manuales asociados?")) {
+                vehiculos = vehiculos.filter(v => v.id !== vehiculoId);
+                guardarVehiculosEnLocalStorage();
+                renderVehiculos();
+                showMessage("Vehículo eliminado con éxito.", "info");
+            }
+        }
+
+        // --- Lógica de Manuales ---
+        function abrirModalAgregarManual(vehiculoId) {
+            const vehiculo = vehiculos.find(v => v.id === vehiculoId);
+            if (!vehiculo) {
+                showMessage("Vehículo no encontrado.", "error");
+                return;
+            }
+            modalInfoVehiculo.textContent = `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.ano})`;
+            modalVehiculoIdInput.value = vehiculoId;
+            manualFileInput.value = ''; // Limpiar input de archivo
+            modalAgregarManual.style.display = "block";
+        }
+
+        closeModalAgregarManualBtn.onclick = function() {
+            modalAgregarManual.style.display = "none";
+        }
+
+        window.onclick = function(event) { // Cerrar modal si se hace clic fuera
+            if (event.target == modalAgregarManual) {
+                modalAgregarManual.style.display = "none";
+            }
+        }
+
+        formAgregarManual.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const vehiculoId = modalVehiculoIdInput.value;
+            const file = manualFileInput.files[0];
+
+            if (!file) {
+                showMessage("Por favor, seleccione un archivo PDF.", "error");
+                return;
+            }
+            if (file.type !== "application/pdf") {
+                showMessage("El archivo debe ser de tipo PDF.", "error");
+                manualFileInput.value = '';
+                return;
+            }
+             // Límite de tamaño (ej. 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showMessage("El archivo PDF es demasiado grande (máximo 5MB).", "error");
+                manualFileInput.value = '';
+                return;
+            }
+
+
+            try {
+                const pdfDataUrl = await readFileAsDataURL(file);
+                const vehiculoIndex = vehiculos.findIndex(v => v.id === vehiculoId);
+                if (vehiculoIndex === -1) {
+                    showMessage("Vehículo no encontrado para agregar el manual.", "error");
+                    return;
+                }
+
+                const nuevoManual = {
+                    id: `manual_${Date.now()}`,
+                    pdfName: file.name,
+                    pdfDataUrl: pdfDataUrl 
+                };
+
+                if (!vehiculos[vehiculoIndex].manuales) {
+                    vehiculos[vehiculoIndex].manuales = [];
+                }
+                vehiculos[vehiculoIndex].manuales.push(nuevoManual);
+                
+                guardarVehiculosEnLocalStorage();
+                renderVehiculos(); // Re-render para actualizar la lista de manuales en la tabla
+                showMessage(`Manual "${file.name}" agregado con éxito.`, "success");
+                modalAgregarManual.style.display = "none";
+                formAgregarManual.reset();
+
+            } catch (error) {
+                showMessage("Error al leer el archivo PDF.", "error");
+                console.error("Error reading PDF file:", error);
+            }
+        });
+
+        function verManual(vehiculoId, manualId) {
+            const vehiculo = vehiculos.find(v => v.id === vehiculoId);
+            if (vehiculo && vehiculo.manuales) {
+                const manual = vehiculo.manuales.find(m => m.id === manualId);
+                if (manual && manual.pdfDataUrl) {
+                    const newWindow = window.open();
+                    newWindow.document.write(`<iframe width='100%' height='100%' src='${manual.pdfDataUrl}' title='${manual.pdfName}'></iframe>`);
+                    newWindow.document.title = manual.pdfName;
+                } else {
+                    showMessage("Datos del manual no encontrados.", "error");
+                }
+            } else {
+                showMessage("Vehículo o manual no encontrado.", "error");
+            }
+        }
+
+        function eliminarManual(vehiculoId, manualId) {
+            const vehiculoIndex = vehiculos.findIndex(v => v.id === vehiculoId);
+            if (vehiculoIndex !== -1 && vehiculos[vehiculoIndex].manuales) {
+                const manual = vehiculos[vehiculoIndex].manuales.find(m => m.id === manualId);
+                if (confirm(`¿Está seguro de eliminar el manual "${manual ? manual.pdfName : 'seleccionado'}"?`)) {
+                    vehiculos[vehiculoIndex].manuales = vehiculos[vehiculoIndex].manuales.filter(m => m.id !== manualId);
+                    guardarVehiculosEnLocalStorage();
+                    renderVehiculos(); // Re-render para actualizar la lista
+                    showMessage("Manual eliminado con éxito.", "info");
+                }
+            } else {
+                 showMessage("Vehiculo o manual no encontrado.", "error");
+            }
+        }
+
+
+        // --- Inicialización ---
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarVehiculos();
+            renderVehiculos();
+        });
+    </script>
+</body>
+</html>
