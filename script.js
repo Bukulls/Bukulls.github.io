@@ -1,12 +1,3 @@
-
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-analytics.js";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAySrOuWY7Zr7Etq_iFKSFLiWsng3KTkXA",
   authDomain: "edc-automotriz.firebaseapp.com",
@@ -16,10 +7,11 @@ const firebaseConfig = {
   appId: "1:387959087823:web:03469bf7d12f4e78674dba",
   measurementId: "G-K98Q6XWTFT"
 };
+// inicializa Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
 
 // Espera a que todo el contenido del DOM esté completamente cargado y parseado
 document.addEventListener('DOMContentLoaded', function() {
