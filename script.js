@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Observador del estado de autenticación (muy importante)
-    auth.onAuthStateChanged((user) => { // Corregido: 'function(user)' en lugar de '(user) =>' para mantener consistencia con tu estilo, aunque arrow function es válida.
+    auth.onAuthStateChanged(function(user) { // Corregido: 'function(user)' en lugar de '(user) =>' para mantener consistencia con tu estilo, aunque arrow function es válida.
         const adminPanel = document.getElementById('admin-panel'); 
 
         if (user) {
@@ -228,6 +228,124 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     } else {
         // console.warn("Formulario 'form-agendar' no encontrado.");
+    }
+    const formIngresoVehiculo = document.getElementById('form-ingreso-vehiculo');
+    const vehiculoImagenesInput = document.getElementById('vehiculo-imagenes');
+    const previsualizacionDiv = document.getElementById('previsualizacion-imagenes');
+
+    // Opcional: Previsualización de imágenes seleccionadas
+    if (vehiculoImagenesInput && previsualizacionDiv) {
+        vehiculoImagenesInput.addEventListener('change', function(event) {
+            previsualizacionDiv.innerHTML = ''; // Limpiar previsualizaciones anteriores
+            const files = event.target.files;
+            if (files) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.type.startsWith('image/')){
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.maxWidth = '100px';
+                            img.style.maxHeight = '100px';
+                            img.style.margin = '5px';
+                            previsualizacionDiv.appendChild(img);
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        });
+    }
+
+
+    if (formIngresoVehiculo) {
+        formIngresoVehiculo.addEventListener('submit', async function(event) { // Hacemos la función async para usar await
+            event.preventDefault();
+            console.log("Formulario de ingreso de vehículo enviado.");
+
+            // Verificar si el usuario está autenticado (solo admin debería poder hacer esto)
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                alert("Debes iniciar sesión como administrador para guardar vehículos.");
+                console.warn("Intento de guardar vehículo sin iniciar sesión.");
+                return;
+            }
+
+            // Obtener datos del formulario
+            const patente = document.getElementById('vehiculo-patente').value.trim();
+            const marca = document.getElementById('vehiculo-marca').value.trim();
+            const modelo = document.getElementById('vehiculo-modelo').value.trim();
+            const ano = document.getElementById('vehiculo-ano').value;
+            const clienteNombre = document.getElementById('vehiculo-cliente-nombre').value.trim();
+            const clienteTelefono = document.getElementById('vehiculo-cliente-telefono').value.trim();
+            const descripcionTrabajo = document.getElementById('vehiculo-descripcion-trabajo').value.trim();
+            const imagenesSeleccionadas = vehiculoImagenesInput.files; // Es un FileList
+
+            if (!patente || !marca || !modelo || !ano || !descripcionTrabajo) {
+                alert("Por favor, completa todos los campos obligatorios del vehículo (Patente, Marca, Modelo, Año, Descripción del Trabajo).");
+                return;
+            }
+
+            // Deshabilitar el botón de submit para evitar envíos múltiples mientras se procesa
+            const submitButton = formIngresoVehiculo.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Guardando...';
+
+            try {
+                const urlsImagenes = [];
+                if (imagenesSeleccionadas && imagenesSeleccionadas.length > 0) {
+                    console.log(`Subiendo ${imagenesSeleccionadas.length} imágenes...`);
+                    for (let i = 0; i < imagenesSeleccionadas.length; i++) {
+                        const imagen = imagenesSeleccionadas[i];
+                        // Crear una referencia en Firebase Storage (ej: vehiculos/patente_nombrearchivo_timestamp.jpg)
+                        const nombreArchivo = `${patente}_${imagen.name}_${Date.now()}`;
+                        const storageRef = storage.ref(`vehiculos/${nombreArchivo}`);
+                        
+                        console.log(`Subiendo archivo: ${imagen.name} como ${nombreArchivo}`);
+                        const uploadTaskSnapshot = await storageRef.put(imagen); // Subir el archivo
+                        const downloadURL = await uploadTaskSnapshot.ref.getDownloadURL(); // Obtener la URL de descarga
+                        urlsImagenes.push(downloadURL);
+                        console.log(`Archivo ${imagen.name} subido. URL: ${downloadURL}`);
+                    }
+                } else {
+                    console.log("No se seleccionaron imágenes para subir.");
+                }
+
+                // Crear el objeto de datos del vehículo para Firestore
+                const datosVehiculo = {
+                    patente: patente,
+                    marca: marca,
+                    modelo: modelo,
+                    ano: parseInt(ano), // Guardar como número
+                    clienteNombre: clienteNombre,
+                    clienteTelefono: clienteTelefono,
+                    descripcionTrabajo: descripcionTrabajo,
+                    imagenesURLs: urlsImagenes, // Array con las URLs de las imágenes
+                    registradoPor: currentUser.email, // Guardar quién lo registró
+                    registradoEl: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Guardar en Firestore en una nueva colección "vehiculos"
+                console.log("Guardando datos del vehículo en Firestore:", datosVehiculo);
+                const docRef = await db.collection("vehiculos").add(datosVehiculo);
+                
+                console.log("Vehículo registrado en Firestore con ID: ", docRef.id);
+                alert(`¡Vehículo con patente ${patente} guardado con éxito!`);
+                formIngresoVehiculo.reset(); // Limpiar el formulario
+                if(previsualizacionDiv) previsualizacionDiv.innerHTML = ''; // Limpiar previsualizaciones
+
+            } catch (error) {
+                console.error("Error al guardar el vehículo: ", error);
+                alert("Hubo un error al guardar el vehículo. Revisa la consola para más detalles. Error: " + error.message);
+            } finally {
+                // Volver a habilitar el botón de submit
+                submitButton.disabled = false;
+                submitButton.textContent = 'Guardar Vehículo';
+            }
+        });
+    } else {
+        console.warn("Formulario 'form-ingreso-vehiculo' no encontrado.");
     }
 
 }); // FIN de document.addEventListener('DOMContentLoaded', ...)
