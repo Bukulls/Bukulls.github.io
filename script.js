@@ -14,10 +14,10 @@ const firebaseConfig = {
 // Inicializar Firebase con la configuración
 firebase.initializeApp(firebaseConfig);
 
-// Obtener una instancia de Firestore Database para poder usarla luego
-const db = firebase.firestore(); // La variable 'db' ahora contiene nuestra conexión a Firestore
-const auth = firebase.auth(); // NUEVA LÍNEA: Instancia de Firebase Auth
-const storage = firebase.storage();
+// Obtener una instancia de Firestore Database, Firebase Auth y Firebase Storage
+const db = firebase.firestore();
+const auth = firebase.auth();
+const storage = firebase.storage(); // Asegúrate de que esta línea esté si planeas usar Storage
 
 // =======================================================================
 // SECCIÓN 2: CÓDIGO JAVASCRIPT PARA LA PÁGINA
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const adminStatusDiv = document.getElementById('admin-status');
 
     // Registrar un nuevo usuario administrador (solo necesitas hacerlo una vez)
-    if (btnAdminRegister && adminEmailInput && adminPasswordInput) { // Verificación de inputs
+    if (btnAdminRegister && adminEmailInput && adminPasswordInput) {
         console.log("Botón de registro de admin ENCONTRADO y configurado.");
         btnAdminRegister.addEventListener('click', function() {
             console.log("Botón 'Registrar Admin' FUE CLICKEADO.");
@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("Llamando a auth.createUserWithEmailAndPassword...");
                 auth.createUserWithEmailAndPassword(email, password)
                     .then((userCredential) => {
-                        // Usuario registrado
                         const user = userCredential.user;
                         console.log("Usuario administrador registrado:", user);
                         alert("¡Usuario administrador registrado con éxito! Ahora puedes iniciar sesión.");
@@ -71,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Iniciar sesión como administrador
-    if (btnAdminLogin && adminEmailInput && adminPasswordInput) { // Verificación de inputs
+    if (btnAdminLogin && adminEmailInput && adminPasswordInput) { 
         btnAdminLogin.addEventListener('click', function() {
             const email = adminEmailInput.value;
             const password = adminPasswordInput.value;
@@ -83,11 +82,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Inicio de sesión exitoso
                     const user = userCredential.user;
                     console.log("Administrador ha iniciado sesión:", user);
                     alert("¡Inicio de sesión exitoso!");
-                    // Aquí podrías redirigir a un panel de admin o mostrar contenido de admin
                 })
                 .catch((error) => {
                     console.error("Error al iniciar sesión:", error);
@@ -112,54 +109,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Observador del estado de autenticación (muy importante)
-    // Esto se ejecuta cuando la página carga y cada vez que el estado de auth cambia
-    auth.onAuthStateChanged((user) => {
-        const adminPanel = document.getElementById('admin-panel'); // Obtener el panel de admin
+    auth.onAuthStateChanged(function(user) { // Corregido: 'function(user)' en lugar de '(user) =>' para mantener consistencia con tu estilo, aunque arrow function es válida.
+        const adminPanel = document.getElementById('admin-panel'); 
 
         if (user) {
-            // El usuario ha iniciado sesión
             console.log("Usuario actualmente conectado:", user.email);
             if (adminStatusDiv) adminStatusDiv.textContent = "Sesión iniciada como: " + user.email;
             if (btnAdminLogin) btnAdminLogin.style.display = 'none';
             if (btnAdminRegister) btnAdminRegister.style.display = 'none';
             if (btnAdminLogout) btnAdminLogout.style.display = 'inline-block';
-
-            if (adminPanel) adminPanel.style.display = 'block'; // MOSTRAR PANEL DE ADMIN
-
+            if (adminPanel) adminPanel.style.display = 'block'; 
         } else {
-            // El usuario no ha iniciado sesión o ha cerrado sesión
             console.log("Ningún usuario conectado.");
             if (adminStatusDiv) adminStatusDiv.textContent = "No has iniciado sesión.";
             if (btnAdminLogin) btnAdminLogin.style.display = 'inline-block';
             if (btnAdminRegister) btnAdminRegister.style.display = 'inline-block';
             if (btnAdminLogout) btnAdminLogout.style.display = 'none';
-
-            if (adminPanel) adminPanel.style.display = 'none'; // OCULTAR PANEL DE ADMIN
+            if (adminPanel) adminPanel.style.display = 'none'; 
         }
-    });
-        if (user) {
-            // El usuario ha iniciado sesión
-            console.log("Usuario actualmente conectado:", user.email);
-            if(adminStatusDiv) adminStatusDiv.textContent = "Sesión iniciada como: " + user.email;
-            if(btnAdminLogin) btnAdminLogin.style.display = 'none';
-            if(btnAdminRegister) btnAdminRegister.style.display = 'none';
-            if(btnAdminLogout) btnAdminLogout.style.display = 'inline-block';
-
-            // AQUÍ ES DONDE HABILITARÍAS EL ACCESO A FUNCIONES DE ADMINISTRADOR
-            // Por ejemplo, podrías mostrar un botón para "Ingresar Vehículo"
-            // o permitir ciertas acciones que antes estaban deshabilitadas.
-
-        } else {
-            // El usuario no ha iniciado sesión o ha cerrado sesión
-            console.log("Ningún usuario conectado.");
-            if(adminStatusDiv) adminStatusDiv.textContent = "No has iniciado sesión.";
-            if(btnAdminLogin) btnAdminLogin.style.display = 'inline-block';
-            if(btnAdminRegister) btnAdminRegister.style.display = 'inline-block';
-            if(btnAdminLogout) btnAdminLogout.style.display = 'none';
-
-            // AQUÍ DESHABILITARÍAS O OCULTARÍAS LAS FUNCIONES DE ADMINISTRADOR
-        }
-    });
+    }); // Fin de auth.onAuthStateChanged
 
     // --- Código del botón "Leer más" ---
     const botonLeerMas = document.getElementById('btn-leer-mas');
@@ -176,8 +144,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     } else {
-        if (!botonLeerMas) console.warn("Elemento 'btn-leer-mas' no encontrado.");
-        if (!masInfoDiv) console.warn("Elemento 'mas-info-nosotros' no encontrado.");
+        // Esta advertencia es útil si los elementos no siempre están presentes
+        // if (!botonLeerMas) console.warn("Elemento 'btn-leer-mas' no encontrado."); 
+        // if (!masInfoDiv) console.warn("Elemento 'mas-info-nosotros' no encontrado.");
     }
 
     // --- Código para el Modal de Agendar Cita (abrir/cerrar modal) ---
@@ -201,13 +170,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btnAbrirModal) {
         btnAbrirModal.addEventListener('click', abrirModal);
     } else {
-        console.warn("Botón 'btn-abrir-modal-agendar' no encontrado.");
+        // console.warn("Botón 'btn-abrir-modal-agendar' no encontrado.");
     }
 
     if (btnCerrarModal) {
         btnCerrarModal.addEventListener('click', cerrarModal);
     } else {
-        console.warn("Botón 'btn-cerrar-modal' no encontrado.");
+        // console.warn("Botón 'btn-cerrar-modal' no encontrado.");
     }
 
     if (modalAgendar) {
@@ -217,3 +186,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+
+    // --- Manejar el envío del formulario CON FIREBASE (CITAS) ---
+    if (formAgendar) {
+        formAgendar.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const servicio = document.getElementById('servicio-deseado').value;
+            const fecha = document.getElementById('fecha-preferida').value;
+            const mensaje = document.getElementById('mensaje').value.trim();
+
+            if (!nombre || !telefono || !email) {
+                alert('Por favor, completa los campos obligatorios: Nombre, Teléfono y Correo Electrónico.');
+                return; 
+            }
+
+            const datosCita = {
+                nombre: nombre,
+                telefono: telefono,
+                email: email,
+                servicio: servicio,
+                fecha: fecha,
+                mensaje: mensaje,
+                registradoEl: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            db.collection("citas").add(datosCita)
+                .then((docRef) => {
+                    console.log("Cita registrada en Firestore con ID: ", docRef.id);
+                    alert('¡Gracias ' + nombre + '! Tu solicitud de cita ha sido registrada con éxito.');
+                    formAgendar.reset(); 
+                    cerrarModal(); 
+                })
+                .catch((error) => {
+                    console.error("Error al registrar la cita en Firestore: ", error);
+                    alert('Hubo un error al procesar tu solicitud. Por favor, inténtalo de nuevo más tarde. Detalles del error: ' + error.message);
+                });
+        });
+    } else {
+        // console.warn("Formulario 'form-agendar' no encontrado.");
+    }
+
+}); // FIN de document.addEventListener('DOMContentLoaded', ...)
