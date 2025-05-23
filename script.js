@@ -17,6 +17,7 @@ firebase.initializeApp(firebaseConfig);
 // Obtener una instancia de Firestore Database para poder usarla luego
 const db = firebase.firestore(); // La variable 'db' ahora contiene nuestra conexión a Firestore
 const auth = firebase.auth(); // NUEVA LÍNEA: Instancia de Firebase Auth
+const storage = firebase.storage();
 
 // =======================================================================
 // SECCIÓN 2: CÓDIGO JAVASCRIPT PARA LA PÁGINA
@@ -112,7 +113,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Observador del estado de autenticación (muy importante)
     // Esto se ejecuta cuando la página carga y cada vez que el estado de auth cambia
-    auth.onAuthStateChanged(function(user) {
+    auth.onAuthStateChanged((user) => {
+        const adminPanel = document.getElementById('admin-panel'); // Obtener el panel de admin
+
+        if (user) {
+            // El usuario ha iniciado sesión
+            console.log("Usuario actualmente conectado:", user.email);
+            if (adminStatusDiv) adminStatusDiv.textContent = "Sesión iniciada como: " + user.email;
+            if (btnAdminLogin) btnAdminLogin.style.display = 'none';
+            if (btnAdminRegister) btnAdminRegister.style.display = 'none';
+            if (btnAdminLogout) btnAdminLogout.style.display = 'inline-block';
+
+            if (adminPanel) adminPanel.style.display = 'block'; // MOSTRAR PANEL DE ADMIN
+
+        } else {
+            // El usuario no ha iniciado sesión o ha cerrado sesión
+            console.log("Ningún usuario conectado.");
+            if (adminStatusDiv) adminStatusDiv.textContent = "No has iniciado sesión.";
+            if (btnAdminLogin) btnAdminLogin.style.display = 'inline-block';
+            if (btnAdminRegister) btnAdminRegister.style.display = 'inline-block';
+            if (btnAdminLogout) btnAdminLogout.style.display = 'none';
+
+            if (adminPanel) adminPanel.style.display = 'none'; // OCULTAR PANEL DE ADMIN
+        }
+    });
         if (user) {
             // El usuario ha iniciado sesión
             console.log("Usuario actualmente conectado:", user.email);
@@ -187,10 +211,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (modalAgendar) {
-                window.addEventListener('click', function(event) {
-                    if (event.target === modalAgendar) {
-                        cerrarModal();
-                    }
-                });
-            }
-        });
+            window.addEventListener('click', function(event) {
+                if (event.target === modalAgendar) {
+                    cerrarModal();
+                }
+            });
+        }
