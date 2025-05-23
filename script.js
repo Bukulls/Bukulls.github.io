@@ -14,8 +14,9 @@ const firebaseConfig = {
 // Inicializar Firebase con la configuración
 firebase.initializeApp(firebaseConfig);
 
-// Obtener una instancia de Firestore Database para poder usarla luego
-const db = firebase.firestore(); // La variable 'db' ahora contiene nuestra conexión a Firestore
+// Obtener una instancia de Firestore Database y Firebase Auth
+const db = firebase.firestore();
+const auth = firebase.auth(); // Instancia de Firebase Auth
 
 // =======================================================================
 // SECCIÓN 2: CÓDIGO JAVASCRIPT PARA LA PÁGINA
@@ -79,12 +80,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- Manejar el envío del formulario CON FIREBASE ---
+    // --- Manejar el envío del formulario CON FIREBASE (CITAS) ---
     if (formAgendar) {
         formAgendar.addEventListener('submit', function(event) {
-            event.preventDefault(); // Previene el envío tradicional del formulario
+            event.preventDefault(); 
 
-            // Obtener los valores de los campos del formulario
             const nombre = document.getElementById('nombre').value.trim();
             const telefono = document.getElementById('telefono').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -92,13 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const fecha = document.getElementById('fecha-preferida').value;
             const mensaje = document.getElementById('mensaje').value.trim();
 
-            // Validaciones básicas
             if (!nombre || !telefono || !email) {
                 alert('Por favor, completa los campos obligatorios: Nombre, Teléfono y Correo Electrónico.');
-                return; // Detiene la ejecución si faltan campos
+                return; 
             }
 
-            // Crear el objeto con los datos de la cita para Firestore
             const datosCita = {
                 nombre: nombre,
                 telefono: telefono,
@@ -106,23 +104,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 servicio: servicio,
                 fecha: fecha,
                 mensaje: mensaje,
-                registradoEl: firebase.firestore.FieldValue.serverTimestamp() // Añade marca de tiempo del servidor
+                registradoEl: firebase.firestore.FieldValue.serverTimestamp() 
             };
 
-            // Guardar los datos en la colección "citas" de Firestore
             db.collection("citas").add(datosCita)
                 .then((docRef) => {
-                    // Esto se ejecuta si los datos se guardaron correctamente
                     console.log("Cita registrada en Firestore con ID: ", docRef.id);
                     alert('¡Gracias ' + nombre + '! Tu solicitud de cita ha sido registrada con éxito.');
-                    formAgendar.reset(); // Limpia el formulario
-                    cerrarModal(); // Cierra el modal
+                    formAgendar.reset(); 
+                    cerrarModal(); 
                 })
                 .catch((error) => {
-                    // Esto se ejecuta si hubo un error al guardar
                     console.error("Error al registrar la cita en Firestore: ", error);
-                    alert('Hubo un error al procesar tu solicitud. Por favor, inténtalo de nuevo más tarde. Detalles del error: ' + error.message);
-                });
+                    alert('Hubo un error al procesar tu solicitud. Por favor, inténtalo de nuevo más tarde.');
+                         });
         });
     } else {
         console.warn("Formulario 'form-agendar' no encontrado.");

@@ -22,10 +22,21 @@
     </header>
 
     <main>
-        <section id="inicio">
-            <h2>¡Bienvenido a tu solución automotriz de confianza!</h2>
-            <p>Expertos en el cuidado y reparación de tu vehículo. Ofrecemos servicios de calidad con la última tecnología.</p>
-            </section>
+        <section id="login-section" style="background-color: #444; padding: 20px; margin-top: 30px;">
+        <h2>Acceso Administrador (Prueba)</h2>
+        <div>
+            <input type="email" id="admin-email" placeholder="Correo Electrónico">
+            <input type="password" id="admin-password" placeholder="Contraseña">
+            <button id="btn-admin-login">Iniciar Sesión</button>
+            <button id="btn-admin-register">Registrar Admin (solo la primera vez)</button>
+            <button id="btn-admin-logout" style="display:none;">Cerrar Sesión</button>
+        </div>
+        <div id="admin-status" style="margin-top:10px;">No has iniciado sesión.</div>
+    </section>
+       <section id="inicio">
+        <h2>¡Bienvenido Mecanica Automotriz De Confianza!</h2>
+        <p>Expertos en el cuidado y reparación de tu vehículo. Ofrecemos servicios de calidad con la última tecnología.</p>
+    </section>
 
         <section id="servicios">
             <h2>Nuestros Servicios</h2>
@@ -98,11 +109,12 @@
     </div>
 
     <footer>
-        <p>&copy; 2025 Taller Automotriz [Nombre de tu Taller]. Todos los derechos reservados.</p>
+        <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
     </footer>
 
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
 <script src="script.js"></script>
 
 </body>
