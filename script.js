@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Observador del estado de autenticación (muy importante)
-    auth.onAuthStateChanged(function(user) { // Corregido: 'function(user)' en lugar de '(user) =>' para mantener consistencia con tu estilo, aunque arrow function es válida.
+    auth.onAuthStateChanged((user) => { // Corregido: 'function(user)' en lugar de '(user) =>' para mantener consistencia con tu estilo, aunque arrow function es válida.
         const adminPanel = document.getElementById('admin-panel'); 
 
         if (user) {
