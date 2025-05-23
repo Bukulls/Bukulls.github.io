@@ -2,13 +2,13 @@
 // SECCIÓN 1: CONFIGURACIÓN E INICIALIZACIÓN DE FIREBASE
 // =======================================================================
 const firebaseConfig = {
-  apiKey: "AIzaSyAySrOuWY7Zr7Etq_iFKSFLiWsng3KTkXA", // Tu API Key
-  authDomain: "edc-automotriz.firebaseapp.com",     // Tu Auth Domain
-  projectId: "edc-automotriz",                     // Tu Project ID
-  storageBucket: "edc-automotriz.firebasestorage.app", // Tu Storage Bucket
-  messagingSenderId: "387959087823",               // Tu Sender ID
-  appId: "1:387959087823:web:03469bf7d12f4e78674dba", // Tu App ID
-  measurementId: "G-K98Q6XWTFT"                    // Tu Measurement ID (opcional para Firestore, pero está bien dejarlo)
+  apiKey: "AIzaSyCY0zuj_0HfGpO6O129hqDjKZiOSy1X7I8",
+  authDomain: "edc-2-771c4.firebaseapp.com",
+  projectId: "edc-2-771c4",
+  storageBucket: "edc-2-771c4.firebasestorage.app",
+  messagingSenderId: "427115955506",
+  appId: "1:427115955506:web:bf1ade0ac2299ed14e432b",
+  measurementId: "G-E7G6GETQJE"
 };
 
 // Inicializar Firebase con la configuración
