@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const previsualizacionDiv = document.getElementById('previsualizacion-imagenes');
     const listaVehiculosDiv = document.getElementById('lista-vehiculos');
     
-    // Variable para guardar el ID del vehículo que se está editando
     let editandoVehiculoId = null;
 
 
@@ -104,9 +103,16 @@ document.addEventListener('DOMContentLoaded', function() {
             auth.signOut().then(() => {
                 console.log("Sesión cerrada.");
                 alert("Has cerrado sesión.");
-                editandoVehiculoId = null; // Resetear ID de edición al cerrar sesión
+                editandoVehiculoId = null; 
                 if(formIngresoVehiculo) formIngresoVehiculo.reset();
                 if(previsualizacionDiv) previsualizacionDiv.innerHTML = '';
+                 // Resetear título del formulario y texto del botón al cerrar sesión
+                if(formIngresoVehiculo) {
+                    const formTitle = formIngresoVehiculo.querySelector('h3');
+                    const submitButtonInForm = formIngresoVehiculo.querySelector('button[type="submit"]');
+                    if(formTitle) formTitle.textContent = 'Ingresar Nuevo Vehículo';
+                    if(submitButtonInForm) submitButtonInForm.textContent = 'Guardar Vehículo';
+                }
             }).catch((error) => {
                 console.error("Error al cerrar sesión:", error);
                 alert("Error al cerrar sesión: " + error.message);
@@ -157,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const vehiculo = doc.data();
                     const vehiculoId = doc.id; 
                     htmlVehiculos += `<li data-vehiculo-id="${vehiculoId}" style="border: 1px solid #555; margin-bottom: 15px; padding: 10px; list-style-type: none;">`;
-                    htmlVehiculos += `<h4>Patente: ${vehiculo.patente || 'N/A'}</h4>`; // Quitamos el ID de aquí para más limpieza
+                    htmlVehiculos += `<h4>Patente: ${vehiculo.patente || 'N/A'}</h4>`;
                     htmlVehiculos += `<p><strong>Marca:</strong> ${vehiculo.marca || 'N/A'} - <strong>Modelo:</strong> ${vehiculo.modelo || 'N/A'} - <strong>Año:</strong> ${vehiculo.ano || 'N/A'}</p>`;
                     htmlVehiculos += `<p><strong>Cliente:</strong> ${vehiculo.clienteNombre || 'N/A'} - <strong>Tel:</strong> ${vehiculo.clienteTelefono || 'N/A'}</p>`;
                     htmlVehiculos += `<p><strong>Trabajo a realizar:</strong> ${vehiculo.descripcionTrabajo || 'N/A'}</p>`;
@@ -207,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const docRef = db.collection("vehiculos").doc(vehiculoId);
                         const docSnap = await docRef.get();
 
-                        if (docSnap.exists) {
+                        if (docSnap.exists) { // CORREGIDO: de docSnap.exists() a docSnap.exists
                             const vehiculoData = docSnap.data();
                             if (vehiculoData.imagenesURLs && vehiculoData.imagenesURLs.length > 0) {
                                 console.log("Borrando imágenes de Firebase Storage...");
@@ -248,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 try {
                     const docRef = db.collection("vehiculos").doc(vehiculoId);
                     const docSnap = await docRef.get();
-                    if (docSnap.exists) {
+                    if (docSnap.exists) { // CORREGIDO: de docSnap.exists() a docSnap.exists
                         const vehiculo = docSnap.data();
                         document.getElementById('vehiculo-patente').value = vehiculo.patente || '';
                         document.getElementById('vehiculo-marca').value = vehiculo.marca || '';
@@ -258,7 +264,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('vehiculo-cliente-telefono').value = vehiculo.clienteTelefono || '';
                         document.getElementById('vehiculo-descripcion-trabajo').value = vehiculo.descripcionTrabajo || '';
                         
-                        // Manejo de previsualización de imágenes existentes (más complejo, por ahora solo limpiamos)
                         if(previsualizacionDiv) previsualizacionDiv.innerHTML = ''; 
                         if (vehiculo.imagenesURLs && vehiculo.imagenesURLs.length > 0) {
                             vehiculo.imagenesURLs.forEach(url => {
@@ -267,17 +272,20 @@ document.addEventListener('DOMContentLoaded', function() {
                                 img.style.maxWidth = '50px'; img.style.maxHeight = '50px'; img.style.margin = '2px';
                                 if(previsualizacionDiv) previsualizacionDiv.appendChild(img);
                             });
-                            if(previsualizacionDiv) previsualizacionDiv.insertAdjacentHTML('beforeend', '<p><small>Imágenes actuales. Selecciona nuevas para reemplazarlas o añadir (la lógica de reemplazo aún no está implementada).</small></p>');
+                            if(previsualizacionDiv) previsualizacionDiv.insertAdjacentHTML('beforeend', '<p><small>Imágenes actuales. Selecciona nuevas para reemplazarlas o añadir.</small></p>');
                         }
                         
-                        vehiculoImagenesInput.value = ''; // Resetear el input de archivos
+                        if(vehiculoImagenesInput) vehiculoImagenesInput.value = ''; 
 
-                        editandoVehiculoId = vehiculoId; // Guardar el ID del vehículo que estamos editando
-                        formIngresoVehiculo.querySelector('h3').textContent = `Editando Vehículo (Patente: ${vehiculo.patente})`;
-                        formIngresoVehiculo.querySelector('button[type="submit"]').textContent = 'Actualizar Vehículo';
+                        editandoVehiculoId = vehiculoId; 
+                        if(formIngresoVehiculo) {
+                            const formTitle = formIngresoVehiculo.querySelector('h3');
+                            const submitButtonInForm = formIngresoVehiculo.querySelector('button[type="submit"]');
+                            if(formTitle) formTitle.textContent = `Editando Vehículo (Patente: ${vehiculo.patente || 'N/A'})`;
+                            if(submitButtonInForm) submitButtonInForm.textContent = 'Actualizar Vehículo';
+                        }
                         
-                        // Scroll al formulario para facilitar la edición
-                        formIngresoVehiculo.scrollIntoView({ behavior: 'smooth' });
+                        if(formIngresoVehiculo) formIngresoVehiculo.scrollIntoView({ behavior: 'smooth' });
 
                     } else {
                         alert("Vehículo no encontrado para editar.");
@@ -362,8 +370,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (vehiculoImagenesInput && previsualizacionDiv) {
         vehiculoImagenesInput.addEventListener('change', function(event) {
             if(editandoVehiculoId && previsualizacionDiv.querySelector('p > small') && previsualizacionDiv.querySelector('p > small').textContent.includes('Imágenes actuales')) {
-                // Si estamos editando y ya hay previsualización de imágenes actuales, no las borramos al instante
-                // El usuario debe verlas y decidir si sube nuevas para reemplazarlas
+                 // No limpiar previsualizaciones si estamos editando y ya hay imágenes actuales mostradas
+                 // Solo añadir las nuevas
             } else {
                 previsualizacionDiv.innerHTML = ''; 
             }
@@ -382,8 +390,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         reader.readAsDataURL(file);
                     }
                 }
-                 if (files.length > 0 && editandoVehiculoId && previsualizacionDiv.querySelector('p > small') && previsualizacionDiv.querySelector('p > small').textContent.includes('Imágenes actuales')) {
-                    previsualizacionDiv.querySelector('p > small').innerHTML = '<small>Nuevas imágenes seleccionadas (reemplazarán a las anteriores al guardar).</small>';
+                 if (files.length > 0 && editandoVehiculoId ) {
+                    const smallText = previsualizacionDiv.querySelector('p > small');
+                    if (smallText && smallText.textContent.includes('Imágenes actuales')) {
+                        smallText.innerHTML = '<small>Nuevas imágenes seleccionadas (reemplazarán a las anteriores al guardar).</small>';
+                    } else if (!smallText) {
+                         previsualizacionDiv.insertAdjacentHTML('beforeend', '<p><small>Nuevas imágenes seleccionadas.</small></p>');
+                    }
                 }
             }
         });
@@ -418,38 +431,34 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.textContent = editandoVehiculoId ? 'Actualizando...' : 'Guardando...';
 
             try {
-                let urlsImagenesNuevas = [];
                 let urlsImagenesAntiguasParaBorrar = [];
                 let urlsImagenesFinales = [];
 
                 // Si estamos editando, obtenemos las URLs de las imágenes antiguas
                 if (editandoVehiculoId) {
-                    const docSnap = await db.collection("vehiculos").doc(editandoVehiculoId).get();
-                    if (docSnap.exists() && docSnap.data().imagenesURLs) {
-                        urlsImagenesFinales = [...docSnap.data().imagenesURLs]; // Copiamos las antiguas por defecto
+                    const docSnapOriginal = await db.collection("vehiculos").doc(editandoVehiculoId).get();
+                    if (docSnapOriginal.exists && docSnapOriginal.data().imagenesURLs) { // CORREGIDO aquí también
+                        urlsImagenesFinales = [...docSnapOriginal.data().imagenesURLs]; 
                     }
                 }
 
-                // Subir nuevas imágenes si se seleccionaron
                 if (imagenesNuevasSeleccionadas && imagenesNuevasSeleccionadas.length > 0) {
                     console.log(`Subiendo ${imagenesNuevasSeleccionadas.length} nuevas imágenes...`);
                     if (editandoVehiculoId && urlsImagenesFinales.length > 0) {
-                        // Si estamos editando y hay imágenes nuevas, marcamos las antiguas para borrar
                         urlsImagenesAntiguasParaBorrar = [...urlsImagenesFinales];
-                        urlsImagenesFinales = []; // Y empezamos de cero con las URLs para este guardado
                     }
+                    let urlsImagenesNuevasSubidas = [];
                     for (let i = 0; i < imagenesNuevasSeleccionadas.length; i++) {
                         const imagen = imagenesNuevasSeleccionadas[i];
                         const nombreArchivo = `${patente}_${imagen.name}_${Date.now()}`;
                         const storageRef = storage.ref(`vehiculos/${nombreArchivo}`);
                         const uploadTaskSnapshot = await storageRef.put(imagen); 
                         const downloadURL = await uploadTaskSnapshot.ref.getDownloadURL(); 
-                        urlsImagenesNuevas.push(downloadURL);
+                        urlsImagenesNuevasSubidas.push(downloadURL);
                     }
-                    urlsImagenesFinales = urlsImagenesNuevas; // Usar solo las nuevas si se subieron nuevas
+                    urlsImagenesFinales = urlsImagenesNuevasSubidas; // Usar solo las nuevas si se subieron nuevas
                     console.log("Nuevas imágenes subidas:", urlsImagenesFinales);
 
-                    // Borrar imágenes antiguas de Storage si se reemplazaron
                     if (urlsImagenesAntiguasParaBorrar.length > 0) {
                         console.log("Borrando imágenes antiguas de Storage...", urlsImagenesAntiguasParaBorrar);
                         const promesasBorrado = urlsImagenesAntiguasParaBorrar.map(async (url) => {
@@ -464,15 +473,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 } else {
                     console.log("No se seleccionaron nuevas imágenes.");
-                    // Si no se seleccionaron nuevas y no estamos editando, urlsImagenesFinales estará vacío.
-                    // Si estamos editando y no se seleccionaron nuevas, urlsImagenesFinales ya tiene las antiguas.
+                    // Si no hay nuevas imágenes y estamos editando, urlsImagenesFinales ya contiene las antiguas.
+                    // Si no hay nuevas imágenes y estamos creando, urlsImagenesFinales estará vacío.
                 }
 
                 const datosVehiculo = {
                     patente, marca, modelo, ano: parseInt(ano), clienteNombre, clienteTelefono, 
                     descripcionTrabajo, imagenesURLs: urlsImagenesFinales, registradoPor: currentUser.email,
-                    // No actualizamos 'registradoEl' al editar, o lo hacemos con un campo 'actualizadoEl'
-                    // Si es una nueva creación, añadimos 'registradoEl'
                     ...(editandoVehiculoId ? { actualizadoEl: firebase.firestore.FieldValue.serverTimestamp() } 
                                           : { registradoEl: firebase.firestore.FieldValue.serverTimestamp() })
                 };
@@ -487,10 +494,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert(`¡Vehículo con patente ${patente} guardado con éxito!`);
                 }
                 
-                formIngresoVehiculo.reset(); 
+                if(formIngresoVehiculo) formIngresoVehiculo.reset(); 
                 if(previsualizacionDiv) previsualizacionDiv.innerHTML = ''; 
-                formIngresoVehiculo.querySelector('h3').textContent = 'Ingresar Nuevo Vehículo'; // Resetear título del form
-                editandoVehiculoId = null; // Resetear ID de edición
+                if(formIngresoVehiculo) {
+                    const formTitle = formIngresoVehiculo.querySelector('h3');
+                    const submitButtonInForm = formIngresoVehiculo.querySelector('button[type="submit"]');
+                    if(formTitle) formTitle.textContent = 'Ingresar Nuevo Vehículo';
+                    // El texto del botón se restaura en el 'finally'
+                }
+                editandoVehiculoId = null; 
                 cargarYMostrarVehiculos(); 
 
             } catch (error) {
@@ -498,7 +510,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert("Hubo un error. Revisa la consola. Error: " + error.message);
             } finally {
                 submitButton.disabled = false;
-                submitButton.textContent = originalButtonText; // Restaurar texto original
+                submitButton.textContent = 'Guardar Vehículo'; // Siempre resetear a 'Guardar Vehículo' aquí,
+                                                              // porque si era 'Actualizar', ya se reseteó editandoVehiculoId
+                if(formIngresoVehiculo) { // Si aún estamos en modo edición porque algo falló antes de resetear editandoVehiculoId
+                    if(editandoVehiculoId) {
+                         formIngresoVehiculo.querySelector('button[type="submit"]').textContent = 'Actualizar Vehículo';
+                    } else {
+                         formIngresoVehiculo.querySelector('h3').textContent = 'Ingresar Nuevo Vehículo';
+                    }
+                }
             }
         });
     } else {
