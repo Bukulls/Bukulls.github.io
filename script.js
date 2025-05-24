@@ -158,4 +158,246 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Mostrar el error al usuario puede ser útil, o un mensaje genérico
                 let mensajeError = '<p style="color:red;">Error al cargar los vehículos. Revisa la consola.';
                 if (error.code === 'failed-precondition' && error.message.includes('index')) {
-                    mensajeError += '
+                    mensajeError += '<br>Este error puede requerir la creación de un índice en Firestore. Por favor, revisa la consola para ver un enlace de creación de índice y haz clic en él.';
+                }
+                mensajeError += '</p>';
+                listaVehiculosDiv.innerHTML = mensajeError;
+            }
+        } else {
+            listaVehiculosDiv.innerHTML = '<p>Debes iniciar sesión para ver los vehículos.</p>';
+        }
+    }
+
+    // Observador del estado de autenticación (muy importante)
+    auth.onAuthStateChanged(function(user) { 
+        const adminPanel = document.getElementById('admin-panel'); 
+
+        if (user) {
+            console.log("Usuario actualmente conectado:", user.email);
+            if (adminStatusDiv) adminStatusDiv.textContent = "Sesión iniciada como: " + user.email;
+            if (btnAdminLogin) btnAdminLogin.style.display = 'none';
+            if (btnAdminRegister) btnAdminRegister.style.display = 'none';
+            if (btnAdminLogout) btnAdminLogout.style.display = 'inline-block';
+            if (adminPanel) {
+                adminPanel.style.display = 'block'; 
+                cargarYMostrarVehiculos(); // LLAMAR A LA FUNCIÓN AQUÍ para cargar vehículos cuando el admin inicia sesión
+            }
+        } else {
+            console.log("Ningún usuario conectado.");
+            if (adminStatusDiv) adminStatusDiv.textContent = "No has iniciado sesión.";
+            if (btnAdminLogin) btnAdminLogin.style.display = 'inline-block';
+            if (btnAdminRegister) btnAdminRegister.style.display = 'inline-block';
+            if (btnAdminLogout) btnAdminLogout.style.display = 'none';
+            if (adminPanel) {
+                adminPanel.style.display = 'none'; 
+                if(listaVehiculosDiv) listaVehiculosDiv.innerHTML = '<p>Debes iniciar sesión para ver los vehículos.</p>';
+            }
+        }
+    }); 
+
+    // --- Código del botón "Leer más" ---
+    const botonLeerMas = document.getElementById('btn-leer-mas');
+    const masInfoDiv = document.getElementById('mas-info-nosotros');
+
+    if (botonLeerMas && masInfoDiv) {
+        botonLeerMas.addEventListener('click', function() {
+            if (masInfoDiv.style.display === 'none' || masInfoDiv.style.display === '') {
+                masInfoDiv.style.display = 'block';
+                botonLeerMas.textContent = 'Leer menos';
+            } else {
+                masInfoDiv.style.display = 'none';
+                botonLeerMas.textContent = 'Leer más';
+            }
+        });
+    }
+
+    // --- Código para el Modal de Agendar Cita (abrir/cerrar modal) ---
+    const modalAgendar = document.getElementById('modal-agendar');
+    const btnAbrirModal = document.getElementById('btn-abrir-modal-agendar');
+    const btnCerrarModal = document.getElementById('btn-cerrar-modal');
+    const formAgendar = document.getElementById('form-agendar');
+
+    function abrirModal() {
+        if (modalAgendar) {
+            modalAgendar.style.display = 'block';
+        }
+    }
+
+    function cerrarModal() {
+        if (modalAgendar) {
+            modalAgendar.style.display = 'none';
+        }
+    }
+
+    if (btnAbrirModal) {
+        btnAbrirModal.addEventListener('click', abrirModal);
+    } 
+
+    if (btnCerrarModal) {
+        btnCerrarModal.addEventListener('click', cerrarModal);
+    } 
+
+    if (modalAgendar) {
+            window.addEventListener('click', function(event) {
+                if (event.target === modalAgendar) {
+                    cerrarModal();
+                }
+            });
+        }
+
+    // --- Manejar el envío del formulario CON FIREBASE (CITAS) ---
+    if (formAgendar) {
+        formAgendar.addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const servicio = document.getElementById('servicio-deseado').value;
+            const fecha = document.getElementById('fecha-preferida').value;
+            const mensaje = document.getElementById('mensaje').value.trim();
+
+            if (!nombre || !telefono || !email) {
+                alert('Por favor, completa los campos obligatorios: Nombre, Teléfono y Correo Electrónico.');
+                return; 
+            }
+
+            const datosCita = {
+                nombre: nombre,
+                telefono: telefono,
+                email: email,
+                servicio: servicio,
+                fecha: fecha,
+                mensaje: mensaje,
+                registradoEl: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            db.collection("citas").add(datosCita)
+                .then((docRef) => {
+                    console.log("Cita registrada en Firestore con ID: ", docRef.id);
+                    alert('¡Gracias ' + nombre + '! Tu solicitud de cita ha sido registrada con éxito.');
+                    formAgendar.reset(); 
+                    cerrarModal(); 
+                })
+                .catch((error) => {
+                    console.error("Error al registrar la cita en Firestore: ", error);
+                    alert('Hubo un error al procesar tu solicitud. Por favor, inténtalo de nuevo más tarde. Detalles del error: ' + error.message);
+                });
+        });
+    } 
+    
+    // --- LÓGICA PARA EL FORMULARIO DE INGRESO DE VEHÍCULOS ---
+    const formIngresoVehiculo = document.getElementById('form-ingreso-vehiculo');
+    const vehiculoImagenesInput = document.getElementById('vehiculo-imagenes');
+    const previsualizacionDiv = document.getElementById('previsualizacion-imagenes');
+
+    // Opcional: Previsualización de imágenes seleccionadas
+    if (vehiculoImagenesInput && previsualizacionDiv) {
+        vehiculoImagenesInput.addEventListener('change', function(event) {
+            previsualizacionDiv.innerHTML = ''; 
+            const files = event.target.files;
+            if (files) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (file.type.startsWith('image/')){
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.maxWidth = '100px';
+                            img.style.maxHeight = '100px';
+                            img.style.margin = '5px';
+                            previsualizacionDiv.appendChild(img);
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        });
+    }
+
+    if (formIngresoVehiculo) {
+        formIngresoVehiculo.addEventListener('submit', async function(event) { 
+            event.preventDefault();
+            console.log("Formulario de ingreso de vehículo enviado.");
+
+            const currentUser = auth.currentUser;
+            if (!currentUser) {
+                alert("Debes iniciar sesión como administrador para guardar vehículos.");
+                console.warn("Intento de guardar vehículo sin iniciar sesión.");
+                return;
+            }
+
+            const patente = document.getElementById('vehiculo-patente').value.trim();
+            const marca = document.getElementById('vehiculo-marca').value.trim();
+            const modelo = document.getElementById('vehiculo-modelo').value.trim();
+            const ano = document.getElementById('vehiculo-ano').value;
+            const clienteNombre = document.getElementById('vehiculo-cliente-nombre').value.trim();
+            const clienteTelefono = document.getElementById('vehiculo-cliente-telefono').value.trim();
+            const descripcionTrabajo = document.getElementById('vehiculo-descripcion-trabajo').value.trim();
+            const imagenesSeleccionadas = vehiculoImagenesInput.files; 
+
+            if (!patente || !marca || !modelo || !ano || !descripcionTrabajo) {
+                alert("Por favor, completa todos los campos obligatorios del vehículo (Patente, Marca, Modelo, Año, Descripción del Trabajo).");
+                return;
+            }
+
+            const submitButton = formIngresoVehiculo.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Guardando...';
+
+            try {
+                const urlsImagenes = [];
+                if (imagenesSeleccionadas && imagenesSeleccionadas.length > 0) {
+                    console.log(`Subiendo ${imagenesSeleccionadas.length} imágenes...`);
+                    for (let i = 0; i < imagenesSeleccionadas.length; i++) {
+                        const imagen = imagenesSeleccionadas[i];
+                        const nombreArchivo = `${patente}_${imagen.name}_${Date.now()}`;
+                        const storageRef = storage.ref(`vehiculos/${nombreArchivo}`);
+                        
+                        console.log(`Subiendo archivo: ${imagen.name} como ${nombreArchivo}`);
+                        const uploadTaskSnapshot = await storageRef.put(imagen); 
+                        const downloadURL = await uploadTaskSnapshot.ref.getDownloadURL(); 
+                        urlsImagenes.push(downloadURL);
+                        console.log(`Archivo ${imagen.name} subido. URL: ${downloadURL}`);
+                    }
+                } else {
+                    console.log("No se seleccionaron imágenes para subir.");
+                }
+
+                const datosVehiculo = {
+                    patente: patente,
+                    marca: marca,
+                    modelo: modelo,
+                    ano: parseInt(ano), 
+                    clienteNombre: clienteNombre,
+                    clienteTelefono: clienteTelefono,
+                    descripcionTrabajo: descripcionTrabajo,
+                    imagenesURLs: urlsImagenes, 
+                    registradoPor: currentUser.email, 
+                    registradoEl: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                console.log("Guardando datos del vehículo en Firestore:", datosVehiculo);
+                const docRef = await db.collection("vehiculos").add(datosVehiculo);
+                
+                console.log("Vehículo registrado en Firestore con ID: ", docRef.id);
+                alert(`¡Vehículo con patente ${patente} guardado con éxito!`);
+                formIngresoVehiculo.reset(); 
+                if(previsualizacionDiv) previsualizacionDiv.innerHTML = ''; 
+                
+                cargarYMostrarVehiculos(); // Volver a cargar la lista de vehículos después de agregar uno nuevo
+
+            } catch (error) {
+                console.error("Error al guardar el vehículo: ", error);
+                alert("Hubo un error al guardar el vehículo. Revisa la consola para más detalles. Error: " + error.message);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Guardar Vehículo';
+            }
+        });
+    } else {
+        console.warn("Formulario 'form-ingreso-vehiculo' no encontrado.");
+    }
+
+}); // FIN de document.addEventListener('DOMContentLoaded', ...)
