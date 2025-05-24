@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const docRef = db.collection("vehiculos").doc(vehiculoId);
                         const docSnap = await docRef.get();
 
-                        if (docSnap.exists()) {
+                        if (docSnap.exists) {
                             const vehiculoData = docSnap.data();
                             if (vehiculoData.imagenesURLs && vehiculoData.imagenesURLs.length > 0) {
                                 console.log("Borrando imágenes de Firebase Storage...");
