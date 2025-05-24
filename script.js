@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 try {
                     const docRef = db.collection("vehiculos").doc(vehiculoId);
                     const docSnap = await docRef.get();
-                    if (docSnap.exists()) {
+                    if (docSnap.exists) {
                         const vehiculo = docSnap.data();
                         document.getElementById('vehiculo-patente').value = vehiculo.patente || '';
                         document.getElementById('vehiculo-marca').value = vehiculo.marca || '';
