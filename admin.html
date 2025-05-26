@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,67 +6,127 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel de Administración - Mecanico Automotriz Luis Díaz</title>
 <link rel="stylesheet" href="style.css">
+<style>
+/* Estilo básico para el layout de admin con menú lateral */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-menu {
+    background-color: #222;
+    color: #fff;
+    width: 220px;
+    flex-shrink: 0;
+    padding: 20px;
+}
+
+.admin-menu h3 {
+    margin-bottom: 15px;
+}
+
+.admin-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.admin-menu li {
+    margin: 10px 0;
+}
+
+.admin-menu a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.admin-menu a:hover {
+    color: #ad0000;
+}
+
+.admin-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+</style>
 </head>
 <body>
 
 <header>
   <h1>Panel de Administración</h1>
-   <nav>
-        <ul>
-
-            <li><a href="index.html" class="btn-admin">Inicio</a></li>
-        </ul>
-    </nav>
 </header>
 
-<main>
-  <section id="login-section" style="background-color: #444; padding: 20px; margin-top: 30px;">
-    <h2>Acceso Administrador</h2>
-    <div>
-      <input type="email" id="admin-email" placeholder="Correo Electrónico">
-      <input type="password" id="admin-password" placeholder="Contraseña">
-      <button id="btn-admin-login">Iniciar Sesión</button>
-      <button id="btn-admin-register">Registrar Admin</button>
-      <button id="btn-admin-logout" style="display:none;">Cerrar Sesión</button>
-    </div>
-    <div id="admin-status" style="margin-top:10px;">No has iniciado sesión.</div>
-  </section>
+<div class="admin-container">
+  <aside class="admin-menu">
+    <h3>Menú</h3>
+    <ul>
+      <li><a href="#" data-section="vehiculos">Vehículos</a></li>
+      <li><a href="#" data-section="presupuestos">Presupuestos</a></li>
+      <li><a href="#" data-section="trabajos">Trabajos</a></li>
+      <li><a href="#" data-section="manuales">Manuales</a></li>
+      <li><a href="index.html">Volver a Inicio</a></li>
+    </ul>
+  </aside>
 
-  <section id="admin-panel" style="display:none; background-color: #333; padding: 20px; margin-top: 20px; border: 1px solid #ad0000;">
-    <h2>Panel de Administración de Vehículos</h2>
-
-    <div id="form-ingreso-vehiculo-container">
-      <h3>Ingresar Nuevo Vehículo</h3>
-      <form id="form-ingreso-vehiculo">
-        <label for="vehiculo-patente">Patente:</label>
-        <input type="text" id="vehiculo-patente" name="patente" required>
-        <label for="vehiculo-marca">Marca:</label>
-        <input type="text" id="vehiculo-marca" name="marca" required>
-        <label for="vehiculo-modelo">Modelo:</label>
-        <input type="text" id="vehiculo-modelo" name="modelo" required>
-        <label for="vehiculo-ano">Año:</label>
-        <input type="number" id="vehiculo-ano" name="ano" min="1900" max="2099" step="1" required>
-        <label for="vehiculo-cliente-nombre">Nombre del Cliente:</label>
-        <input type="text" id="vehiculo-cliente-nombre" name="clienteNombre">
-        <label for="vehiculo-cliente-telefono">Teléfono del Cliente:</label>
-        <input type="tel" id="vehiculo-cliente-telefono" name="clienteTelefono">
-        <label for="vehiculo-descripcion-trabajo">Descripción del Trabajo:</label>
-        <textarea id="vehiculo-descripcion-trabajo" name="descripcionTrabajo" rows="4" required></textarea>
-        <label for="vehiculo-imagenes">Imágenes del Vehículo:</label>
-        <input type="file" id="vehiculo-imagenes" name="imagenesVehiculo" multiple accept="image/*">
-        <div id="previsualizacion-imagenes" style="margin-top:10px;"></div>
-        <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Vehículo</button>
-      </form>
-    </div>
-
-    <div id="lista-vehiculos-container" style="margin-top: 30px;">
-      <h3>Vehículos Ingresados</h3>
-      <div id="lista-vehiculos">
-        <p>Aún no hay vehículos registrados o no se han cargado.</p>
+  <main class="admin-content">
+    <!-- Sección Vehículos -->
+    <section id="vehiculos-section">
+      <h2>Panel de Administración de Vehículos</h2>
+      <div id="form-ingreso-vehiculo-container">
+        <h3>Ingresar Nuevo Vehículo</h3>
+        <form id="form-ingreso-vehiculo">
+          <label for="vehiculo-patente">Patente:</label>
+          <input type="text" id="vehiculo-patente" required>
+          <label for="vehiculo-marca">Marca:</label>
+          <input type="text" id="vehiculo-marca" required>
+          <label for="vehiculo-modelo">Modelo:</label>
+          <input type="text" id="vehiculo-modelo" required>
+          <label for="vehiculo-ano">Año:</label>
+          <input type="number" id="vehiculo-ano" min="1900" max="2099" required>
+          <label for="vehiculo-cliente-nombre">Nombre del Cliente:</label>
+          <input type="text" id="vehiculo-cliente-nombre">
+          <label for="vehiculo-cliente-telefono">Teléfono:</label>
+          <input type="tel" id="vehiculo-cliente-telefono">
+          <label for="vehiculo-descripcion-trabajo">Descripción:</label>
+          <textarea id="vehiculo-descripcion-trabajo" rows="4" required></textarea>
+          <label for="vehiculo-imagenes">Imágenes:</label>
+          <input type="file" id="vehiculo-imagenes" multiple accept="image/*">
+          <div id="previsualizacion-imagenes" style="margin-top:10px;"></div>
+          <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Vehículo</button>
+        </form>
       </div>
-    </div>
-  </section>
-</main>
+      <div id="lista-vehiculos-container" style="margin-top: 30px;">
+        <h3>Vehículos Ingresados</h3>
+        <div id="lista-vehiculos">
+          <p>Aún no hay vehículos registrados.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección Presupuestos -->
+    <section id="presupuestos-section" class="hidden">
+      <h2>Presupuestos</h2>
+      <p>Aquí podrás gestionar los presupuestos.</p>
+    </section>
+
+    <!-- Sección Trabajos -->
+    <section id="trabajos-section" class="hidden">
+      <h2>Trabajos</h2>
+      <p>Aquí podrás gestionar los trabajos realizados o pendientes.</p>
+    </section>
+
+    <!-- Sección Manuales -->
+    <section id="manuales-section" class="hidden">
+      <h2>Manuales</h2>
+      <p>Aquí podrás almacenar y consultar manuales.</p>
+    </section>
+  </main>
+</div>
 
 <footer>
   <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
@@ -76,6 +137,16 @@
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
 <script src="script.js"></script>
-
+<script>
+  // JS para cambiar entre secciones
+  document.querySelectorAll('.admin-menu a[data-section]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const sectionId = link.dataset.section + '-section';
+      document.querySelectorAll('.admin-content section').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(sectionId).classList.remove('hidden');
+    });
+  });
+</script>
 </body>
 </html>
