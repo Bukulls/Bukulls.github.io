@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,163 +9,63 @@
 </head>
 <body>
 
-    <header>
-        <h1>Mecanico Automotriz Luis Díaz</h1>
-        <nav>
-            <ul>
-                <li><a href="#inicio">Inicio</a></li> <li><a href="#servicios">Servicios</a></li>
-                <li><a href="#nosotros">Sobre Nosotros</a></li>
-                <li><a href="#contacto">Contacto</a></li>
-                <li><button id="btn-abrir-modal-agendar" class="btn-agendar">Agendar Cita</button></li>
-            </ul>
-        </nav>
-        
-    </header>
+<header>
+    <div class="logo-container">
+        <!-- Aquí puedes poner tu logo -->
+        <img src="logo.png" alt="Logo del taller" class="logo">
+    </div>
+    <h1>Mecanico Automotriz Luis Díaz</h1>
+    <nav>
+        <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#nosotros">Sobre Nosotros</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+            <li><a href="admin.html" class="btn-admin">Panel Admin</a></li>
+        </ul>
+    </nav>
+</header>
 
-    <main>
-        <section id="login-section" style="background-color: #444; padding: 20px; margin-top: 30px;">
-        <h2>Acceso Administrador (Prueba)</h2>
-        <div>
-            <input type="email" id="admin-email" placeholder="Correo Electrónico">
-            <input type="password" id="admin-password" placeholder="Contraseña">
-            <button id="btn-admin-login">Iniciar Sesión</button>
-            <button id="btn-admin-register">Registrar Admin (solo la primera vez)</button>
-            <button id="btn-admin-logout" style="display:none;">Cerrar Sesión</button>
-        </div>
-        <div id="admin-status" style="margin-top:10px;">No has iniciado sesión.</div>
-    </section>
-    <section id="admin-panel" style="display:none; background-color: #333; padding: 20px; margin-top: 20px; border: 1px solid #ad0000;">
-        <h2>Panel de Administración de Vehículos</h2>
+<section class="banner">
+    <!-- Aquí puedes poner un banner llamativo -->
+    <h2>Bienvenido a tu taller de confianza</h2>
+    <p>Expertos en el cuidado y reparación de tu vehículo.</p>
+</section>
 
-        <div id="form-ingreso-vehiculo-container">
-            <h3>Ingresar Nuevo Vehículo</h3>
-            <form id="form-ingreso-vehiculo">
-                <label for="vehiculo-patente">Patente:</label>
-                <input type="text" id="vehiculo-patente" name="patente" required>
-
-                <label for="vehiculo-marca">Marca:</label>
-                <input type="text" id="vehiculo-marca" name="marca" required>
-
-                <label for="vehiculo-modelo">Modelo:</label>
-                <input type="text" id="vehiculo-modelo" name="modelo" required>
-
-                <label for="vehiculo-ano">Año:</label>
-                <input type="number" id="vehiculo-ano" name="ano" min="1900" max="2099" step="1" required>
-
-                <label for="vehiculo-cliente-nombre">Nombre del Cliente (opcional):</label>
-                <input type="text" id="vehiculo-cliente-nombre" name="clienteNombre">
-
-                <label for="vehiculo-cliente-telefono">Teléfono del Cliente (opcional):</label>
-                <input type="tel" id="vehiculo-cliente-telefono" name="clienteTelefono">
-
-                <label for="vehiculo-descripcion-trabajo">Descripción del Trabajo a Realizar:</label>
-                <textarea id="vehiculo-descripcion-trabajo" name="descripcionTrabajo" rows="4" required></textarea>
-
-                <label for="vehiculo-imagenes">Imágenes del Vehículo (selecciona una o varias):</label>
-                <input type="file" id="vehiculo-imagenes" name="imagenesVehiculo" multiple accept="image/*">  
-                {/* 'multiple' permite seleccionar varios archivos, 'accept' filtra por imágenes */}
-
-                <div id="previsualizacion-imagenes" style="margin-top:10px;">
-                    {/* Aquí se mostrarán las previsualizaciones de las imágenes */}
-                </div>
-
-                <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Vehículo</button>
-            </form>
-        </div>
-
-        {/* Más adelante aquí podríamos añadir una sección para ver los vehículos ingresados */}
-        <div id="lista-vehiculos-container" style="margin-top: 30px;">
-            <h3>Vehículos Ingresados</h3>
-            <div id="lista-vehiculos">
-                {/* Los vehículos se cargarán aquí con JavaScript */}
-                <p>Aún no hay vehículos registrados o no se han cargado.</p>
-            </div>
-        </div>
-    </section>
-       <section id="inicio">
+<main>
+    <section id="inicio">
         <h2>¡Bienvenido Mecanica Automotriz De Confianza!</h2>
         <p>Expertos en el cuidado y reparación de tu vehículo. Ofrecemos servicios de calidad con la última tecnología.</p>
     </section>
 
-        <section id="servicios">
-            <h2>Nuestros Servicios</h2>
-            <ul>
-                <li>Mantenimiento Preventivo</li>
-                <li>Diagnóstico Computarizado</li>
-                <li>Reparación de Motores</li>
-                <li>Alineación y Balanceo</li>
-                <li>Frenos</li>
-                <li>Cambio de Aceite</li>
-                </ul>
-        </section>
+    <section id="servicios">
+        <h2>Nuestros Servicios</h2>
+        <ul>
+            <li>Mantenimiento Preventivo</li>
+            <li>Diagnóstico Computarizado</li>
+            <li>Reparación de Motores</li>
+            <li>Alineación y Balanceo</li>
+            <li>Frenos</li>
+            <li>Cambio de Aceite</li>
+        </ul>
+    </section>
 
-        <section id="nosotros">
-            <h2>Sobre Nosotros</h2>
-            <p>Somos un equipo de mecánicos apasionados y certificados, comprometidos con ofrecer el mejor servicio para tu automóvil. Llevamos [X] años sirviendo a nuestra comunidad con honestidad y profesionalismo.</p>
-            
-            <div id="mas-info-nosotros" style="display: none;">
-                <p>Nuestra misión es mantener tu vehículo en óptimas condiciones, utilizando repuestos de calidad y las técnicas más actualizadas del sector. Creemos en la transparencia, por lo que siempre te explicaremos en detalle el trabajo a realizar y te ofreceremos un presupuesto justo.</p>
-                <p>¡Confía en nosotros para el cuidado integral de tu auto!</p>
-            </div>
-            
-            <button id="btn-leer-mas">Leer más</button>
-            </section>
+    <section id="nosotros">
+        <h2>Sobre Nosotros</h2>
+        <p>Somos un equipo de mecánicos apasionados y certificados, comprometidos con ofrecer el mejor servicio para tu automóvil.</p>
+    </section>
 
-        <section id="contacto">
-            <h2>Contacto</h2>
-            <p>¿Listo para agendar una cita o tienes alguna consulta?</p>
-            <p><strong>Teléfono:</strong> <a href="tel:+56912345678">+56 9 45987504</a></p>
-            <p><strong>Email:</strong> <a href="mailto:contacto@taller[nombre].cl">ldiaz1999@gmail.com</a></p>
-            <p><strong>Dirección:</strong> Pasaje Rigel 5 , Troncos viejos.</p>
-            </section>
-    </main>
+    <section id="contacto">
+        <h2>Contacto</h2>
+        <p><strong>Teléfono:</strong> <a href="tel:+56912345678">+56 9 45987504</a></p>
+        <p><strong>Email:</strong> <a href="mailto:ldiaz1999@gmail.com">ldiaz1999@gmail.com</a></p>
+        <p><strong>Dirección:</strong> Pasaje Rigel 5 , Troncos viejos.</p>
+    </section>
+</main>
 
-    <div id="modal-agendar" class="modal">
-        <div class="modal-contenido">
-            <span class="modal-cerrar" id="btn-cerrar-modal">&times;</span>
-            <h2>Agendar Cita</h2>
-            <form id="form-agendar">
-                <label for="nombre">Nombre Completo:</label>
-                <input type="text" id="nombre" name="nombre" required>
-
-                <label for="telefono">Teléfono:</label>
-                <input type="tel" id="telefono" name="telefono" required>
-
-                <label for="email">Correo Electrónico:</label>
-                <input type="email" id="email" name="email" required>
-
-                <label for="servicio-deseado">Servicio Deseado:</label>
-                <select id="servicio-deseado" name="servicio">
-                    <option value="">-- Seleccione un servicio --</option>
-                    <option value="mantenimiento">Mantenimiento Preventivo</option>
-                    <option value="diagnostico">Diagnóstico Computarizado</option>
-                    <option value="motor">Reparación de Motores</option>
-                    <option value="alineacion">Alineación y Balanceo</option>
-                    <option value="frenos">Frenos</option>
-                    <option value="aceite">Cambio de Aceite</option>
-                    <option value="otro">Otro (especificar en mensaje)</option>
-                </select>
-
-                <label for="fecha-preferida">Fecha Preferida:</label>
-                <input type="date" id="fecha-preferida" name="fecha">
-                
-                <label for="mensaje">Mensaje Adicional (opcional):</label>
-                <textarea id="mensaje" name="mensaje" rows="3"></textarea>
-
-                <button type="submit" class="btn-submit-form">Enviar Solicitud</button>
-            </form>
-        </div>
-    </div>
-
-    <footer>
-        <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
-    </footer>
-
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
-<script src="script.js"></script>
+<footer>
+    <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
+</footer>
 
 </body>
 </html>

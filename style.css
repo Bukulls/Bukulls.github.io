@@ -1,373 +1,80 @@
-/* Estilos Generales y Reseteo Básico */
-* {
-    box-sizing: border-box; /* Hace que el padding y el border no aumenten el tamaño total del elemento */
+
+/* Estilo minimalista con los mismos colores */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000000;
+    color: #ffffff;
     margin: 0;
     padding: 0;
 }
 
-body {
-    font-family: Arial, sans-serif; /* Tipo de letra principal para toda la página */
-    line-height: 1.6; /* Espacio entre líneas de texto para mejor legibilidad */
-    color: #ffffff; /* Color de texto principal (gris oscuro) */
-    background-color: #000000; /* Un color de fondo suave para la página */
-    padding-top: 80px; /* Dejamos espacio para la cabecera fija si la hacemos después */
-}
-
-.container { /* Una clase que podríamos usar para centrar contenido */
-    width: 80%;
-    margin: auto;
-    overflow: hidden; /* Limpia los floats si los usamos */
-    padding: 0 20px;
-}
-
-/* Estilos del Encabezado */
 header {
-    background: #000000; /* Fondo oscuro para el encabezado */
-    color: #ad0000; /* Texto blanco en el encabezado */
-    padding: 20px 0;
-    border-bottom: #ad0000 2px solid; /* Un borde inferior de color azul */
-    /* Si queremos que el header sea fijo en la parte superior:
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 100; */
+    background-color: #000000;
+    color: #ad0000;
+    padding: 20px;
+    text-align: center;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.logo {
+    max-width: 150px;
 }
 
 header h1 {
-    float: left; /* Alinea el título a la izquierda */
-    margin-left: 100px; /* Un poco de margen a la izquierda del título */
+    margin: 10px 0;
 }
 
-header nav {
-    float: right; /* Alinea la navegación a la derecha */
-    margin-top: 10px; /* Ajusta la alineación vertical con el título */
-    margin-right: 20px; /* Un poco de margen a la derecha de la navegación */
+nav ul {
+    list-style: none;
+    padding: 0;
 }
 
-header ul {
-    list-style: none; /* Quita las viñetas de la lista */
+nav ul li {
+    display: inline-block;
+    margin: 0 10px;
 }
 
-header ul li {
-    display: inline-block; /* Coloca los elementos de la lista en línea (horizontal) */
-    margin-left: 20px; /* Espacio entre los elementos del menú */
-}
-
-header a {
-    color: #ffffff; /* Color de los enlaces del menú */
-    text-decoration: none; /* Quita el subrayado de los enlaces */
+nav a {
+    color: #ffffff;
+    text-decoration: none;
     font-weight: bold;
 }
 
-header a:hover {
-    color: #ab0000; /* Color de los enlaces al pasar el mouse por encima (hover) */
+nav a:hover, .btn-admin:hover {
+    color: #ff0000;
 }
 
-/* Estilos para las Secciones Principales */
-main {
-    padding: 20px 0;
+.banner {
+    background-color: #363636;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.banner h2 {
+    margin: 0 0 10px;
 }
 
 section {
-    padding: 40px 20px; /* Espacio interno para cada sección */
-    margin-bottom: 20px; /* Espacio debajo de cada sección */
-    background: #000000; /* Fondo blanco para las secciones para contrastar con el body */
-    border-radius: 5px; /* Bordes redondeados para las secciones */
+    padding: 30px 20px;
+    margin: 20px auto;
+    max-width: 800px;
+    background-color: #000000;
+    border-radius: 5px;
 }
 
-section h2 {
-    text-align: center; /* Centra los títulos de sección */
-    margin-bottom: 20px; /* Espacio debajo del título de sección */
-    color: #ffffff;
-}
-
-#inicio {
-    background-color: #363636; /* Un color ligeramente diferente para la sección de inicio */
-    text-align: center;
-}
-
-#servicios ul {
-    list-style: disc; /* Estilo de viñeta para los servicios */
-    padding-left: 40px; /* Añade un poco de padding para que las viñetas no estén pegadas al borde */
-}
-
-#servicios ul li {
-    margin-bottom: 10px; /* Espacio entre los ítems de la lista de servicios */
-}
-
-/* Estilos del Pie de Página */
 footer {
+    background-color: #000000;
+    color: #ad0000;
     text-align: center;
-    padding: 20px;
-    background: #000000;
-    color: #ab0000;
-    margin-top: 20px;
+    padding: 15px;
 }
 
-footer a {
-    color: #ab0000; /* Color para los enlaces en el footer si los tuvieras */
-    text-decoration: none;
-}
-
-footer a:hover {
-    text-decoration: underline;
-}
-
-/* Pequeño truco para limpiar floats (si usamos header h1 y nav flotantes) */
-header::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-/* ... (Todo tu CSS anterior va aquí arriba) ... */
-
-/* === Media Queries para Diseño Responsivo === */
-
-/* Para tablets y dispositivos más pequeños (hasta 768px) */
-@media (max-width: 768px) {
-    header h1 {
-        float: none; /* Quitamos el float */
-        text-align: center; /* Centramos el título */
-        margin-left: 0;
-        margin-bottom: 10px; /* Espacio debajo del título */
-    }
-
-    header nav {
-        float: none; /* Quitamos el float */
-        text-align: center; /* Centramos la navegación */
-        margin-top: 0;
-        margin-right: 0;
-    }
-
-    header nav ul li {
-        display: block; /* Hacemos que cada item del menú ocupe una línea */
-        margin: 10px 0; /* Espacio vertical entre ítems */
-        margin-left: 0; /* Reseteamos el margen izquierdo */
-    }
-
-    .container { /* Si estuvieras usando la clase container */
-        width: 90%;
-    }
-
-    section {
-        padding: 30px 15px; /* Reducimos un poco el padding de las secciones */
-    }
-}
-
-/* Para móviles (hasta 480px) */
-@media (max-width: 480px) {
-    body {
-        padding-top: 0; /* Si el header no es fijo, o si cambia mucho, ajustar */
-        font-size: 15px; /* Podemos ajustar el tamaño de fuente base */
-    }
-
-    header {
-        padding: 15px 0; /* Reducimos padding del header */
-        /* Considera no tener el header fijo en móviles si ocupa mucho espacio
-           o si el menú se vuelve un menú "hamburguesa" que se despliega.
-           Si descomentaste position:fixed antes, podrías hacer esto:
-           position: static;
-        */
-    }
-    
-    header h1 {
-        font-size: 1.8em; /* Hacemos el título un poco más pequeño */
-    }
-
-    section h2 {
-        font-size: 1.5em; /* Hacemos los títulos de sección más pequeños */
-    }
-
-    #contacto p {
-        word-wrap: break-word; /* Para que emails o direcciones largas no rompan el layout */
-    }
-
-    /* Ajustes específicos si es necesario. Por ejemplo, si los botones son muy anchos */
-    button, input[type="submit"] { /* Si tuvieras más botones o inputs */
-        width: 100%; /* Hacemos que los botones ocupen todo el ancho disponible */
-        padding: 12px;
-        margin-bottom: 10px; /* Espacio si hay varios botones */
-    }
-
-    #btn-leer-mas { /* Aplicamos el estilo general de botón al específico */
-        width: auto; /* Pero para el botón de leer más, quizás preferimos que no ocupe todo el ancho */
-        display: inline-block; /* Para que no ocupe todo el ancho si es auto */
-        padding: 10px 15px;
-    }
-}
-
-/* ... tus estilos anteriores ... */
-
-/* Estilo para el botón Agendar Cita en el Header */
-.btn-agendar {
-    background-color: #ab0000; /* Un color azul llamativo */
-    color: white;
-    padding: 10px 20px;
-    border: none;
+.btn-admin {
+    background-color: #ad0000;
+    padding: 8px 16px;
     border-radius: 5px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    /* Para posicionarlo en el header, si es necesario más ajuste: */
-    /* Esto es un ejemplo, puede que necesites ajustar según tu layout de header */
-    /* float: right; */ /* O usar flexbox en el header */
-    /* margin-top: 5px; */ /* Ajuste vertical si es necesario */
-    /* margin-right: 20px; */
-}
-
-.btn-agendar:hover {
-    background-color: #ff0000; /* Un azul más oscuro al pasar el mouse */
-}
-
-
-/* Estilos para el Modal */
-.modal {
-    display: none; /* Oculto por defecto */
-    position: fixed; /* Se queda fijo en la pantalla */
-    z-index: 1000; /* Por encima de todo lo demás */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto; /* Permite scroll si el contenido es muy largo */
-    background-color: rgba(0,0,0,0.6); /* Fondo negro semitransparente */
-    padding-top: 60px; /* Espacio para que no pegue arriba del todo */
-}
-
-.modal-contenido {
-    background-color: #fefefe;
-    margin: 5% auto; /* Centrado vertical (aprox) y horizontal */
-    padding: 25px;
-    border: 1px solid #888;
-    width: 80%; /* Ancho del contenido del modal */
-    max-width: 600px; /* Un ancho máximo para que no sea demasiado grande en pantallas anchas */
-    border-radius: 8px;
-    position: relative; /* Para posicionar el botón de cerrar */
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    animation-name: animatetop;
-    animation-duration: 0.4s
-}
-
-/* Animación para que aparezca el modal (opcional) */
-@keyframes animatetop {
-    from {top: -300px; opacity: 0}
-    to {top: 0; opacity: 1}
-}
-
-.modal-cerrar {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute; /* Para posicionarlo bien */
-    top: 10px;
-    right: 20px;
-}
-
-.modal-cerrar:hover,
-.modal-cerrar:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* Estilos para el formulario dentro del modal */
-#form-agendar label {
-    display: block; /* Cada label en su propia línea */
-    margin-top: 15px;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
-}
-
-#form-agendar input[type="text"],
-#form-agendar input[type="tel"],
-#form-agendar input[type="email"],
-#form-agendar input[type="date"],
-#form-agendar select,
-#form-agendar textarea {
-    width: 100%; /* Ocupan todo el ancho disponible */
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Para que el padding no afecte el width */
-    font-size: 1em;
-}
-
-#form-agendar textarea {
-    resize: vertical; /* Permite redimensionar verticalmente */
-}
-
-.btn-submit-form {
-    background-color: #28a745; /* Verde para el botón de enviar */
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.1em;
-    width: 100%; /* Ocupa todo el ancho */
-    transition: background-color 0.3s ease;
-}
-
-.btn-submit-form:hover {
-    background-color: #1e7e34; /* Verde más oscuro */
-}
-
-/* Ajuste para el header si usamos float para el botón Agendar */
-/* Esto es necesario si el botón .btn-agendar está flotando dentro del header */
-/* header::after {
-    content: "";
-    display: table;
-    clear: both;
-} */
-/* Ya deberíamos tener un header::after si flotamos el H1 y NAV, así que podría no ser necesario añadir otro. */
-/* O mejor aún, si tu header es un contenedor flexbox, no necesitarías floats. */
-
-/* === Media Queries para Diseño Responsivo === */
-/* ... tus media queries existentes ... */
-
-/* Dentro de tus media queries, puedes ajustar el modal si es necesario */
-@media (max-width: 768px) {
-    /* ... tus otros estilos responsivos ... */
-    .modal-contenido {
-        width: 90%;
-        padding: 20px;
-        margin-top: 10%;
-    }
-
-    /* Si el botón Agendar en el header necesita ajuste: */
-    /* .btn-agendar {
-      Por ejemplo, si el menú se apila, quizás el botón también deba ser block
-      display: block;
-      margin: 10px auto;
-    } */
-}
-
-@media (max-width: 480px) {
-    /* ... tus otros estilos responsivos ... */
-    .modal-contenido {
-        width: 95%;
-        padding: 15px;
-        margin-top: 15%;
-    }
-
-    #form-agendar label {
-        margin-top: 10px;
-    }
-
-    #form-agendar input[type="text"],
-    #form-agendar input[type="tel"],
-    #form-agendar input[type="email"],
-    #form-agendar input[type="date"],
-    #form-agendar select,
-    #form-agendar textarea {
-        padding: 8px;
-        margin-bottom: 10px;
-    }
-
-    .btn-submit-form {
-        padding: 10px 15px;
-    }
 }
