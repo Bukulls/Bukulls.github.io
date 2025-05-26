@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Administración - Mecanico Automotriz Luis Díaz</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Panel de Administración</h1>
+</header>
+
+<main>
+  <section id="login-section" style="background-color: #444; padding: 20px; margin-top: 30px;">
+    <h2>Acceso Administrador</h2>
+    <div>
+      <input type="email" id="admin-email" placeholder="Correo Electrónico">
+      <input type="password" id="admin-password" placeholder="Contraseña">
+      <button id="btn-admin-login">Iniciar Sesión</button>
+      <button id="btn-admin-register">Registrar Admin</button>
+      <button id="btn-admin-logout" style="display:none;">Cerrar Sesión</button>
+    </div>
+    <div id="admin-status" style="margin-top:10px;">No has iniciado sesión.</div>
+  </section>
+
+  <section id="admin-panel" style="display:none; background-color: #333; padding: 20px; margin-top: 20px; border: 1px solid #ad0000;">
+    <h2>Panel de Administración de Vehículos</h2>
+
+    <div id="form-ingreso-vehiculo-container">
+      <h3>Ingresar Nuevo Vehículo</h3>
+      <form id="form-ingreso-vehiculo">
+        <label for="vehiculo-patente">Patente:</label>
+        <input type="text" id="vehiculo-patente" name="patente" required>
+        <label for="vehiculo-marca">Marca:</label>
+        <input type="text" id="vehiculo-marca" name="marca" required>
+        <label for="vehiculo-modelo">Modelo:</label>
+        <input type="text" id="vehiculo-modelo" name="modelo" required>
+        <label for="vehiculo-ano">Año:</label>
+        <input type="number" id="vehiculo-ano" name="ano" min="1900" max="2099" step="1" required>
+        <label for="vehiculo-cliente-nombre">Nombre del Cliente:</label>
+        <input type="text" id="vehiculo-cliente-nombre" name="clienteNombre">
+        <label for="vehiculo-cliente-telefono">Teléfono del Cliente:</label>
+        <input type="tel" id="vehiculo-cliente-telefono" name="clienteTelefono">
+        <label for="vehiculo-descripcion-trabajo">Descripción del Trabajo:</label>
+        <textarea id="vehiculo-descripcion-trabajo" name="descripcionTrabajo" rows="4" required></textarea>
+        <label for="vehiculo-imagenes">Imágenes del Vehículo:</label>
+        <input type="file" id="vehiculo-imagenes" name="imagenesVehiculo" multiple accept="image/*">
+        <div id="previsualizacion-imagenes" style="margin-top:10px;"></div>
+        <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Vehículo</button>
+      </form>
+    </div>
+
+    <div id="lista-vehiculos-container" style="margin-top: 30px;">
+      <h3>Vehículos Ingresados</h3>
+      <div id="lista-vehiculos">
+        <p>Aún no hay vehículos registrados o no se han cargado.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
