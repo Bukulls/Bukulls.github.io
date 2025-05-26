@@ -106,7 +106,139 @@
           <p>Aún no hay vehículos registrados.</p>
         </div>
       </div>
-    </section>
+    
+<!-- Sección Presupuestos -->
+<section id="presupuestos-section" class="hidden">
+  <h2>Presupuestos</h2>
+  <div>
+    <label for="vehiculo-presupuesto">Seleccionar Vehículo:</label>
+    <select id="vehiculo-presupuesto"></select>
+  </div>
+
+  <table id="tabla-presupuesto" style="width: 100%; margin-top: 20px; color:#fff;">
+    <thead>
+      <tr>
+        <th>Repuesto</th>
+        <th>Monto</th>
+        <th>Link</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <button id="agregar-item" style="margin-top: 10px;">Agregar Item</button>
+  <div style="margin-top: 10px;">
+    <strong>Total: $</strong><span id="total-presupuesto">0</span>
+  </div>
+  <button id="guardar-presupuesto" style="margin-top: 10px;">Guardar Presupuesto</button>
+</section>
+
+<script>
+// JS para cargar vehículos y manejar la tabla de presupuestos
+document.addEventListener('DOMContentLoaded', function() {
+  const vehiculoSelect = document.getElementById('vehiculo-presupuesto');
+  const tablaBody = document.querySelector('#tabla-presupuesto tbody');
+  const totalSpan = document.getElementById('total-presupuesto');
+  const btnAgregarItem = document.getElementById('agregar-item');
+  const btnGuardarPresupuesto = document.getElementById('guardar-presupuesto');
+
+  // Cargar vehículos
+  async function cargarVehiculosPresupuesto() {
+    try {
+      const snapshot = await db.collection("vehiculos").orderBy("registradoEl", "desc").get();
+      vehiculoSelect.innerHTML = "<option value=''>-- Selecciona un vehículo --</option>";
+      snapshot.forEach(doc => {
+        const veh = doc.data();
+        const option = document.createElement('option');
+        option.value = doc.id;
+        option.textContent = veh.patente + " - " + veh.marca + " - " + veh.modelo;
+        vehiculoSelect.appendChild(option);
+      });
+    } catch (e) {
+      console.error("Error cargando vehículos:", e);
+    }
+  }
+
+  cargarVehiculosPresupuesto();
+
+  // Agregar fila
+  btnAgregarItem.addEventListener('click', () => {
+    const fila = document.createElement('tr');
+    fila.innerHTML = \`
+      <td><input type="text" placeholder="Repuesto"></td>
+      <td><input type="number" placeholder="Monto" min="0"></td>
+      <td><input type="url" placeholder="Link"></td>
+      <td><button class="borrar-item">Borrar</button></td>
+    \`;
+    tablaBody.appendChild(fila);
+    actualizarTotal();
+  });
+
+  // Borrar fila
+  tablaBody.addEventListener('click', e => {
+    if (e.target.classList.contains('borrar-item')) {
+      e.target.closest('tr').remove();
+      actualizarTotal();
+    }
+  });
+
+  // Actualizar total en tiempo real
+  tablaBody.addEventListener('input', e => {
+    if (e.target.matches('input[type="number"]')) {
+      actualizarTotal();
+    }
+  });
+
+  function actualizarTotal() {
+    let total = 0;
+    tablaBody.querySelectorAll('tr').forEach(row => {
+      const monto = parseFloat(row.querySelector('input[type="number"]').value) || 0;
+      total += monto;
+    });
+    totalSpan.textContent = total;
+  }
+
+  // Guardar presupuesto
+  btnGuardarPresupuesto.addEventListener('click', async () => {
+    const vehiculoId = vehiculoSelect.value;
+    if (!vehiculoId) {
+      alert("Por favor, selecciona un vehículo.");
+      return;
+    }
+    const items = [];
+    tablaBody.querySelectorAll('tr').forEach(row => {
+      const repuesto = row.cells[0].querySelector('input').value.trim();
+      const monto = parseFloat(row.cells[1].querySelector('input').value) || 0;
+      const link = row.cells[2].querySelector('input').value.trim();
+      if (repuesto && monto > 0) {
+        items.push({ repuesto, monto, link });
+      }
+    });
+    if (items.length === 0) {
+      alert("Agrega al menos un item.");
+      return;
+    }
+    const presupuesto = {
+      vehiculoId,
+      items,
+      total: parseFloat(totalSpan.textContent),
+      creadoEl: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    try {
+      await db.collection("presupuestos").add(presupuesto);
+      alert("¡Presupuesto guardado con éxito!");
+      tablaBody.innerHTML = "";
+      totalSpan.textContent = "0";
+      vehiculoSelect.value = "";
+    } catch (e) {
+      console.error("Error guardando presupuesto:", e);
+      alert("Error al guardar el presupuesto. Revisa la consola.");
+    }
+  });
+});
+</script>
+</section>
 
     <!-- Sección Presupuestos -->
     <section id="presupuestos-section" class="hidden">
