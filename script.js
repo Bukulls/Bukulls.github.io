@@ -81,3 +81,72 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   mostrarBotonAdminSiAutenticado();
 });
+
+
+// ----------------------
+// Lógica para presupuestos guardados
+// ----------------------
+document.addEventListener('DOMContentLoaded', () => {
+  const listaPresupuestos = document.getElementById('lista-presupuestos');
+  if (!listaPresupuestos) return; // Para evitar errores en otras páginas
+
+  db.collection("presupuestos").orderBy("creadoEl", "desc").onSnapshot(snapshot => {
+    listaPresupuestos.innerHTML = "";
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const div = document.createElement('div');
+      div.style.border = "1px solid #ad0000";
+      div.style.margin = "10px";
+      div.style.padding = "10px";
+      div.innerHTML = \`
+        <p><strong>Vehículo:</strong> \${data.vehiculoId}</p>
+        <p><strong>Total:</strong> $\${data.total}</p>
+        <ul>\${data.items.map(item => \`<li>\${item.repuesto}: $\${item.monto} (<a href="\${item.link}" target="_blank">Ver</a>)</li>\`).join('')}</ul>
+        <button class="aceptar-btn">Aceptar</button>
+        <button class="rechazar-btn">Rechazar</button>
+        <button class="pdf-btn">Generar PDF</button>
+        <button class="whatsapp-btn">Enviar por WhatsApp</button>
+      \`;
+      listaPresupuestos.appendChild(div);
+
+      div.querySelector('.aceptar-btn').addEventListener('click', () => aceptarPresupuesto(doc.id, data));
+      div.querySelector('.rechazar-btn').addEventListener('click', () => rechazarPresupuesto(doc.id));
+      div.querySelector('.pdf-btn').addEventListener('click', () => generarPDF(data));
+      div.querySelector('.whatsapp-btn').addEventListener('click', () => enviarWhatsApp(data));
+    });
+  });
+
+  function aceptarPresupuesto(id, data) {
+    db.collection("trabajos").add(data).then(() => {
+      return db.collection("presupuestos").doc(id).delete();
+    }).then(() => {
+      alert("Presupuesto aceptado y movido a trabajos.");
+    }).catch(err => console.error(err));
+  }
+
+  function rechazarPresupuesto(id) {
+    db.collection("presupuestos").doc(id).delete().then(() => {
+      alert("Presupuesto eliminado.");
+    }).catch(err => console.error(err));
+  }
+
+  function generarPDF(data) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text("Presupuesto del Taller", 10, 10);
+    doc.text("Vehículo ID: " + data.vehiculoId, 10, 20);
+    let y = 30;
+    data.items.forEach(item => {
+      doc.text(\`\${item.repuesto}: $\${item.monto} - \${item.link}\`, 10, y);
+      y += 10;
+    });
+    doc.text("Total: $" + data.total, 10, y + 10);
+    doc.save("presupuesto.pdf");
+  }
+
+  function enviarWhatsApp(data) {
+    const mensaje = encodeURIComponent("Hola! Aquí te envío el presupuesto del vehículo: " + data.vehiculoId + " por $" + data.total);
+    const link = \`https://wa.me/?text=\${mensaje}\`;
+    window.open(link, '_blank');
+  }
+});
