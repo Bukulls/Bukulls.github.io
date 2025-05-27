@@ -14,164 +14,342 @@
 }
 
 .admin-menu {
-    background-color: #222;
-    color: #fff;
-    width: 220px;
-    flex-shrink: 0;
-    padding: 20px;
+    background-color: #222; /* */
+    color: #fff; /* */
+    width: 220px; /* */
+    flex-shrink: 0; /* */
+    padding: 20px; /* */
 }
 
 .admin-menu h3 {
-    margin-bottom: 15px;
+    margin-bottom: 15px; /* */
 }
 
 .admin-menu ul {
-    list-style: none;
-    padding: 0;
+    list-style: none; /* */
+    padding: 0; /* */
 }
 
 .admin-menu li {
-    margin: 10px 0;
+    margin: 10px 0; /* */
 }
 
 .admin-menu a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
+    color: #fff; /* */
+    text-decoration: none; /* */
+    font-weight: bold; /* */
 }
 
 .admin-menu a:hover {
-    color: #ad0000;
+    color: #ad0000; /* */
 }
 
 .admin-content {
-    flex: 1;
-    padding: 20px;
+    flex: 1; /* */
+    padding: 20px; /* */
+    color: #fff; /* Estilo añadido para mejor visibilidad del texto general */
 }
 
 .hidden {
-    display: none;
+    display: none; /* */
 }
+
+/* Estilos para formularios y tablas para que coincidan con el tema oscuro */
+label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #ccc;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="tel"],
+input[type="email"], /* Añadido para consistencia */
+input[type="password"], /* Añadido para consistencia */
+input[type="url"], /* Añadido para consistencia */
+textarea,
+select {
+    width: calc(100% - 22px); /* Ajustar padding y borde */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #fff;
+    box-sizing: border-box;
+}
+
+input[type="file"] {
+    color: #ccc; /* Para que el texto del botón de "examinar" sea más visible */
+    margin-bottom: 10px;
+}
+
+
+textarea {
+    resize: vertical;
+}
+
+button, .btn-submit-form { /* Incluyendo la clase que usas */
+    background-color: #ad0000;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 5px; /* Espacio consistente */
+}
+
+button:hover, .btn-submit-form:hover {
+    background-color: #ff0000;
+}
+
+#tabla-presupuesto {
+    border-collapse: collapse; /* Para que los bordes de las celdas se unan */
+}
+
+#tabla-presupuesto th,
+#tabla-presupuesto td {
+    border: 1px solid #444; /* Bordes más sutiles para la tabla */
+    padding: 8px;
+    text-align: left;
+}
+
+#tabla-presupuesto th {
+    background-color: #2a2a2a; /* Fondo oscuro para encabezados de tabla */
+    color: #ad0000;
+}
+
+/* Estilos para la lista de vehículos y presupuestos */
+#lista-vehiculos ul, #lista-presupuestos-guardados div > div {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+#lista-vehiculos h4, #lista-presupuestos-guardados h5 {
+    color: #ad0000;
+    margin-top:0;
+}
+#previsualizacion-imagenes img {
+    border: 1px solid #444;
+    border-radius: 3px;
+}
+
 </style>
 </head>
 <body>
 
 <header>
-  <h1 style="color:#ad0000;">Panel de Administración</h1>
-</header>
+  <h1 style="color:#ad0000;">Panel de Administración</h1> </header>
 
-<div class="admin-container">
-  <aside class="admin-menu">
-    <h3>Menú</h3>
-    <ul>
-      <li><a href="#" data-section="vehiculos">Vehículos</a></li>
-      <li><a href="#" data-section="presupuestos">Presupuestos</a></li>
-      <li><a href="#" data-section="trabajos">Trabajos</a></li>
-      <li><a href="#" data-section="manuales">Manuales</a></li>
-      <li><a href="index.html">Volver a Inicio</a></li>
-    </ul>
+<div class="admin-container"> <aside class="admin-menu"> <h3>Menú</h3> <ul>
+      <li><a href="#" data-section="vehiculos">Vehículos</a></li> <li><a href="#" data-section="presupuestos">Presupuestos</a></li> <li><a href="#" data-section="trabajos">Trabajos</a></li> <li><a href="#" data-section="manuales">Manuales</a></li> <li><a href="index.html">Volver a Inicio</a></li> </ul>
   </aside>
 
-  <main class="admin-content">
-    <section id="vehiculos-section">
-      <h2>Panel de Administración de Vehículos</h2>
-      <div id="form-ingreso-vehiculo-container">
-        <h3>Ingresar Nuevo Vehículo</h3>
-        <form id="form-ingreso-vehiculo">
-          <label for="vehiculo-patente">Patente:</label>
-          <input type="text" id="vehiculo-patente" required>
-          <label for="vehiculo-marca">Marca:</label>
-          <input type="text" id="vehiculo-marca" required>
-          <label for="vehiculo-modelo">Modelo:</label>
-          <input type="text" id="vehiculo-modelo" required>
-          <label for="vehiculo-ano">Año:</label>
-          <input type="number" id="vehiculo-ano" min="1900" max="2099" required>
-          <label for="vehiculo-cliente-nombre">Nombre del Cliente:</label>
-          <input type="text" id="vehiculo-cliente-nombre">
-          <label for="vehiculo-cliente-telefono">Teléfono:</label>
-          <input type="tel" id="vehiculo-cliente-telefono">
-          <label for="vehiculo-descripcion-trabajo">Descripción:</label>
-          <textarea id="vehiculo-descripcion-trabajo" rows="4" required></textarea>
-          <label for="vehiculo-imagenes">Imágenes:</label>
-          <input type="file" id="vehiculo-imagenes" multiple accept="image/*">
-          <div id="previsualizacion-imagenes" style="margin-top:10px;"></div>
-          <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Vehículo</button>
-        </form>
+  <main class="admin-content"> <section id="vehiculos-section"> <h2>Panel de Administración de Vehículos</h2> <div id="form-ingreso-vehiculo-container"> <h3>Ingresar Nuevo Vehículo</h3> <form id="form-ingreso-vehiculo"> <label for="vehiculo-patente">Patente:</label> <input type="text" id="vehiculo-patente" required> <label for="vehiculo-marca">Marca:</label> <input type="text" id="vehiculo-marca" required> <label for="vehiculo-modelo">Modelo:</label> <input type="text" id="vehiculo-modelo" required> <label for="vehiculo-ano">Año:</label> <input type="number" id="vehiculo-ano" min="1900" max="2099" required> <label for="vehiculo-cliente-nombre">Nombre del Cliente:</label> <input type="text" id="vehiculo-cliente-nombre"> <label for="vehiculo-cliente-telefono">Teléfono:</label> <input type="tel" id="vehiculo-cliente-telefono"> <label for="vehiculo-descripcion-trabajo">Descripción del Trabajo/Problema:</label> <textarea id="vehiculo-descripcion-trabajo" rows="4" required></textarea> <label for="vehiculo-imagenes">Imágenes (máx. 5):</label> <input type="file" id="vehiculo-imagenes" multiple accept="image/*"> <div id="previsualizacion-imagenes" style="margin-top:10px; display: flex; flex-wrap: wrap; gap: 10px;"></div> <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Vehículo</button> </form>
       </div>
-      <div id="lista-vehiculos-container" style="margin-top: 30px;">
-        <h3>Vehículos Ingresados</h3>
-        <div id="lista-vehiculos">
-          <p>Aún no hay vehículos registrados.</p>
-          </div>
+      <div id="lista-vehiculos-container" style="margin-top: 30px;"> <h3>Vehículos Ingresados</h3> <div id="lista-vehiculos"> <p>Aún no hay vehículos registrados.</p> </div>
       </div>
     </section>
 
- <section id="presupuestos-section" class="hidden">
-  <h2>Presupuestos</h2>
-  <div>
-    <label for="vehiculo-presupuesto">Seleccionar Vehículo:</label>
-    <select id="vehiculo-presupuesto"></select>
-  </div>
+    <section id="presupuestos-section" class="hidden"> <h2>Presupuestos</h2> <div>
+        <label for="vehiculo-presupuesto">Seleccionar Vehículo para Nuevo Presupuesto:</label> <select id="vehiculo-presupuesto"></select> </div>
 
-  <table id="tabla-presupuesto" style="width: 100%; margin-top: 20px; color:#fff;">
-    <thead>
-      <tr>
-        <th>Repuesto</th>
-        <th>Monto</th>
-        <th>Link</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+      <table id="tabla-presupuesto" style="width: 100%; margin-top: 20px; color:#fff;"> <thead> <tr>
+            <th>Repuesto/Servicio</th> <th>Monto</th> <th>Link (Opcional)</th> <th>Acciones</th> </tr>
+        </thead>
+        <tbody></tbody> </table>
 
-  <button id="agregar-item" style="margin-top: 10px;">Agregar Item</button>
-  <div style="margin-top: 10px;">
-    <strong>Total: $</strong><span id="total-presupuesto">0</span>
-  </div>
-  <button id="guardar-presupuesto" style="margin-top: 10px;">Guardar Presupuesto</button>
-</section> <section id="trabajos-section" class="hidden">
-      <h2>Trabajos</h2>
-      <p>En construcción. Aquí podrás gestionar trabajos.</p>
-       <div id="lista-trabajos"></div>
+      <button id="agregar-item" style="margin-top: 10px;">Agregar Item</button> <div style="margin-top: 20px; font-size: 1.2em;">
+        <strong>Total Presupuesto: $</strong><span id="total-presupuesto">0.00</span> </div>
+      <button id="guardar-presupuesto" style="margin-top: 20px;">Guardar Nuevo Presupuesto</button> <hr style="margin: 40px 0; border-color: #555;">
+      <h3 style="margin-top:20px;">Presupuestos Guardados</h3>
+      <div id="lista-presupuestos-guardados">
+          <p>Cargando presupuestos...</p>
+      </div>
+    </section>
+    
+    <section id="trabajos-section" class="hidden"> <h2>Trabajos en Curso / Realizados</h2> <p>En construcción. Aquí podrás gestionar los trabajos aceptados.</p> <div id="lista-trabajos">
+           </div>
     </section>
 
-    <section id="manuales-section" class="hidden">
-      <h2>Manuales</h2>
-      <p>En construcción. Aquí podrás gestionar manuales.</p>
-       <div id="lista-manuales"></div>
+    <section id="manuales-section" class="hidden"> <h2>Manuales y Documentación</h2> <p>En construcción. Aquí podrás gestionar manuales y otra documentación útil.</p> <div id="lista-manuales">
+           </div>
     </section>
   </main>
 </div>
 
-<footer>
-  <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
-</footer>
+<footer> <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p> </footer>
 
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
-<script src="script.js"></script>
-
-<script>
-// JS para cargar vehículos y manejar la tabla de presupuestos en admin.html
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script> <script src="script.js"></script> <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Lógica para la sección de Presupuestos
+  // Asegurarse que db y storage de Firebase (definidos en script.js) están disponibles
+  if (typeof db === 'undefined' || typeof storage === 'undefined') {
+    console.error("Firebase (db o storage) no está inicializado. Verifica script.js y su carga.");
+    alert("Error crítico: No se pudo conectar a la base de datos. Por favor, recarga o contacta soporte.");
+    return; // Detener ejecución si Firebase no está listo
+  }
+
+  // --- LÓGICA PARA LA SECCIÓN DE VEHÍCULOS ---
+  const vehiculosSection = document.getElementById('vehiculos-section');
+  const formIngresoVehiculo = document.getElementById('form-ingreso-vehiculo');
+  const listaVehiculosDiv = document.getElementById('lista-vehiculos');
+  const previsualizacionImagenesDiv = document.getElementById('previsualizacion-imagenes');
+  const inputImagenesVehiculo = document.getElementById('vehiculo-imagenes');
+
+  if (vehiculosSection) { // Solo ejecutar lógica de vehículos si la sección existe
+    // Previsualización de imágenes para vehículos
+    if (inputImagenesVehiculo && previsualizacionImagenesDiv) {
+      inputImagenesVehiculo.addEventListener('change', function(event) {
+        previsualizacionImagenesDiv.innerHTML = ''; // Limpiar previsualizaciones anteriores
+        const files = event.target.files;
+        if (files.length > 5) {
+            alert("Puedes seleccionar un máximo de 5 imágenes.");
+            inputImagenesVehiculo.value = ""; // Limpiar selección
+            return;
+        }
+        for (const file of files) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.maxWidth = '100px';
+            img.style.maxHeight = '100px';
+            img.style.margin = '5px';
+            img.style.border = '1px solid #444';
+            previsualizacionImagenesDiv.appendChild(img);
+          }
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // Función para mostrar vehículos
+    async function mostrarVehiculos() {
+      if (!listaVehiculosDiv) return;
+      listaVehiculosDiv.innerHTML = '<p>Cargando vehículos...</p>';
+
+      try {
+        const querySnapshot = await db.collection("vehiculos").orderBy("registradoEl", "desc").get();
+        if (querySnapshot.empty) {
+          listaVehiculosDiv.innerHTML = '<p>Aún no hay vehículos registrados.</p>';
+          return;
+        }
+
+        let vehiculosHTML = '<ul style="list-style: none; padding: 0;">';
+        querySnapshot.forEach(doc => {
+          const vehiculo = doc.data();
+          const vehiculoId = doc.id;
+          vehiculosHTML += `
+            <li style="border: 1px solid #333; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #1a1a1a;">
+              <h4 style="margin-top:0; color: #ad0000;">Patente: ${vehiculo.patente || 'N/A'} (ID: ${vehiculoId})</h4>
+              <p><strong>Marca:</strong> ${vehiculo.marca || 'N/A'} - <strong>Modelo:</strong> ${vehiculo.modelo || 'N/A'} - <strong>Año:</strong> ${vehiculo.ano || 'N/A'}</p>
+              <p><strong>Cliente:</strong> ${vehiculo.clienteNombre || 'N/A'} - <strong>Teléfono:</strong> ${vehiculo.clienteTelefono || 'N/A'}</p>
+              <p><strong>Descripción del Trabajo/Problema:</strong><br>${(vehiculo.descripcionTrabajo || 'N/A').replace(/\n/g, '<br>')}</p>
+              ${vehiculo.imagenes && vehiculo.imagenes.length > 0 ?
+                '<p style="margin-bottom: 5px;"><strong>Imágenes:</strong></p><div style="display: flex; flex-wrap: wrap; gap: 10px;">' + vehiculo.imagenes.map(imgUrl => `<a href="${imgUrl}" target="_blank"><img src="${imgUrl}" alt="Imagen vehículo" style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #444; border-radius: 3px;"></a>`).join('') + '</div>'
+                : '<p>No hay imágenes adjuntas.</p>'}
+              <p style="font-size: 0.8em; color: #888; margin-top: 10px;">Registrado el: ${vehiculo.registradoEl ? new Date(vehiculo.registradoEl.seconds * 1000).toLocaleString() : 'N/A'}</p>
+            </li>
+          `;
+        });
+        vehiculosHTML += '</ul>';
+        listaVehiculosDiv.innerHTML = vehiculosHTML;
+      } catch (error) {
+        console.error("Error al mostrar vehículos: ", error);
+        listaVehiculosDiv.innerHTML = '<p style="color:red;">Error al cargar los vehículos. Revise la consola.</p>';
+      }
+    }
+
+    if (formIngresoVehiculo) {
+      formIngresoVehiculo.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const submitButton = formIngresoVehiculo.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Guardando...';
+
+        const patente = document.getElementById('vehiculo-patente').value.trim().toUpperCase();
+        const marca = document.getElementById('vehiculo-marca').value.trim();
+        const modelo = document.getElementById('vehiculo-modelo').value.trim();
+        const ano = document.getElementById('vehiculo-ano').value;
+        const clienteNombre = document.getElementById('vehiculo-cliente-nombre').value.trim();
+        const clienteTelefono = document.getElementById('vehiculo-cliente-telefono').value.trim();
+        const descripcionTrabajo = document.getElementById('vehiculo-descripcion-trabajo').value.trim();
+        const files = inputImagenesVehiculo ? inputImagenesVehiculo.files : [];
+        let urlsImagenes = [];
+
+        if (!patente || !marca || !modelo || !ano || !descripcionTrabajo) {
+            alert("Por favor, complete todos los campos obligatorios: Patente, Marca, Modelo, Año y Descripción.");
+            submitButton.disabled = false;
+            submitButton.textContent = 'Guardar Vehículo';
+            return;
+        }
+        if (files.length > 5) {
+            alert("Puedes seleccionar un máximo de 5 imágenes.");
+            submitButton.disabled = false;
+            submitButton.textContent = 'Guardar Vehículo';
+            return;
+        }
+
+        try {
+          if (files.length > 0) {
+            console.log(`Subiendo ${files.length} imágenes...`);
+            const uploadPromises = Array.from(files).map(file => {
+                const filePath = `vehiculos/${patente.replace(/\s+/g, '_')}/${Date.now()}_${file.name}`;
+                const fileRef = storage.ref().child(filePath);
+                return fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
+            });
+            urlsImagenes = await Promise.all(uploadPromises);
+            console.log("Imágenes subidas:", urlsImagenes);
+          }
+
+          const nuevoVehiculo = {
+            patente,
+            marca,
+            modelo,
+            ano: parseInt(ano),
+            clienteNombre,
+            clienteTelefono,
+            descripcionTrabajo,
+            imagenes: urlsImagenes,
+            registradoEl: firebase.firestore.FieldValue.serverTimestamp()
+          };
+
+          await db.collection("vehiculos").add(nuevoVehiculo);
+          alert("¡Vehículo guardado con éxito!");
+          formIngresoVehiculo.reset();
+          if (previsualizacionImagenesDiv) previsualizacionImagenesDiv.innerHTML = '';
+          mostrarVehiculos(); 
+
+        } catch (error) {
+          console.error("Error al guardar el vehículo: ", error);
+          alert("Error al guardar el vehículo. Revisa la consola para más detalles.\n" + error.message);
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Guardar Vehículo';
+        }
+      });
+    }
+  }
+
+  // --- LÓGICA PARA LA SECCIÓN DE PRESUPUESTOS ---
   const presupuestosSection = document.getElementById('presupuestos-section');
-  if (presupuestosSection) { // Solo ejecutar si estamos en una página con esta sección
+  if (presupuestosSection) {
     const vehiculoSelect = document.getElementById('vehiculo-presupuesto');
     const tablaBody = document.querySelector('#tabla-presupuesto tbody');
     const totalSpan = document.getElementById('total-presupuesto');
     const btnAgregarItem = document.getElementById('agregar-item');
     const btnGuardarPresupuesto = document.getElementById('guardar-presupuesto');
+    const listaPresupuestosGuardadosDiv = document.getElementById('lista-presupuestos-guardados');
 
-    // Cargar vehículos
-    async function cargarVehiculosPresupuesto() {
-      console.log("Intentando cargar vehículos para presupuestos..."); // (MODIFICACIÓN)
-      if (!db) { // (MODIFICACIÓN: Verificar que db esté disponible)
-          console.error("Firestore (db) no está inicializado. Verifica script.js y su carga.");
-          if(vehiculoSelect) vehiculoSelect.innerHTML = "<option value=''>Error: DB no configurada</option>";
+    async function cargarVehiculosParaPresupuesto() {
+      console.log("Intentando cargar vehículos para el select de presupuestos...");
+      if (!db) {
+          console.error("Firestore (db) no está inicializado.");
+          if(vehiculoSelect) vehiculoSelect.innerHTML = "<option value=''>Error: DB no config.</option>";
           return;
       }
       try {
@@ -179,48 +357,36 @@ document.addEventListener('DOMContentLoaded', function() {
         if (vehiculoSelect) {
             vehiculoSelect.innerHTML = "<option value=''>-- Selecciona un vehículo --</option>";
             if (snapshot.empty) {
-                console.log("No se encontraron vehículos en Firestore."); // (MODIFICACIÓN)
+                console.log("No se encontraron vehículos en Firestore para el select.");
                 vehiculoSelect.innerHTML = "<option value=''>No hay vehículos registrados</option>";
             } else {
                 snapshot.forEach(doc => {
                     const veh = doc.data();
                     const option = document.createElement('option');
                     option.value = doc.id;
-                    option.textContent = `${veh.patente || 'N/A'} - ${veh.marca || 'N/A'} - ${veh.modelo || 'N/A'}`; // (MODIFICACIÓN: Manejar campos undefined)
+                    option.textContent = `${veh.patente || 'N/P'} - ${veh.marca || 'N/M'} - ${veh.modelo || 'N/D'}`;
                     vehiculoSelect.appendChild(option);
                 });
-                console.log("Vehículos cargados en el select:", snapshot.size); // (MODIFICACIÓN)
+                console.log("Vehículos cargados en el select de presupuestos:", snapshot.size);
             }
         }
       } catch (e) {
-        console.error("Error cargando vehículos:", e); // (MODIFICACIÓN)
-        if(vehiculoSelect) vehiculoSelect.innerHTML = "<option value=''>Error al cargar vehículos</option>"; // (MODIFICACIÓN)
+        console.error("Error cargando vehículos para el select:", e);
+        if(vehiculoSelect) vehiculoSelect.innerHTML = "<option value=''>Error al cargar</option>";
       }
     }
 
-    // Solo llamar a cargarVehiculosPresupuesto si la sección de presupuestos está visible o se va a mostrar
-    // O llamarla una vez y que se actualice si es necesario. Por ahora, la llamamos al inicio.
-    // Si la sección de presupuestos no es la default, se podría llamar cuando se muestre esa sección.
-    if (document.getElementById('presupuestos-section') && !document.getElementById('presupuestos-section').classList.contains('hidden')) {
-        cargarVehiculosPresupuesto();
-    }
-    // O, si se muestra al hacer clic, llamar a cargarVehiculosPresupuesto dentro del event listener que muestra la sección.
-    // Por simplicidad y dado que está en DOMContentLoaded, la cargaremos una vez.
-    // Si la colección de vehículos puede cambiar mientras el admin está en la página, se necesitaría un listener onSnapshot.
-
-
-    if (btnAgregarItem) {
+    if (btnAgregarItem && tablaBody) {
       btnAgregarItem.addEventListener('click', () => {
-        if (!tablaBody) return;
         const fila = document.createElement('tr');
         fila.innerHTML = `
-          <td><input type="text" placeholder="Repuesto" style="width:90%;"></td>
-          <td><input type="number" placeholder="Monto" min="0" style="width:80%;"></td>
-          <td><input type="url" placeholder="Link (opcional)" style="width:90%;"></td>
-          <td><button class="borrar-item">Borrar</button></td>
+          <td><input type="text" placeholder="Repuesto/Servicio" style="width:95%; padding: 5px; background-color: #333; color: #fff; border: 1px solid #555;"></td>
+          <td><input type="number" placeholder="Monto" min="0" style="width:90%; padding: 5px; background-color: #333; color: #fff; border: 1px solid #555;"></td>
+          <td><input type="url" placeholder="Link (opcional)" style="width:95%; padding: 5px; background-color: #333; color: #fff; border: 1px solid #555;"></td>
+          <td><button class="borrar-item" style="background-color: #555; color: #fff; border: none; padding: 5px 10px; cursor: pointer;">Borrar</button></td>
         `;
         tablaBody.appendChild(fila);
-        actualizarTotal();
+        actualizarTotalPresupuesto();
       });
     }
 
@@ -228,19 +394,17 @@ document.addEventListener('DOMContentLoaded', function() {
       tablaBody.addEventListener('click', e => {
         if (e.target.classList.contains('borrar-item')) {
           e.target.closest('tr').remove();
-          actualizarTotal();
+          actualizarTotalPresupuesto();
         }
       });
-
       tablaBody.addEventListener('input', e => {
         if (e.target.matches('input[type="number"]')) {
-          actualizarTotal();
+          actualizarTotalPresupuesto();
         }
       });
     }
 
-
-    function actualizarTotal() {
+    function actualizarTotalPresupuesto() {
       if (!tablaBody || !totalSpan) return;
       let total = 0;
       tablaBody.querySelectorAll('tr').forEach(row => {
@@ -250,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
             total += monto;
         }
       });
-      totalSpan.textContent = total.toFixed(2); // (MODIFICACIÓN: Formatear a 2 decimales)
+      totalSpan.textContent = total.toFixed(2);
     }
 
     if (btnGuardarPresupuesto) {
@@ -259,8 +423,10 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("Error de configuración. Algunos elementos no se encontraron.");
             return;
         }
-        const vehiculoId = vehiculoSelect.value;
-        if (!vehiculoId) {
+        const vehiculoIdFirestore = vehiculoSelect.value;
+        const vehiculoInfoTexto = vehiculoSelect.options[vehiculoSelect.selectedIndex].text;
+
+        if (!vehiculoIdFirestore) {
           alert("Por favor, selecciona un vehículo.");
           return;
         }
@@ -275,7 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const monto = parseFloat(montoInput.value) || 0;
             const link = linkInput ? linkInput.value.trim() : '';
             if (repuesto && monto > 0) {
-              items.push({ repuesto, monto, link });
+              items.push({ repuesto, monto: parseFloat(monto.toFixed(2)), link });
             }
           }
         });
@@ -285,35 +451,231 @@ document.addEventListener('DOMContentLoaded', function() {
           return;
         }
         const presupuesto = {
-          vehiculoId,
-          vehiculoInfo: vehiculoSelect.options[vehiculoSelect.selectedIndex].text, // (MODIFICACIÓN: Guardar texto del vehículo)
+          vehiculoDocId: vehiculoIdFirestore,
+          vehiculoInfo: vehiculoInfoTexto,
           items,
           total: parseFloat(totalSpan.textContent),
           creadoEl: firebase.firestore.FieldValue.serverTimestamp(),
-          estado: "Pendiente" // (MODIFICACIÓN: Añadir un estado inicial)
+          estado: "Pendiente"
         };
         try {
           await db.collection("presupuestos").add(presupuesto);
           alert("¡Presupuesto guardado con éxito!");
-          if (tablaBody) tablaBody.innerHTML = ""; // Limpiar tabla
-          if (totalSpan) totalSpan.textContent = "0";
-          if (vehiculoSelect) vehiculoSelect.value = ""; // Resetear select
+          if (tablaBody) tablaBody.innerHTML = "";
+          if (totalSpan) totalSpan.textContent = "0.00";
+          if (vehiculoSelect) vehiculoSelect.value = "";
         } catch (e) {
           console.error("Error guardando presupuesto:", e);
           alert("Error al guardar el presupuesto. Revisa la consola.");
         }
       });
     }
-    // Llamada inicial para cargar vehículos si la sección de presupuestos es la visible por defecto
-    // Esto depende de tu lógica de cuál sección se muestra primero.
-    // Si 'presupuestos-section' no es la activa al cargar, esta llamada se puede optimizar
-    // para que solo se ejecute cuando el usuario navegue a esa sección.
-    // Por ahora, se ejecutará si 'vehiculoSelect' existe.
-    if(vehiculoSelect) {
-        cargarVehiculosPresupuesto();
+
+    async function mostrarPresupuestosGuardados() {
+        if (!listaPresupuestosGuardadosDiv) return;
+        listaPresupuestosGuardadosDiv.innerHTML = '<p>Cargando presupuestos guardados...</p>';
+
+        db.collection("presupuestos").orderBy("creadoEl", "desc")
+          .onSnapshot(snapshot => {
+            if (snapshot.empty) {
+                listaPresupuestosGuardadosDiv.innerHTML = "<p>No hay presupuestos guardados.</p>";
+                return;
+            }
+            let presupuestosHTML = "";
+            snapshot.forEach(doc => {
+                const presupuesto = doc.data();
+                const idPresupuesto = doc.id;
+                presupuestosHTML += `
+                    <div style="border: 1px solid #ad0000; margin: 15px 0; padding: 15px; border-radius: 5px; background-color: #1a1a1a;">
+                        <h5 style="margin-top:0; color: #ffc107;">Presupuesto ID: ${idPresupuesto}</h5>
+                        <p><strong>Vehículo:</strong> ${presupuesto.vehiculoInfo || presupuesto.vehiculoDocId || 'N/A'}</p>
+                        <p><strong>Total:</strong> $${presupuesto.total ? presupuesto.total.toFixed(2) : '0.00'}</p>
+                        <p><strong>Estado:</strong> <span style="font-weight: bold; color: ${presupuesto.estado === 'Aceptado' ? 'lightgreen' : presupuesto.estado === 'Rechazado' ? 'salmon' : 'yellow'};">${presupuesto.estado || 'Pendiente'}</span></p>
+                        <p><strong>Items:</strong></p>
+                        <ul style="padding-left: 20px; margin-bottom: 10px;">
+                            ${presupuesto.items.map(item => `<li>${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'} ${item.link ? `(<a href="${item.link}" target="_blank" style="color: #64b5f6;">Ver Repuesto</a>)` : ''}</li>`).join('')}
+                        </ul>
+                        <p style="font-size: 0.8em; color: #888;">Creado el: ${presupuesto.creadoEl ? new Date(presupuesto.creadoEl.seconds * 1000).toLocaleString() : 'N/A'}</p>
+                        <div style="margin-top: 10px;">
+                        ${presupuesto.estado === 'Pendiente' ? `
+                            <button class="accion-presupuesto-btn" data-id="${idPresupuesto}" data-accion="aceptar" style="background-color: green; color: white; margin-right: 5px; padding: 8px 12px; border: none; border-radius: 3px; cursor: pointer;">Aceptar</button>
+                            <button class="accion-presupuesto-btn" data-id="${idPresupuesto}" data-accion="rechazar" style="background-color: darkred; color: white; margin-right: 5px; padding: 8px 12px; border: none; border-radius: 3px; cursor: pointer;">Rechazar</button>
+                        ` : ''}
+                        <button class="accion-presupuesto-btn" data-id="${idPresupuesto}" data-accion="pdf" style="background-color: #007bff; color: white; margin-right: 5px; padding: 8px 12px; border: none; border-radius: 3px; cursor: pointer;">Generar PDF</button>
+                        <button class="accion-presupuesto-btn" data-id="${idPresupuesto}" data-accion="whatsapp" style="background-color: #25D366; color: white; padding: 8px 12px; border: none; border-radius: 3px; cursor: pointer;">Enviar WhatsApp</button>
+                        </div>
+                    </div>
+                `;
+            });
+            listaPresupuestosGuardadosDiv.innerHTML = presupuestosHTML;
+
+            listaPresupuestosGuardadosDiv.querySelectorAll('.accion-presupuesto-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.target.dataset.id;
+                    const accion = e.target.dataset.accion;
+                    const presDoc = await db.collection('presupuestos').doc(id).get();
+                    if (!presDoc.exists) {
+                        alert("El presupuesto ya no existe.");
+                        return;
+                    }
+                    const dataPresupuesto = presDoc.data();
+                    if (accion === 'aceptar') aceptarPresupuesto(id, dataPresupuesto);
+                    else if (accion === 'rechazar') rechazarPresupuesto(id, dataPresupuesto);
+                    else if (accion === 'pdf') generarPDFPresupuesto(dataPresupuesto, id);
+                    else if (accion === 'whatsapp') enviarWhatsAppPresupuesto(dataPresupuesto);
+                });
+            });
+
+        }, error => {
+            console.error("Error al obtener presupuestos en tiempo real:", error);
+            if (listaPresupuestosGuardadosDiv) listaPresupuestosGuardadosDiv.innerHTML = "<p style='color:red;'>Error al cargar los presupuestos. Intenta más tarde.</p>";
+        });
     }
 
-  } // Fin de if (presupuestosSection)
+    async function aceptarPresupuesto(id, dataPresupuesto) {
+        if (!confirm(`¿Estás seguro de ACEPTAR el presupuesto para "${dataPresupuesto.vehiculoInfo || dataPresupuesto.vehiculoDocId}" y moverlo a trabajos?`)) return;
+        try {
+            const trabajoData = { 
+                ...dataPresupuesto, 
+                presupuestoOriginalId: id, // ID del presupuesto original
+                vehiculoOriginalId: dataPresupuesto.vehiculoDocId, // ID del vehículo original
+                estadoTrabajo: 'Pendiente', // Nuevo estado para el trabajo
+                fechaAceptacion: firebase.firestore.FieldValue.serverTimestamp() 
+            };
+            // No es necesario 'estado' del presupuesto en la colección de trabajos, o renómbralo.
+            delete trabajoData.estado; 
+            delete trabajoData.vehiculoDocId; // Ya tenemos vehiculoOriginalId
+
+            await db.collection("trabajos_en_curso").add(trabajoData);
+            await db.collection("presupuestos").doc(id).update({ estado: 'Aceptado', movidoATrabajosEl: firebase.firestore.FieldValue.serverTimestamp() });
+            alert("Presupuesto aceptado y nuevo trabajo creado en 'Trabajos en Curso'.");
+        } catch (err) {
+            console.error("Error al aceptar presupuesto:", err);
+            alert("Error al aceptar el presupuesto: " + err.message);
+        }
+    }
+
+    async function rechazarPresupuesto(id, dataPresupuesto) {
+        if (!confirm(`¿Estás seguro de RECHAZAR el presupuesto para "${dataPresupuesto.vehiculoInfo || dataPresupuesto.vehiculoDocId}"?`)) return;
+        try {
+            await db.collection("presupuestos").doc(id).update({ estado: 'Rechazado', rechazadoEl: firebase.firestore.FieldValue.serverTimestamp() });
+            alert("Presupuesto marcado como 'Rechazado'.");
+        } catch (err) {
+            console.error("Error al rechazar presupuesto:", err);
+            alert("Error al rechazar el presupuesto: " + err.message);
+        }
+    }
+
+    function generarPDFPresupuesto(data, idPresupuesto) {
+        if (typeof jspdf === 'undefined' || typeof jspdf.jsPDF === 'undefined') {
+            alert("La librería PDF (jsPDF) no está cargada. No se puede generar el PDF.");
+            console.error("jsPDF no está definido. Asegúrate de que la librería esté incluida en admin.html.");
+            return;
+        }
+        const { jsPDF } = jspdf;
+        const doc = new jsPDF();
+        
+        doc.setFontSize(18);
+        doc.text("Presupuesto del Taller", 105, 15, null, null, 'center');
+        
+        doc.setFontSize(11);
+        doc.text(`Presupuesto ID: ${idPresupuesto}`, 15, 25);
+        doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 150, 25)
+
+        doc.text(`Vehículo: ${data.vehiculoInfo || data.vehiculoDocId || 'N/A'}`, 15, 35);
+        doc.text(`Estado: ${data.estado || 'Pendiente'}`, 15, 42);
+
+        let y = 55;
+        doc.setFontSize(12);
+        doc.text("Detalle del Presupuesto:", 15, y);
+        y += 7;
+        
+        doc.setFontSize(10);
+        data.items.forEach(item => {
+          doc.text(`- ${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'} ${item.link ? `(Ver: ${item.link})` : ''}`, 20, y);
+          y += 7;
+          if (y > 270) { // Salto de página si es necesario
+              doc.addPage();
+              y = 20;
+          }
+        });
+        
+        y += 5;
+        doc.setLineWidth(0.5);
+        doc.line(15, y, 195, y); // Línea separadora
+        y += 7;
+
+        doc.setFontSize(14);
+        doc.text(`Total Presupuesto: $${data.total ? data.total.toFixed(2) : '0.00'}`, 15, y, {align: 'left'});
+        
+        // Pie de página simple
+        doc.setFontSize(9);
+        doc.setTextColor(150);
+        doc.text("Gracias por su confianza.", 105, 285, null, null, "center");
+
+        const nombreArchivo = `presupuesto_${(data.vehiculoInfo || idPresupuesto).replace(/[^a-z0-9]/gi, '_')}.pdf`;
+        doc.save(nombreArchivo);
+    }
+
+    function enviarWhatsAppPresupuesto(data) {
+        const nombreTaller = "Mecanico Automotriz Luis Díaz";
+        let mensajeItems = "";
+        data.items.forEach(item => {
+            mensajeItems += `\n- ${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'}`;
+        });
+
+        const mensaje = 
+`Hola,
+Le adjuntamos el presupuesto de ${nombreTaller} para el vehículo: ${data.vehiculoInfo || data.vehiculoDocId || 'N/A'}.
+
+Detalle:${mensajeItems}
+
+Total: $${data.total ? data.total.toFixed(2) : '0.00'}
+Estado: ${data.estado || 'Pendiente'}
+
+Para cualquier consulta, no dude en contactarnos.`;
+        
+        const link = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+        window.open(link, '_blank');
+    }
+  }
+
+  // --- LÓGICA PARA LA SECCIÓN DE TRABAJOS (BÁSICA) ---
+  const trabajosSection = document.getElementById('trabajos-section');
+  const listaTrabajosDiv = document.getElementById('lista-trabajos');
+
+  async function mostrarTrabajos() {
+      if (!listaTrabajosDiv) return;
+      listaTrabajosDiv.innerHTML = '<p>Cargando trabajos...</p>';
+      try {
+          const snapshot = await db.collection("trabajos_en_curso").orderBy("fechaAceptacion", "desc").get();
+          if (snapshot.empty) {
+              listaTrabajosDiv.innerHTML = "<p>No hay trabajos en curso o realizados registrados.</p>";
+              return;
+          }
+          let trabajosHTML = "";
+          snapshot.forEach(doc => {
+              const trabajo = doc.data();
+              trabajosHTML += `
+                  <div style="border: 1px solid #5cb85c; margin: 15px 0; padding: 15px; border-radius: 5px; background-color: #1a1a1a;">
+                      <h5 style="margin-top:0; color: #5cb85c;">Trabajo para: ${trabajo.vehiculoInfo || 'Vehículo no especificado'} (ID Presupuesto Orig: ${trabajo.presupuestoOriginalId})</h5>
+                      <p><strong>Estado del Trabajo:</strong> ${trabajo.estadoTrabajo || 'Pendiente'}</p>
+                      <p><strong>Total Original:</strong> $${trabajo.total ? trabajo.total.toFixed(2) : '0.00'}</p>
+                      <p><strong>Items:</strong></p>
+                      <ul style="padding-left: 20px; margin-bottom: 10px;">
+                          ${trabajo.items.map(item => `<li>${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'}</li>`).join('')}
+                      </ul>
+                      <p style="font-size: 0.8em; color: #888;">Presupuesto Aceptado el: ${trabajo.fechaAceptacion ? new Date(trabajo.fechaAceptacion.seconds * 1000).toLocaleString() : 'N/A'}</p>
+                      </div>
+              `;
+          });
+          listaTrabajosDiv.innerHTML = trabajosHTML;
+      } catch (error) {
+          console.error("Error al mostrar trabajos:", error);
+          listaTrabajosDiv.innerHTML = "<p style='color:red;'>Error al cargar los trabajos.</p>";
+      }
+  }
+
 
   // Alternar secciones al hacer clic en el menú lateral
   document.querySelectorAll('.admin-menu a[data-section]').forEach(link => {
@@ -330,16 +692,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (targetSection) {
         targetSection.classList.remove('hidden');
-        // (MODIFICACIÓN SUGERIDA) Si es la sección de presupuestos y aún no se han cargado los vehículos, cargarlos ahora.
-        // Esto es útil si la carga inicial no ocurrió o si quieres recargar.
-        // if (sectionId === 'presupuestos-section' && vehiculoSelect && vehiculoSelect.options.length <= 1) { // <=1 para contar el "-- Selecciona --"
-        //    cargarVehiculosPresupuesto();
-        // }
+        // Cargar datos relevantes para la sección que se acaba de mostrar
+        if (sectionId === 'vehiculos-section' && typeof mostrarVehiculos === 'function') {
+          mostrarVehiculos();
+        } else if (sectionId === 'presupuestos-section') {
+          if (typeof cargarVehiculosParaPresupuesto === 'function') cargarVehiculosParaPresupuesto();
+          if (typeof mostrarPresupuestosGuardados === 'function') mostrarPresupuestosGuardados();
+        } else if (sectionId === 'trabajos-section' && typeof mostrarTrabajos === 'function') {
+            mostrarTrabajos();
+        }
       } else {
         console.warn("Sección no encontrada con ID:", sectionId);
       }
     });
   });
+
+  // Simular clic en la primera opción del menú para cargar la sección por defecto
+  const linkVehiculos = document.querySelector('.admin-menu a[data-section="vehiculos"]');
+  if (linkVehiculos) {
+      linkVehiculos.click();
+  } else if (vehiculosSection) { 
+      vehiculosSection.classList.remove('hidden');
+      if (typeof mostrarVehiculos === 'function') mostrarVehiculos();
+  }
+
 });
 </script>
 
