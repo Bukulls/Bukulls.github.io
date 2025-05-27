@@ -11,40 +11,39 @@
 
 <header>
     <div class="logo-container">
-        <!-- Aquí puedes poner tu logo -->
         <img src="logo.png" alt="Logo del taller" class="logo">
     </div>
     <h1>Mecanico Automotriz Luis Díaz</h1>
+    <button id="btn-abrir-modal-login" class="btn-admin" style="margin-top:10px;">Iniciar Sesión</button>
     <nav>
         <ul>
             <li><a href="#inicio">Inicio</a></li>
             <li><a href="#servicios">Servicios</a></li>
             <li><a href="#nosotros">Sobre Nosotros</a></li>
             <li><a href="#contacto">Contacto</a></li>
-            <li><a href="admin.html" class="btn-admin">Panel Admin</a></li>
+            <li><a href="admin.html" class="btn-admin" style="display:none;">Panel Admin</a></li>
         </ul>
     </nav>
 </header>
 
+<!-- Panel de Inicio de Sesión -->
+<section id="panel-login" style="display: none; background-color: #222; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 300px;">
+  <h2>Iniciar Sesión</h2>
+  <input type="email" id="login-email" placeholder="Correo Electrónico" style="margin-bottom: 10px; width: 100%; padding: 5px;">
+  <input type="password" id="login-password" placeholder="Contraseña" style="margin-bottom: 10px; width: 100%; padding: 5px;">
+  <button id="btn-login" style="margin-bottom: 10px; width: 100%;">Iniciar Sesión</button>
+  <p>¿No tienes cuenta?</p>
+  <button id="btn-register" style="width: 100%;">Crear Cuenta</button>
+  <br><br>
+  <button id="btn-cerrar-panel-login" style="background: #ad0000; width: 100%; margin-top: 10px;">Cerrar</button>
+</section>
 
 <section class="banner">
-    <!-- Aquí puedes poner un banner llamativo -->
     <h2>Bienvenido a tu taller de confianza</h2>
     <p>Expertos en el cuidado y reparación de tu vehículo.</p>
 </section>
 
 <main>
-            <section id="login-section" style="background-color: #444; padding: 20px; margin-top: 30px;">
-        <h2>Acceso Administrador (Prueba)</h2>
-        <div>
-            <input type="email" id="admin-email" placeholder="Correo Electrónico">
-            <input type="password" id="admin-password" placeholder="Contraseña">
-            <button id="btn-admin-login">Iniciar Sesión</button>
-            <button id="btn-admin-register">Registrar Admin (solo la primera vez)</button>
-            <button id="btn-admin-logout" style="display:none;">Cerrar Sesión</button>
-        </div>
-        <div id="admin-status" style="margin-top:10px;">No has iniciado sesión.</div>
-    </section>
     <section id="inicio">
         <h2>¡Bienvenido Mecanica Automotriz De Confianza!</h2>
         <p>Expertos en el cuidado y reparación de tu vehículo. Ofrecemos servicios de calidad con la última tecnología.</p>
@@ -78,6 +77,12 @@
 <footer>
     <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
 </footer>
+
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
