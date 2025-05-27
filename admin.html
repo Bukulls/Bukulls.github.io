@@ -4,54 +4,52 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel de Administración - Mecanico Automotriz Luis Díaz</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
+<link rel="stylesheet" href="style.css"> <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <style>
 /* Estilo básico para el layout de admin con menú lateral */
 .admin-container {
-    display: flex;
-    min-height: 100vh;
+    display: flex; /* */
+    min-height: 100vh; /* */
 }
 
 .admin-menu {
-    background-color: #222;
-    color: #fff;
-    width: 220px;
-    flex-shrink: 0;
-    padding: 20px;
+    background-color: #222; /* */
+    color: #fff; /* */
+    width: 220px; /* */
+    flex-shrink: 0; /* */
+    padding: 20px; /* */
 }
 
 .admin-menu h3 {
-    margin-bottom: 15px;
+    margin-bottom: 15px; /* */
 }
 
 .admin-menu ul {
-    list-style: none;
-    padding: 0;
+    list-style: none; /* */
+    padding: 0; /* */
 }
 
 .admin-menu li {
-    margin: 10px 0;
+    margin: 10px 0; /* */
 }
 
 .admin-menu a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
+    color: #fff; /* */
+    text-decoration: none; /* */
+    font-weight: bold; /* */
 }
 
 .admin-menu a:hover {
-    color: #ad0000;
+    color: #ad0000; /* */
 }
 
 .admin-content {
-    flex: 1;
-    padding: 20px;
+    flex: 1; /* */
+    padding: 20px; /* */
     color: #fff;
 }
 
 .hidden {
-    display: none !important;
+    display: none !important; /* */
 }
 
 /* Estilos para formularios y tablas */
@@ -90,19 +88,19 @@ textarea {
 }
 
 button, .btn-submit-form, .btn-action {
-    background-color: #ad0000;
+    background-color: #ad0000; /* */
     color: white;
     padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    border: none; /* */
+    border-radius: 4px; /* */
+    cursor: pointer; /* */
     font-weight: bold;
     margin-top: 5px;
     margin-right: 5px;
 }
 
 button:hover, .btn-submit-form:hover, .btn-action:hover {
-    background-color: #ff0000;
+    background-color: #ff0000; /* */
 }
 
 button.btn-edit { background-color: #007bff; }
@@ -112,7 +110,7 @@ button.btn-delete:hover { background-color: #c82333; }
 
 
 #tabla-presupuesto {
-    border-collapse: collapse;
+    border-collapse: collapse; /* */
 }
 
 #tabla-presupuesto th,
@@ -192,104 +190,65 @@ button.btn-delete:hover { background-color: #c82333; }
     cursor: pointer;
 }
 
+.mano-de-obra-container {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #2a2a2a;
+    border-radius: 4px;
+    border: 1px solid #444;
+}
+.mano-de-obra-container label {
+    color: #ffc107; 
+}
+
 </style>
 </head>
 <body>
 
 <header>
-  <h1 style="color:#ad0000;">Panel de Administración</h1>
-</header>
+  <h1 style="color:#ad0000;">Panel de Administración</h1> </header>
 
-<div class="admin-container">
-  <aside class="admin-menu">
-    <h3>Menú</h3>
-    <ul>
-      <li><a href="#" data-section="vehiculos">Vehículos</a></li>
-      <li><a href="#" data-section="presupuestos">Presupuestos</a></li>
-      <li><a href="#" data-section="trabajos">Trabajos</a></li>
-      <li><a href="#" data-section="manuales">Manuales</a></li>
-      <li><a href="index.html">Volver a Inicio</a></li>
-    </ul>
+<div class="admin-container"> <aside class="admin-menu"> <h3>Menú</h3> <ul>
+      <li><a href="#" data-section="vehiculos">Vehículos</a></li> <li><a href="#" data-section="presupuestos">Presupuestos</a></li> <li><a href="#" data-section="trabajos">Trabajos</a></li> <li><a href="#" data-section="manuales">Manuales</a></li> <li><a href="index.html">Volver a Inicio</a></li> </ul>
   </aside>
 
-  <main class="admin-content">
-    <section id="vehiculos-section">
-      <h2>Panel de Administración de Vehículos</h2>
-      <div id="form-ingreso-vehiculo-container">
-        <h3>Ingresar Nuevo Vehículo</h3>
-        <form id="form-ingreso-vehiculo">
-          <label for="vehiculo-patente">Patente:</label>
-          <input type="text" id="vehiculo-patente" required>
-          <label for="vehiculo-marca">Marca:</label>
-          <input type="text" id="vehiculo-marca" required>
-          <label for="vehiculo-modelo">Modelo:</label>
-          <input type="text" id="vehiculo-modelo" required>
-          <label for="vehiculo-ano">Año:</label>
-          <input type="number" id="vehiculo-ano" min="1900" max="2099" required>
-          <label for="vehiculo-cliente-nombre">Nombre del Cliente:</label>
-          <input type="text" id="vehiculo-cliente-nombre">
-          <label for="vehiculo-cliente-telefono">Teléfono:</label>
-          <input type="tel" id="vehiculo-cliente-telefono">
-          <label for="vehiculo-descripcion-trabajo">Descripción del Trabajo/Problema:</label>
-          <textarea id="vehiculo-descripcion-trabajo" rows="4" required></textarea>
-          <label for="vehiculo-imagenes">Imágenes (máx. 5):</label>
-          <input type="file" id="vehiculo-imagenes" multiple accept="image/*">
-          <div id="previsualizacion-imagenes" style="margin-top:10px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
-          <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Vehículo</button>
-        </form>
+  <main class="admin-content"> <section id="vehiculos-section"> <h2>Panel de Administración de Vehículos</h2> <div id="form-ingreso-vehiculo-container"> <h3>Ingresar Nuevo Vehículo</h3> <form id="form-ingreso-vehiculo"> <label for="vehiculo-patente">Patente:</label> <input type="text" id="vehiculo-patente" required> <label for="vehiculo-marca">Marca:</label> <input type="text" id="vehiculo-marca" required> <label for="vehiculo-modelo">Modelo:</label> <input type="text" id="vehiculo-modelo" required> <label for="vehiculo-ano">Año:</label> <input type="number" id="vehiculo-ano" min="1900" max="2099" required> <label for="vehiculo-cliente-nombre">Nombre del Cliente:</label> <input type="text" id="vehiculo-cliente-nombre"> <label for="vehiculo-cliente-telefono">Teléfono:</label> <input type="tel" id="vehiculo-cliente-telefono"> <label for="vehiculo-descripcion-trabajo">Descripción del Trabajo/Problema:</label> <textarea id="vehiculo-descripcion-trabajo" rows="4" required></textarea> <label for="vehiculo-imagenes">Imágenes (máx. 5):</label> <input type="file" id="vehiculo-imagenes" multiple accept="image/*"> <div id="previsualizacion-imagenes" style="margin-top:10px; display: flex; flex-wrap: wrap; gap: 10px;"></div> <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Vehículo</button> </form>
       </div>
-      <div id="lista-vehiculos-container" style="margin-top: 30px;">
-        <h3>Vehículos Ingresados</h3>
-        <div id="lista-vehiculos">
-          <p>Aún no hay vehículos registrados.</p>
-          </div>
+      <div id="lista-vehiculos-container" style="margin-top: 30px;"> <h3>Vehículos Ingresados</h3> <div id="lista-vehiculos"> <p>Aún no hay vehículos registrados.</p> </div>
       </div>
     </section>
 
-    <section id="presupuestos-section" class="hidden">
-      <h2>Presupuestos</h2>
-      <div>
-        <label for="vehiculo-presupuesto">Seleccionar Vehículo para Nuevo Presupuesto:</label>
-        <select id="vehiculo-presupuesto"></select>
-        <p id="info-cliente-presupuesto" style="font-size: 0.9em; color: #ccc; margin-top: 5px;"></p>
+    <section id="presupuestos-section" class="hidden"> <h2>Presupuestos</h2> <div>
+        <label for="vehiculo-presupuesto">Seleccionar Vehículo para Nuevo Presupuesto:</label> <select id="vehiculo-presupuesto"></select> <p id="info-cliente-presupuesto" style="font-size: 0.9em; color: #ccc; margin-top: 5px;"></p>
       </div>
 
-      <table id="tabla-presupuesto" style="width: 100%; margin-top: 20px; color:#fff;">
-        <thead>
-          <tr>
-            <th>Repuesto/Servicio</th>
-            <th>Monto</th>
-            <th>Link (Opcional)</th>
-            <th>Acciones</th>
-          </tr>
+      <h4 style="margin-top: 20px; color: #ccc;">Items de Repuestos/Servicios:</h4>
+      <table id="tabla-presupuesto" style="width: 100%; margin-top: 10px; color:#fff;"> <thead> <tr>
+            <th>Repuesto/Servicio</th> <th>Monto</th> <th>Link (Opcional)</th> <th>Acciones</th> </tr>
         </thead>
-        <tbody></tbody>
-      </table>
-
-      <button id="agregar-item" class="btn-action" style="margin-top: 10px;">Agregar Item</button>
-      <div style="margin-top: 20px; font-size: 1.2em;">
-        <strong>Total Presupuesto: $</strong><span id="total-presupuesto">0.00</span>
+        <tbody></tbody> </table>
+      <button id="agregar-item" class="btn-action" style="margin-top: 10px;">Agregar Item Repuesto/Servicio</button> <div class="mano-de-obra-container">
+        <h4 style="margin-top: 0; color: #ffc107;">Mano de Obra:</h4>
+        <label for="mano-obra-descripcion">Descripción Mano de Obra:</label>
+        <input type="text" id="mano-obra-descripcion" placeholder="Ej: Revisión y cambio de aceite, Ajuste de frenos...">
+        <label for="mano-obra-monto">Monto Mano de Obra:</label>
+        <input type="number" id="mano-obra-monto" min="0" placeholder="0.00" step="0.01">
       </div>
-      <button id="guardar-presupuesto" class="btn-submit-form" style="margin-top: 20px;">Guardar Nuevo Presupuesto</button>
       
-      <hr style="margin: 40px 0; border-color: #555;">
+      <div style="margin-top: 20px; font-size: 1.2em;">
+        <strong>Total Presupuesto General: $</strong><span id="total-presupuesto">0.00</span> </div>
+      <button id="guardar-presupuesto" class="btn-submit-form" style="margin-top: 20px;">Guardar Nuevo Presupuesto</button> <hr style="margin: 40px 0; border-color: #555;">
       <h3 style="margin-top:20px;">Presupuestos Guardados</h3>
       <div id="lista-presupuestos-guardados">
           <p>Cargando presupuestos...</p>
       </div>
     </section>
     
-    <section id="trabajos-section" class="hidden">
-      <h2>Trabajos en Curso / Realizados</h2>
-      <p>Aquí podrás gestionar los trabajos aceptados.</p>
-       <div id="lista-trabajos">
+    <section id="trabajos-section" class="hidden"> <h2>Trabajos en Curso / Realizados</h2> <p>Aquí podrás gestionar los trabajos aceptados.</p> <div id="lista-trabajos">
        </div>
     </section>
 
-    <section id="manuales-section" class="hidden">
-      <h2>Manuales y Documentación</h2>
-      <p>En construcción. Aquí podrás gestionar manuales y otra documentación útil.</p>
-       <div id="lista-manuales">
+    <section id="manuales-section" class="hidden"> <h2>Manuales y Documentación</h2> <p>En construcción. Aquí podrás gestionar manuales y otra documentación útil.</p> <div id="lista-manuales">
        </div>
     </section>
   </main>
@@ -336,17 +295,9 @@ button.btn-delete:hover { background-color: #c82333; }
 </div>
 
 
-<footer>
-  <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
-</footer>
+<footer> <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p> </footer>
 
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
-<script src="script.js"></script>
-
-<script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script> <script src="script.js"></script> <script>
 document.addEventListener('DOMContentLoaded', function() {
   if (typeof db === 'undefined' || typeof storage === 'undefined') {
     console.error("Firebase (db o storage) no está inicializado.");
@@ -356,7 +307,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // --- DECLARACIÓN DE FUNCIONES PRINCIPALES ---
   
-  // Funciones para la sección Vehículos
   async function mostrarVehiculos() {
       const listaVehiculosDiv = document.getElementById('lista-vehiculos');
       if (!listaVehiculosDiv) return;
@@ -414,8 +364,7 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
           const docRef = db.collection("vehiculos").doc(vehiculoId);
           const docSnap = await docRef.get();
-          // ***** CORRECCIÓN AQUÍ *****
-          if (docSnap.exists) { // ANTES: docSnap.exists()
+          if (docSnap.exists) { 
               const data = docSnap.data();
               document.getElementById('vehiculo-id-editar').value = vehiculoId;
               document.getElementById('vehiculo-patente-editar').value = data.patente || '';
@@ -463,27 +412,23 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
           const vehiculoRef = db.collection("vehiculos").doc(vehiculoId);
           const docSnap = await vehiculoRef.get();
-          // ***** CORRECCIÓN AQUÍ *****
-          if (docSnap.exists) { // ANTES: docSnap.exists()
+          if (docSnap.exists) { 
               const vehiculoData = docSnap.data();
               if (vehiculoData.imagenes && vehiculoData.imagenes.length > 0) {
                   const deletePromises = vehiculoData.imagenes.map(imageUrl => {
                       try {
-                          // Asegurarse que la URL sea válida y completa para storage.refFromURL, o parsear manualmente.
-                          // Si la URL es una URL de descarga de Firebase Storage, refFromURL es más seguro.
                           const imageRef = storage.refFromURL(imageUrl);
                           return imageRef.delete()
                               .catch(err => console.warn("No se pudo borrar de Storage:", imageUrl, err));
                       } catch (e) { 
                           console.error("Error creando referencia de Storage desde URL:", imageUrl, e); 
-                          // Fallback a parseo manual si refFromURL falla y conoces la estructura del path
                           try {
                             let filePath = decodeURIComponent(imageUrl.split('/o/')[1].split('?alt=media')[0]);
                             return storage.ref().child(filePath).delete()
                                 .catch(err_manual => console.warn("Fallo borrado manual de Storage:", filePath, err_manual));
                           } catch (e_manual_parse) {
                              console.error("Error parseando URL manualmente para borrar:", imageUrl, e_manual_parse);
-                             return Promise.resolve(); // No detener el proceso
+                             return Promise.resolve(); 
                           }
                       }
                   });
@@ -495,11 +440,10 @@ document.addEventListener('DOMContentLoaded', function() {
           } else { alert("Error: El vehículo no existe."); }
       } catch (error) { 
         alert("Error al eliminar el vehículo: " + error.message); 
-        console.error("Error en eliminarVehiculo:", error); // Loguear el error completo
+        console.error("Error en eliminarVehiculo:", error);
       }
   }
 
-  // Funciones para la sección Presupuestos
   async function cargarVehiculosParaPresupuesto() {
       const vehiculoSelect = document.getElementById('vehiculo-presupuesto');
       window.vehiculosCargadosParaPresupuesto = window.vehiculosCargadosParaPresupuesto || [];
@@ -536,6 +480,12 @@ document.addEventListener('DOMContentLoaded', function() {
           let presupuestosHTML = "";
           snapshot.forEach(doc => {
               const p = doc.data(); const id = doc.id;
+              // Incluir la sección de Mano de Obra si existe
+              let manoDeObraHTML = '';
+              if (p.manoDeObra && p.manoDeObra.monto > 0) {
+                  manoDeObraHTML = `<li style="color: #ffc107;">Mano de Obra (${p.manoDeObra.descripcion || 'General'}): $${p.manoDeObra.monto.toFixed(2)}</li>`;
+              }
+
               presupuestosHTML += `
                   <div style="border: 1px solid #ad0000; margin: 15px 0; padding: 15px; border-radius: 5px; background-color: #1e1e1e;">
                       <h5 style="margin-top:0; color: #ffc107;">Presupuesto ID: ${id.substring(0,8)}</h5>
@@ -546,6 +496,7 @@ document.addEventListener('DOMContentLoaded', function() {
                       <p><strong>Items:</strong></p>
                       <ul style="padding-left: 20px; margin-bottom: 10px;">
                           ${p.items.map(item => `<li>${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'} ${item.link ? `(<a href="${item.link}" target="_blank" style="color: #64b5f6;">Ver</a>)` : ''}</li>`).join('')}
+                          ${manoDeObraHTML}
                       </ul>
                       <p style="font-size: 0.8em; color: #888;">Creado: ${p.creadoEl ? new Date(p.creadoEl.seconds * 1000).toLocaleString() : 'N/A'}</p>
                       <div style="margin-top: 10px;">
@@ -561,9 +512,8 @@ document.addEventListener('DOMContentLoaded', function() {
           listaPresupuestosGuardadosDiv.querySelectorAll('.accion-presupuesto-btn').forEach(btn => {
               btn.addEventListener('click', async (e) => {
                   const id = e.target.dataset.id; const accion = e.target.dataset.accion;
-                  // ***** CORRECCIÓN AQUÍ para botones de presupuesto *****
                   const presDoc = await db.collection('presupuestos').doc(id).get();
-                  if (!presDoc.exists) { // ANTES: presDoc.exists()
+                  if (!presDoc.exists) { 
                       alert("El presupuesto ya no existe."); return;
                   }
                   const data = presDoc.data();
@@ -582,6 +532,7 @@ document.addEventListener('DOMContentLoaded', function() {
           const trabajo = { 
               presupuestoOriginalId: id, vehiculoOriginalId: data.vehiculoDocId, vehiculoInfo: data.vehiculoInfo,
               clienteNombre: data.clienteNombre, clienteTelefono: data.clienteTelefono, items: data.items,
+              manoDeObra: data.manoDeObra || { descripcion: '', monto: 0 }, // Incluir mano de obra
               total: data.total, estadoTrabajo: 'Pendiente', 
               fechaAceptacionPresupuesto: data.creadoEl, fechaInicioTrabajo: firebase.firestore.FieldValue.serverTimestamp() 
           };
@@ -612,7 +563,7 @@ document.addEventListener('DOMContentLoaded', function() {
       doc.setLineWidth(0.5); doc.line(15, 35, 195, 35);
       doc.setFontSize(12);
       doc.text(`PRESUPUESTO N°: ${idPresupuesto.substring(0,8).toUpperCase()}`, 150, 45, {align: 'right'});
-      doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 15, 45);
+      doc.text(`Fecha: ${data.creadoEl ? new Date(data.creadoEl.seconds * 1000).toLocaleDateString() : new Date().toLocaleDateString()}`, 15, 45);
       doc.setFontSize(11);
       doc.text(`Cliente: ${data.clienteNombre || 'No especificado'}`, 15, 55);
       doc.text(`Teléfono Cliente: ${data.clienteTelefono || 'N/A'}`, 15, 60);
@@ -624,17 +575,35 @@ document.addEventListener('DOMContentLoaded', function() {
       doc.rect(150, y, 45, 7, 'F'); doc.text("Monto ($)", 152, y + 5);        
       y += 7;
       doc.setDrawColor(180,180,180); doc.line(15, y, 195, y);
+      
       data.items.forEach(item => {
         doc.setTextColor(50,50,50);
         const descLines = doc.splitTextToSize(item.repuesto + (item.link ? ` (Ver: ${item.link})` : ''), 130);
         const montoStr = `$${item.monto ? item.monto.toFixed(2) : '0.00'}`;
         let itemHeight = (descLines.length * 5) + 4; 
-        if (y + itemHeight > 270) { doc.addPage(); y = 20; }
+        if (y + itemHeight > 260) { doc.addPage(); y = 20; /* Podrías re-dibujar encabezados de tabla aquí */ }
         doc.text(descLines, 17, y + 5);
         doc.text(montoStr, 152, y + 5);
         y += itemHeight;
         doc.line(15, y, 195, y);
       });
+
+      // Añadir Mano de Obra al PDF si existe
+      if (data.manoDeObra && data.manoDeObra.monto > 0) {
+          doc.setTextColor(50,50,50);
+          const descManoObra = data.manoDeObra.descripcion || "Mano de Obra General";
+          const descMOLines = doc.splitTextToSize(descManoObra, 130);
+          const montoMOStr = `$${data.manoDeObra.monto.toFixed(2)}`;
+          let itemHeight = (descMOLines.length * 5) + 4;
+          if (y + itemHeight > 260) { doc.addPage(); y = 20; }
+          doc.setFont(undefined, "italic"); // Diferenciar mano de obra
+          doc.text(descMOLines, 17, y + 5);
+          doc.text(montoMOStr, 152, y + 5);
+          doc.setFont(undefined, "normal");
+          y += itemHeight;
+          doc.line(15, y, 195, y);
+      }
+      
       y += 7;
       doc.setFontSize(12); doc.setFont(undefined, "bold");
       doc.text(`TOTAL PRESUPUESTO:`, 105, y);
@@ -654,6 +623,10 @@ document.addEventListener('DOMContentLoaded', function() {
       data.items.forEach(item => {
           mensajeItems += `\n- ${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'}`;
       });
+      if (data.manoDeObra && data.manoDeObra.monto > 0) {
+          mensajeItems += `\n- Mano de Obra (${data.manoDeObra.descripcion || 'General'}): $${data.manoDeObra.monto.toFixed(2)}`;
+      }
+
       const telCliente = data.clienteTelefono ? data.clienteTelefono.replace(/\D/g,'') : '';
       const mensaje = 
 `Estimado/a ${data.clienteNombre || 'Cliente'},
@@ -666,7 +639,8 @@ Estado: ${data.estado || 'Pendiente'}
 
 Para confirmar o cualquier consulta, por favor contáctenos.
 ¡Gracias!`;
-      const link = `https://wa.me/${telCliente ? '56' + telCliente : ''}?text=${encodeURIComponent(mensaje)}`; // Ajustar prefijo si es necesario
+      
+      const link = `https://wa.me/${telCliente ? '56' + telCliente.slice(-8) : ''}?text=${encodeURIComponent(mensaje)}`; // Asume Chile si se usa slice(-8)
       window.open(link, '_blank');
   }
 
@@ -679,7 +653,27 @@ Para confirmar o cualquier consulta, por favor contáctenos.
           const snapshot = await db.collection("trabajos_en_curso").orderBy("fechaInicioTrabajo", "desc").get();
           if (snapshot.empty) { listaTrabajosDiv.innerHTML = "<p>No hay trabajos registrados.</p>"; return; }
           let trabajosHTML = "";
-          snapshot.forEach(doc => { /* ... (código sin cambios) ... */ });
+          snapshot.forEach(doc => {
+              const t = doc.data(); const id = doc.id;
+              let manoDeObraTrabajoHTML = '';
+              if (t.manoDeObra && t.manoDeObra.monto > 0) {
+                  manoDeObraTrabajoHTML = `<li style="color: #ffc107;">Mano de Obra (${t.manoDeObra.descripcion || 'General'}): $${t.manoDeObra.monto.toFixed(2)}</li>`;
+              }
+              trabajosHTML += `
+                  <div style="border: 1px solid ${t.estadoTrabajo === 'Completado' ? 'gray' : '#5cb85c'}; margin: 15px 0; padding: 15px; border-radius: 5px; background-color: #1e1e1e;">
+                      <h5 style="margin-top:0; color: ${t.estadoTrabajo === 'Completado' ? 'gray' : '#5cb85c'};">Trabajo: ${t.vehiculoInfo || 'N/A'} (ID Trabajo: ${id.substring(0,8)})</h5>
+                      <p><strong>Cliente:</strong> ${t.clienteNombre || 'N/A'}</p>
+                      <p><strong>Estado Trabajo:</strong> ${t.estadoTrabajo || 'Pendiente'}</p>
+                      <p><strong>Total Original Presup.:</strong> $${t.total ? t.total.toFixed(2) : '0.00'}</p>
+                      <p><strong>ID Presupuesto Original:</strong> ${t.presupuestoOriginalId || 'N/A'}</p>
+                      <p><strong>Items:</strong></p>
+                      <ul style="padding-left: 20px; margin-bottom: 10px;">
+                          ${t.items.map(item => `<li>${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'}</li>`).join('')}
+                          ${manoDeObraTrabajoHTML}
+                      </ul>
+                      <p style="font-size: 0.8em; color: #888;">Iniciado el: ${t.fechaInicioTrabajo ? new Date(t.fechaInicioTrabajo.seconds * 1000).toLocaleString() : 'N/A'}</p>
+                  </div>`;
+          });
           listaTrabajosDiv.innerHTML = trabajosHTML;
       } catch (error) { if(listaTrabajosDiv) listaTrabajosDiv.innerHTML = "<p style='color:red;'>Error al cargar trabajos.</p>"; }
   }
@@ -688,16 +682,27 @@ Para confirmar o cualquier consulta, por favor contáctenos.
   // --- SETUP DE EVENT LISTENERS Y LÓGICA ESPEĆIFICA DE SECCIÓN ---
   const vehiculosSectionDOM = document.getElementById('vehiculos-section');
   const formIngresoVehiculoDOM = document.getElementById('form-ingreso-vehiculo');
-  // ... (otras constantes para elementos DOM)
   const formEditarVehiculoDOM = document.getElementById('form-editar-vehiculo');
-
 
   if (vehiculosSectionDOM) {
     const inputImagenesVehiculoDOM = document.getElementById('vehiculo-imagenes');
     const previsualizacionImagenesDOM = document.getElementById('previsualizacion-imagenes');
 
     if (inputImagenesVehiculoDOM && previsualizacionImagenesDOM) {
-      inputImagenesVehiculoDOM.addEventListener('change', function(event) { /* ... (código previsualización) ... */ });
+      inputImagenesVehiculoDOM.addEventListener('change', function(event) {
+        previsualizacionImagenesDOM.innerHTML = '';
+        const files = event.target.files;
+        if (files.length > 5) { alert("Máximo 5 imágenes."); inputImagenesVehiculoDOM.value = ""; return; }
+        for (const file of files) { 
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img'); img.src = e.target.result;
+                img.style.maxWidth = '100px'; img.style.maxHeight = '100px'; img.style.margin = '5px'; img.style.border = '1px solid #444';
+                previsualizacionImagenesDOM.appendChild(img);
+            }
+            reader.readAsDataURL(file);
+        }
+      });
     }
 
     if (formIngresoVehiculoDOM) {
@@ -812,6 +817,8 @@ Para confirmar o cualquier consulta, por favor contáctenos.
   // Sección Presupuestos
   const presupuestosSectionDOM = document.getElementById('presupuestos-section');
   const infoClientePresupuestoPDOM = document.getElementById('info-cliente-presupuesto');
+  const inputManoObraDescripcion = document.getElementById('mano-obra-descripcion');
+  const inputManoObraMonto = document.getElementById('mano-obra-monto');
 
   if (presupuestosSectionDOM) {
     const vehiculoSelect = document.getElementById('vehiculo-presupuesto');
@@ -821,17 +828,99 @@ Para confirmar o cualquier consulta, por favor contáctenos.
     const btnGuardarPresupuesto = document.getElementById('guardar-presupuesto');
 
     if (vehiculoSelect && infoClientePresupuestoPDOM) {
-        vehiculoSelect.addEventListener('change', function() { /* ... */ });
+        vehiculoSelect.addEventListener('change', function() {
+            const selectedVehiculoId = this.value;
+            infoClientePresupuestoPDOM.textContent = '';
+            if (selectedVehiculoId && window.vehiculosCargadosParaPresupuesto) {
+                const vehiculoSeleccionado = window.vehiculosCargadosParaPresupuesto.find(v => v.id === selectedVehiculoId);
+                if (vehiculoSeleccionado) {
+                    infoClientePresupuestoPDOM.textContent = `Cliente: ${vehiculoSeleccionado.clienteNombre || 'No especificado'} - Tel: ${vehiculoSeleccionado.clienteTelefono || 'N/A'}`;
+                }
+            }
+        });
     }
+
     if (btnAgregarItem && tablaBody) {
-      btnAgregarItem.addEventListener('click', () => { /* ... llama a actualizarTotalPresupuesto ... */ });
+      btnAgregarItem.addEventListener('click', () => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td><input type="text" class="item-repuesto" placeholder="Repuesto/Servicio"></td>
+          <td><input type="number" class="item-monto" placeholder="0.00" min="0" step="0.01"></td>
+          <td><input type="url" class="item-link" placeholder="Link (opcional)"></td>
+          <td><button type="button" class="borrar-item btn-action" style="background-color: #555;">Borrar</button></td>`;
+        tablaBody.appendChild(fila);
+        fila.querySelector('.item-monto').addEventListener('input', actualizarTotalPresupuesto);
+        actualizarTotalPresupuesto();
+      });
     }
-    if (tablaBody) { /* ... listeners, llaman a actualizarTotalPresupuesto ... */ }
+
+    if (tablaBody) {
+      tablaBody.addEventListener('click', e => {
+        if (e.target.classList.contains('borrar-item')) {
+          e.target.closest('tr').remove();
+          actualizarTotalPresupuesto();
+        }
+      });
+    }
     
-    function actualizarTotalPresupuesto() { /* ... */ }
+    if (inputManoObraMonto) {
+        inputManoObraMonto.addEventListener('input', actualizarTotalPresupuesto);
+    }
+
+    function actualizarTotalPresupuesto() {
+      if (!tablaBody || !totalSpan) return;
+      let totalItems = 0;
+      tablaBody.querySelectorAll('tr').forEach(row => {
+        const montoInput = row.querySelector('.item-monto');
+        if (montoInput) { totalItems += parseFloat(montoInput.value) || 0; }
+      });
+      const montoManoObra = parseFloat(inputManoObraMonto.value) || 0;
+      const totalGeneral = totalItems + montoManoObra;
+      totalSpan.textContent = totalGeneral.toFixed(2);
+    }
 
     if (btnGuardarPresupuesto) {
-      btnGuardarPresupuesto.addEventListener('click', async () => { /* ... */ });
+      btnGuardarPresupuesto.addEventListener('click', async () => {
+        if (!vehiculoSelect || !tablaBody || !totalSpan || !db) { alert("Error de config."); return; }
+        
+        const vehiculoIdFirestore = vehiculoSelect.value;
+        const vehiculoSeleccionado = window.vehiculosCargadosParaPresupuesto.find(v => v.id === vehiculoIdFirestore);
+
+        if (!vehiculoIdFirestore || !vehiculoSeleccionado) { alert("Selecciona un vehículo válido."); return; }
+        
+        const vehiculoInfoTexto = `${vehiculoSeleccionado.patente} - ${vehiculoSeleccionado.marca} (${vehiculoSeleccionado.clienteNombre || 'S/N'})`;
+        const items = [];
+        tablaBody.querySelectorAll('tr').forEach(row => {
+          const repuesto = row.querySelector('.item-repuesto').value.trim();
+          const monto = parseFloat(row.querySelector('.item-monto').value) || 0;
+          const link = row.querySelector('.item-link').value.trim();
+          if (repuesto && monto >= 0) items.push({ repuesto, monto: parseFloat(monto.toFixed(2)), link, tipo: 'repuesto_servicio' });
+        });
+        
+        const manoObraDesc = inputManoObraDescripcion.value.trim();
+        const manoObraMontoVal = parseFloat(inputManoObraMonto.value) || 0;
+
+        if (items.length === 0 && manoObraMontoVal <= 0 && !manoObraDesc) { 
+             alert("Agrega al menos un item o detalle de mano de obra al presupuesto."); return; 
+        }
+            
+        const presupuesto = {
+          vehiculoDocId: vehiculoIdFirestore, vehiculoInfo: vehiculoInfoTexto,
+          clienteNombre: vehiculoSeleccionado.clienteNombre || '', clienteTelefono: vehiculoSeleccionado.clienteTelefono || '',
+          items, 
+          manoDeObra: { descripcion: manoObraDesc, monto: parseFloat(manoObraMontoVal.toFixed(2)) },
+          total: parseFloat(totalSpan.textContent), 
+          creadoEl: firebase.firestore.FieldValue.serverTimestamp(), estado: "Pendiente"
+        };
+        try {
+          await db.collection("presupuestos").add(presupuesto);
+          alert("¡Presupuesto guardado!");
+          tablaBody.innerHTML = ""; totalSpan.textContent = "0.00"; vehiculoSelect.value = ""; 
+          inputManoObraDescripcion.value = ""; inputManoObraMonto.value = "";      
+          if (infoClientePresupuestoPDOM) infoClientePresupuestoPDOM.textContent = "";
+          actualizarTotalPresupuesto(); 
+        } catch (e) { alert("Error al guardar presupuesto: " + e.message); }
+      });
     }
   }
 
