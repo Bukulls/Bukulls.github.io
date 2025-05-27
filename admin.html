@@ -1089,14 +1089,46 @@ Para cualquier consulta, no dude en contactarnos.`;
     });
   });
 
-  const linkVehiculos = document.querySelector('.admin-menu a[data-section="vehiculos"]');
-  if (linkVehiculos) {
-      linkVehiculos.click();
-  } else if (vehiculosSection) { 
-      vehiculosSection.classList.remove('hidden');
-      if (typeof mostrarVehiculos === 'function') mostrarVehiculos();
-  }
+// --- CARGA INICIAL DE LA SECCIÓN POR DEFECTO ---
+  const seccionPorDefecto = 'vehiculos'; // Puedes cambiar esto si quieres otra sección por defecto
+  const linkSeccionPorDefecto = document.querySelector(`.admin-menu a[data-section="${seccionPorDefecto}"]`);
 
+  if (linkSeccionPorDefecto) {
+      // Ocultar todas las secciones primero
+      document.querySelectorAll('.admin-content section').forEach(sec => {
+          sec.classList.add('hidden');
+      });
+      // Mostrar la sección por defecto
+      const seccionDOM = document.getElementById(seccionPorDefecto + '-section');
+      if (seccionDOM) {
+          seccionDOM.classList.remove('hidden');
+          console.log(`Sección por defecto '${seccionPorDefecto}' activada.`);
+
+          // Cargar los datos de la sección por defecto
+          if (seccionPorDefecto === 'vehiculos' && typeof mostrarVehiculos === 'function') {
+              mostrarVehiculos();
+          } else if (seccionPorDefecto === 'presupuestos') {
+              if (typeof cargarVehiculosParaPresupuesto === 'function') cargarVehiculosParaPresupuesto();
+              if (typeof mostrarPresupuestosGuardados === 'function') mostrarPresupuestosGuardados();
+          } else if (seccionPorDefecto === 'trabajos' && typeof mostrarTrabajos === 'function') {
+              mostrarTrabajos();
+          }
+          // Añade más 'else if' si tienes otras secciones con carga de datos inicial
+      } else {
+          console.warn(`El elemento de la sección por defecto '${seccionPorDefecto}-section' no fue encontrado.`);
+      }
+  } else {
+      // Fallback si el sistema de menú no está presente o la sección por defecto no tiene link
+      // Esto es menos ideal, pero asegura que al menos se intente mostrar la de vehículos
+      console.warn(`No se encontró el link para la sección por defecto '${seccionPorDefecto}'. Intentando fallback a vehículos.`);
+      if (vehiculosSection) {
+          document.querySelectorAll('.admin-content section').forEach(sec => sec.classList.add('hidden'));
+          vehiculosSection.classList.remove('hidden');
+          if (typeof mostrarVehiculos === 'function') {
+              mostrarVehiculos();
+          }
+      }
+  }
 });
 </script>
 
