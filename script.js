@@ -16,28 +16,24 @@ const auth = firebase.auth();
 const storage = firebase.storage();
 
 document.addEventListener('DOMContentLoaded', function() {
-  // --- LÓGICA PARA EL MODAL DE LOGIN ---
-  const btnAbrirModalLogin = document.getElementById('btn-abrir-modal-login');
-  const modalLogin = document.getElementById('modal-login');
-  const btnCerrarModalLogin = document.getElementById('btn-cerrar-modal-login');
+  const btnAbrirPanelLogin = document.getElementById('btn-abrir-modal-login');
+  const panelLogin = document.getElementById('panel-login');
+  const btnCerrarPanelLogin = document.getElementById('btn-cerrar-panel-login');
   const btnLogin = document.getElementById('btn-login');
   const btnRegister = document.getElementById('btn-register');
 
-  if (btnAbrirModalLogin) {
-    btnAbrirModalLogin.addEventListener('click', () => {
-      modalLogin.style.display = 'flex';
+  if (btnAbrirPanelLogin) {
+    btnAbrirPanelLogin.addEventListener('click', () => {
+      panelLogin.style.display = 'block';
+      window.scrollTo({ top: panelLogin.offsetTop - 20, behavior: 'smooth' });
     });
   }
-  if (btnCerrarModalLogin) {
-    btnCerrarModalLogin.addEventListener('click', () => {
-      modalLogin.style.display = 'none';
+
+  if (btnCerrarPanelLogin) {
+    btnCerrarPanelLogin.addEventListener('click', () => {
+      panelLogin.style.display = 'none';
     });
   }
-  window.addEventListener('click', (e) => {
-    if (e.target === modalLogin) {
-      modalLogin.style.display = 'none';
-    }
-  });
 
   btnLogin.addEventListener('click', () => {
     const email = document.getElementById('login-email').value;
@@ -49,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     auth.signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
         alert("¡Inicio de sesión exitoso!");
-        modalLogin.style.display = 'none';
+        panelLogin.style.display = 'none';
         mostrarBotonAdminSiAutenticado();
       })
       .catch((error) => {

@@ -26,6 +26,18 @@
     </nav>
 </header>
 
+<!-- Panel de Inicio de Sesión -->
+<section id="panel-login" style="display: none; background-color: #222; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 300px;">
+  <h2>Iniciar Sesión</h2>
+  <input type="email" id="login-email" placeholder="Correo Electrónico" style="margin-bottom: 10px; width: 100%; padding: 5px;">
+  <input type="password" id="login-password" placeholder="Contraseña" style="margin-bottom: 10px; width: 100%; padding: 5px;">
+  <button id="btn-login" style="margin-bottom: 10px; width: 100%;">Iniciar Sesión</button>
+  <p>¿No tienes cuenta?</p>
+  <button id="btn-register" style="width: 100%;">Crear Cuenta</button>
+  <br><br>
+  <button id="btn-cerrar-panel-login" style="background: #ad0000; width: 100%; margin-top: 10px;">Cerrar</button>
+</section>
+
 <section class="banner">
     <h2>Bienvenido a tu taller de confianza</h2>
     <p>Expertos en el cuidado y reparación de tu vehículo.</p>
@@ -65,20 +77,6 @@
 <footer>
     <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
 </footer>
-
-<!-- Modal de Login -->
-<div id="modal-login" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-    <div style="background: #222; padding: 20px; border-radius: 8px; width: 300px; text-align: center;">
-        <h2>Iniciar Sesión</h2>
-        <input type="email" id="login-email" placeholder="Correo Electrónico" style="margin-bottom: 10px; width: 100%; padding: 5px;">
-        <input type="password" id="login-password" placeholder="Contraseña" style="margin-bottom: 10px; width: 100%; padding: 5px;">
-        <button id="btn-login" style="margin-bottom: 10px; width: 100%;">Iniciar Sesión</button>
-        <p>¿No tienes cuenta?</p>
-        <button id="btn-register" style="width: 100%;">Crear Cuenta</button>
-        <br><br>
-        <button id="btn-cerrar-modal-login" style="background: #ad0000; width: 100%; margin-top: 10px;">Cerrar</button>
-    </div>
-</div>
 
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
