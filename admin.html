@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel de Administración - Mecanico Automotriz Luis Díaz</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* Estilo básico para el layout de admin con menú lateral */
 .admin-container {
@@ -73,7 +73,6 @@
   </aside>
 
   <main class="admin-content">
-    <!-- Sección Vehículos visible por defecto -->
     <section id="vehiculos-section">
       <h2>Panel de Administración de Vehículos</h2>
       <div id="form-ingreso-vehiculo-container">
@@ -103,12 +102,11 @@
         <h3>Vehículos Ingresados</h3>
         <div id="lista-vehiculos">
           <p>Aún no hay vehículos registrados.</p>
-        </div>
+          </div>
       </div>
     </section>
 
- <!-- Sección Presupuestos -->
-<section id="presupuestos-section" class="hidden">
+ <section id="presupuestos-section" class="hidden">
   <h2>Presupuestos</h2>
   <div>
     <label for="vehiculo-presupuesto">Seleccionar Vehículo:</label>
@@ -132,125 +130,16 @@
     <strong>Total: $</strong><span id="total-presupuesto">0</span>
   </div>
   <button id="guardar-presupuesto" style="margin-top: 10px;">Guardar Presupuesto</button>
-</section>
-
-<script>
-// JS para cargar vehículos y manejar la tabla de presupuestos
-document.addEventListener('DOMContentLoaded', function() {
-  const vehiculoSelect = document.getElementById('vehiculo-presupuesto');
-  const tablaBody = document.querySelector('#tabla-presupuesto tbody');
-  const totalSpan = document.getElementById('total-presupuesto');
-  const btnAgregarItem = document.getElementById('agregar-item');
-  const btnGuardarPresupuesto = document.getElementById('guardar-presupuesto');
-
-  // Cargar vehículos
-  async function cargarVehiculosPresupuesto() {
-    try {
-      const snapshot = await db.collection("vehiculos").orderBy("registradoEl", "desc").get();
-      vehiculoSelect.innerHTML = "<option value=''>-- Selecciona un vehículo --</option>";
-      snapshot.forEach(doc => {
-        const veh = doc.data();
-        const option = document.createElement('option');
-        option.value = doc.id;
-        option.textContent = veh.patente + " - " + veh.marca + " - " + veh.modelo;
-        vehiculoSelect.appendChild(option);
-      });
-    } catch (e) {
-      console.error("Error cargando vehículos:", e);
-    }
-  }
-
-  cargarVehiculosPresupuesto();
-
-  // Agregar fila
-  btnAgregarItem.addEventListener('click', () => {
-    const fila = document.createElement('tr');
-    fila.innerHTML = `
-      <td><input type="text" placeholder="Repuesto"></td>
-      <td><input type="number" placeholder="Monto" min="0"></td>
-      <td><input type="url" placeholder="Link"></td>
-      <td><button class="borrar-item">Borrar</button></td>
-    `;
-    tablaBody.appendChild(fila);
-    actualizarTotal();
-  });
-
-  // Borrar fila
-  tablaBody.addEventListener('click', e => {
-    if (e.target.classList.contains('borrar-item')) {
-      e.target.closest('tr').remove();
-      actualizarTotal();
-    }
-  });
-
-  // Actualizar total en tiempo real
-  tablaBody.addEventListener('input', e => {
-    if (e.target.matches('input[type="number"]')) {
-      actualizarTotal();
-    }
-  });
-
-  function actualizarTotal() {
-    let total = 0;
-    tablaBody.querySelectorAll('tr').forEach(row => {
-      const monto = parseFloat(row.querySelector('input[type="number"]').value) || 0;
-      total += monto;
-    });
-    totalSpan.textContent = total;
-  }
-
-  // Guardar presupuesto
-  btnGuardarPresupuesto.addEventListener('click', async () => {
-    const vehiculoId = vehiculoSelect.value;
-    if (!vehiculoId) {
-      alert("Por favor, selecciona un vehículo.");
-      return;
-    }
-    const items = [];
-    tablaBody.querySelectorAll('tr').forEach(row => {
-      const repuesto = row.cells[0].querySelector('input').value.trim();
-      const monto = parseFloat(row.cells[1].querySelector('input').value) || 0;
-      const link = row.cells[2].querySelector('input').value.trim();
-      if (repuesto && monto > 0) {
-        items.push({ repuesto, monto, link });
-      }
-    });
-    if (items.length === 0) {
-      alert("Agrega al menos un item.");
-      return;
-    }
-    const presupuesto = {
-      vehiculoId,
-      items,
-      total: parseFloat(totalSpan.textContent),
-      creadoEl: firebase.firestore.FieldValue.serverTimestamp()
-    };
-    try {
-      await db.collection("presupuestos").add(presupuesto);
-      alert("¡Presupuesto guardado con éxito!");
-      tablaBody.innerHTML = "";
-      totalSpan.textContent = "0";
-      vehiculoSelect.value = "";
-    } catch (e) {
-      console.error("Error guardando presupuesto:", e);
-      alert("Error al guardar el presupuesto. Revisa la consola.");
-    }
-  });
-});
-</script>
-</section>
-
-
-    <!-- Sección Trabajos -->
-    <section id="trabajos-section" class="hidden">
+</section> <section id="trabajos-section" class="hidden">
       <h2>Trabajos</h2>
       <p>En construcción. Aquí podrás gestionar trabajos.</p>
+       <div id="lista-trabajos"></div>
     </section>
 
-    <!-- Sección Manuales -->
     <section id="manuales-section" class="hidden">
       <h2>Manuales</h2>
       <p>En construcción. Aquí podrás gestionar manuales.</p>
+       <div id="lista-manuales"></div>
     </section>
   </main>
 </div>
@@ -266,13 +155,190 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="script.js"></script>
 
 <script>
-// Alternar secciones al hacer clic en el menú lateral
-document.querySelectorAll('.admin-menu a[data-section]').forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    const sectionId = link.dataset.section + '-section';
-    document.querySelectorAll('.admin-content section').forEach(sec => sec.classList.add('hidden'));
-    document.getElementById(sectionId).classList.remove('hidden');
+// JS para cargar vehículos y manejar la tabla de presupuestos en admin.html
+document.addEventListener('DOMContentLoaded', function() {
+  // Lógica para la sección de Presupuestos
+  const presupuestosSection = document.getElementById('presupuestos-section');
+  if (presupuestosSection) { // Solo ejecutar si estamos en una página con esta sección
+    const vehiculoSelect = document.getElementById('vehiculo-presupuesto');
+    const tablaBody = document.querySelector('#tabla-presupuesto tbody');
+    const totalSpan = document.getElementById('total-presupuesto');
+    const btnAgregarItem = document.getElementById('agregar-item');
+    const btnGuardarPresupuesto = document.getElementById('guardar-presupuesto');
+
+    // Cargar vehículos
+    async function cargarVehiculosPresupuesto() {
+      console.log("Intentando cargar vehículos para presupuestos..."); // (MODIFICACIÓN)
+      if (!db) { // (MODIFICACIÓN: Verificar que db esté disponible)
+          console.error("Firestore (db) no está inicializado. Verifica script.js y su carga.");
+          if(vehiculoSelect) vehiculoSelect.innerHTML = "<option value=''>Error: DB no configurada</option>";
+          return;
+      }
+      try {
+        const snapshot = await db.collection("vehiculos").orderBy("registradoEl", "desc").get();
+        if (vehiculoSelect) {
+            vehiculoSelect.innerHTML = "<option value=''>-- Selecciona un vehículo --</option>";
+            if (snapshot.empty) {
+                console.log("No se encontraron vehículos en Firestore."); // (MODIFICACIÓN)
+                vehiculoSelect.innerHTML = "<option value=''>No hay vehículos registrados</option>";
+            } else {
+                snapshot.forEach(doc => {
+                    const veh = doc.data();
+                    const option = document.createElement('option');
+                    option.value = doc.id;
+                    option.textContent = `${veh.patente || 'N/A'} - ${veh.marca || 'N/A'} - ${veh.modelo || 'N/A'}`; // (MODIFICACIÓN: Manejar campos undefined)
+                    vehiculoSelect.appendChild(option);
+                });
+                console.log("Vehículos cargados en el select:", snapshot.size); // (MODIFICACIÓN)
+            }
+        }
+      } catch (e) {
+        console.error("Error cargando vehículos:", e); // (MODIFICACIÓN)
+        if(vehiculoSelect) vehiculoSelect.innerHTML = "<option value=''>Error al cargar vehículos</option>"; // (MODIFICACIÓN)
+      }
+    }
+
+    // Solo llamar a cargarVehiculosPresupuesto si la sección de presupuestos está visible o se va a mostrar
+    // O llamarla una vez y que se actualice si es necesario. Por ahora, la llamamos al inicio.
+    // Si la sección de presupuestos no es la default, se podría llamar cuando se muestre esa sección.
+    if (document.getElementById('presupuestos-section') && !document.getElementById('presupuestos-section').classList.contains('hidden')) {
+        cargarVehiculosPresupuesto();
+    }
+    // O, si se muestra al hacer clic, llamar a cargarVehiculosPresupuesto dentro del event listener que muestra la sección.
+    // Por simplicidad y dado que está en DOMContentLoaded, la cargaremos una vez.
+    // Si la colección de vehículos puede cambiar mientras el admin está en la página, se necesitaría un listener onSnapshot.
+
+
+    if (btnAgregarItem) {
+      btnAgregarItem.addEventListener('click', () => {
+        if (!tablaBody) return;
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td><input type="text" placeholder="Repuesto" style="width:90%;"></td>
+          <td><input type="number" placeholder="Monto" min="0" style="width:80%;"></td>
+          <td><input type="url" placeholder="Link (opcional)" style="width:90%;"></td>
+          <td><button class="borrar-item">Borrar</button></td>
+        `;
+        tablaBody.appendChild(fila);
+        actualizarTotal();
+      });
+    }
+
+    if (tablaBody) {
+      tablaBody.addEventListener('click', e => {
+        if (e.target.classList.contains('borrar-item')) {
+          e.target.closest('tr').remove();
+          actualizarTotal();
+        }
+      });
+
+      tablaBody.addEventListener('input', e => {
+        if (e.target.matches('input[type="number"]')) {
+          actualizarTotal();
+        }
+      });
+    }
+
+
+    function actualizarTotal() {
+      if (!tablaBody || !totalSpan) return;
+      let total = 0;
+      tablaBody.querySelectorAll('tr').forEach(row => {
+        const montoInput = row.querySelector('input[type="number"]');
+        if (montoInput) {
+            const monto = parseFloat(montoInput.value) || 0;
+            total += monto;
+        }
+      });
+      totalSpan.textContent = total.toFixed(2); // (MODIFICACIÓN: Formatear a 2 decimales)
+    }
+
+    if (btnGuardarPresupuesto) {
+      btnGuardarPresupuesto.addEventListener('click', async () => {
+        if (!vehiculoSelect || !tablaBody || !totalSpan || !db) {
+            alert("Error de configuración. Algunos elementos no se encontraron.");
+            return;
+        }
+        const vehiculoId = vehiculoSelect.value;
+        if (!vehiculoId) {
+          alert("Por favor, selecciona un vehículo.");
+          return;
+        }
+        const items = [];
+        tablaBody.querySelectorAll('tr').forEach(row => {
+          const repuestoInput = row.cells[0].querySelector('input');
+          const montoInput = row.cells[1].querySelector('input');
+          const linkInput = row.cells[2].querySelector('input');
+
+          if (repuestoInput && montoInput) {
+            const repuesto = repuestoInput.value.trim();
+            const monto = parseFloat(montoInput.value) || 0;
+            const link = linkInput ? linkInput.value.trim() : '';
+            if (repuesto && monto > 0) {
+              items.push({ repuesto, monto, link });
+            }
+          }
+        });
+
+        if (items.length === 0) {
+          alert("Agrega al menos un item al presupuesto.");
+          return;
+        }
+        const presupuesto = {
+          vehiculoId,
+          vehiculoInfo: vehiculoSelect.options[vehiculoSelect.selectedIndex].text, // (MODIFICACIÓN: Guardar texto del vehículo)
+          items,
+          total: parseFloat(totalSpan.textContent),
+          creadoEl: firebase.firestore.FieldValue.serverTimestamp(),
+          estado: "Pendiente" // (MODIFICACIÓN: Añadir un estado inicial)
+        };
+        try {
+          await db.collection("presupuestos").add(presupuesto);
+          alert("¡Presupuesto guardado con éxito!");
+          if (tablaBody) tablaBody.innerHTML = ""; // Limpiar tabla
+          if (totalSpan) totalSpan.textContent = "0";
+          if (vehiculoSelect) vehiculoSelect.value = ""; // Resetear select
+        } catch (e) {
+          console.error("Error guardando presupuesto:", e);
+          alert("Error al guardar el presupuesto. Revisa la consola.");
+        }
+      });
+    }
+    // Llamada inicial para cargar vehículos si la sección de presupuestos es la visible por defecto
+    // Esto depende de tu lógica de cuál sección se muestra primero.
+    // Si 'presupuestos-section' no es la activa al cargar, esta llamada se puede optimizar
+    // para que solo se ejecute cuando el usuario navegue a esa sección.
+    // Por ahora, se ejecutará si 'vehiculoSelect' existe.
+    if(vehiculoSelect) {
+        cargarVehiculosPresupuesto();
+    }
+
+  } // Fin de if (presupuestosSection)
+
+  // Alternar secciones al hacer clic en el menú lateral
+  document.querySelectorAll('.admin-menu a[data-section]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const sectionId = link.dataset.section + '-section';
+      const targetSection = document.getElementById(sectionId);
+
+      document.querySelectorAll('.admin-content section').forEach(sec => {
+        if (sec.id !== sectionId) {
+          sec.classList.add('hidden');
+        }
+      });
+
+      if (targetSection) {
+        targetSection.classList.remove('hidden');
+        // (MODIFICACIÓN SUGERIDA) Si es la sección de presupuestos y aún no se han cargado los vehículos, cargarlos ahora.
+        // Esto es útil si la carga inicial no ocurrió o si quieres recargar.
+        // if (sectionId === 'presupuestos-section' && vehiculoSelect && vehiculoSelect.options.length <= 1) { // <=1 para contar el "-- Selecciona --"
+        //    cargarVehiculosPresupuesto();
+        // }
+      } else {
+        console.warn("Sección no encontrada con ID:", sectionId);
+      }
+    });
   });
 });
 </script>
