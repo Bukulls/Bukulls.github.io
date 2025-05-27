@@ -17,21 +17,44 @@ body { background-color: #000; color: #fff; font-family: Arial, sans-serif; marg
 .admin-menu a:hover, .admin-menu a.active { color: #ad0000; }
 .admin-content { flex: 1; padding: 20px; }
 
-button, .btn-action { /* Estilos para botones de acción si los necesitas */
+label { display: block; margin-top: 10px; margin-bottom: 5px; color: #ccc; }
+select {
+    width: auto; /* Ajustar para que no ocupe todo el ancho innecesariamente */
+    padding: 8px; 
+    margin-bottom: 10px; 
+    border-radius: 4px;
+    border: 1px solid #555; 
+    background-color: #333; 
+    color: #fff; 
+    box-sizing: border-box;
+}
+
+button, .btn-action {
     background-color: #ad0000; color: white; padding: 8px 12px; border: none;
     border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px; margin-right: 5px;
 }
 button:hover, .btn-action:hover { background-color: #ff0000; }
 
-#lista-trabajos div > div { /* Estilo para cada item de trabajo */
+#lista-trabajos .trabajo-item { 
     background-color: #1e1e1e; border: 1px solid #383838; padding: 15px; 
     margin-bottom: 15px; border-radius: 5px; 
 }
-#lista-trabajos h5 { color: #5cb85c; margin-top:0; } /* Verde para trabajos */
-#lista-trabajos h5.completado { color: gray; } /* Gris para trabajos completados */
+#lista-trabajos h5 { margin-top:0; }
+#lista-trabajos .estado-pendiente h5 { color: #ffc107; } /* Amarillo para Pendiente */
+#lista-trabajos .estado-en-proceso h5 { color: #17a2b8; } /* Celeste/Cyan para En Proceso */
+#lista-trabajos .estado-completado h5 { color: #28a745; } /* Verde más brillante para Completado */
+#lista-trabajos .estado-cancelado h5 { color: #dc3545; } /* Rojo para Cancelado */
+
 
 header { background-color: #000; color: #ad0000; padding: 20px; text-align: center; }
 footer { background-color: #000; color: #ad0000; text-align: center; padding: 15px; border-top: 1px solid #333;}
+
+.filtros-trabajos {
+    background-color: #2a2a2a;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
 </style>
 </head>
 <body>
@@ -46,7 +69,8 @@ footer { background-color: #000; color: #ad0000; text-align: center; padding: 15
     <ul>
       <li><a href="admin_vehiculos.html">Vehículos</a></li> 
       <li><a href="admin_presupuestos.html">Presupuestos</a></li>
-      <li><a href="admin_trabajos.html" class="active">Trabajos</a></li> <li><a href="admin_manuales.html">Manuales</a></li>
+      <li><a href="admin_trabajos.html" class="active">Trabajos</a></li>
+      <li><a href="admin_manuales.html">Manuales</a></li>
       <li><a href="index.html">Volver a Inicio</a></li>
     </ul>
   </aside>
@@ -54,9 +78,20 @@ footer { background-color: #000; color: #ad0000; text-align: center; padding: 15
   <main class="admin-content">
     <section id="trabajos-section"> 
       <h2>Gestión de Trabajos</h2>
-      <p>Aquí puedes ver los trabajos aceptados y su estado.</p>
+      <p>Aquí puedes ver los trabajos aceptados y actualizar su estado.</p>
       
-      <div id="lista-trabajos">
+      <div class="filtros-trabajos">
+          <label for="filtro-estado-trabajo">Filtrar por Estado:</label>
+          <select id="filtro-estado-trabajo">
+              <option value="todos">Todos los Estados</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="En Proceso">En Proceso</option>
+              <option value="Completado">Completado</option>
+              <option value="Cancelado">Cancelado</option>
+          </select>
+      </div>
+      
+       <div id="lista-trabajos">
            <p>Cargando trabajos...</p>
        </div>
     </section>
@@ -80,11 +115,9 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
-  // --- Elementos DOM para Trabajos ---
   const listaTrabajosDiv = document.getElementById('lista-trabajos');
-  // const filtroEstadoTrabajoSelect = document.getElementById('filtro-estado-trabajo'); // Para futuros filtros
+  const filtroEstadoTrabajoSelect = document.getElementById('filtro-estado-trabajo');
 
-  // --- Funciones para Trabajos ---
   async function mostrarTrabajos(filtroEstado = "todos") {
       if (!listaTrabajosDiv) return;
       listaTrabajosDiv.innerHTML = '<p>Cargando trabajos...</p>';
@@ -94,73 +127,110 @@ document.addEventListener('DOMContentLoaded', function() {
           if (filtroEstado !== "todos") {
               query = query.where("estadoTrabajo", "==", filtroEstado);
           }
-          // Puedes añadir más orderBy si es necesario, por ejemplo, por fecha de inicio
-          query = query.orderBy("fechaInicioTrabajo", "desc");
+          query = query.orderBy("fechaInicioTrabajo", "desc"); // O por 'estadoTrabajo' y luego por fecha
 
-          const snapshot = await query.get();
-
-          if (snapshot.empty) {
-              listaTrabajosDiv.innerHTML = `<p>No hay trabajos ${filtroEstado !== "todos" ? `con estado '${filtroEstado}'` : ''} registrados.</p>`; 
-              return;
-          }
-          let trabajosHTML = "";
-          snapshot.forEach(doc => {
-              const t = doc.data(); 
-              const id = doc.id; // ID del documento del trabajo
-
-              let manoDeObraTrabajoHTML = '';
-              if (t.manoDeObra && t.manoDeObra.monto > 0) {
-                  manoDeObraTrabajoHTML = `<li style="color: #ffc107;">Mano de Obra (${t.manoDeObra.descripcion || 'General'}): $${t.manoDeObra.monto.toFixed(2)}</li>`;
+          // Usar onSnapshot para actualizaciones en tiempo real
+          query.onSnapshot(snapshot => {
+              if (snapshot.empty) {
+                  listaTrabajosDiv.innerHTML = `<p>No hay trabajos ${filtroEstado !== "todos" ? `con estado '${filtroEstado}'` : ''} registrados.</p>`; 
+                  return;
               }
-              
-              // Determinar el color del título basado en el estado
-              let tituloColor = '#5cb85c'; // Verde para Pendiente/En Proceso
-              if (t.estadoTrabajo === 'Completado') {
-                  tituloColor = 'gray';
-              } else if (t.estadoTrabajo === 'Cancelado') {
-                  tituloColor = '#dc3545'; // Rojo para Cancelado
-              }
+              let trabajosHTML = "";
+              snapshot.forEach(doc => {
+                  const t = doc.data(); 
+                  const id = doc.id; 
 
+                  let manoDeObraTrabajoHTML = '';
+                  if (t.manoDeObra && t.manoDeObra.monto > 0) {
+                      manoDeObraTrabajoHTML = `<li style="color: #ffc107;">Mano de Obra (${t.manoDeObra.descripcion || 'General'}): $${t.manoDeObra.monto.toFixed(2)}</li>`;
+                  }
+                  
+                  let claseEstado = `estado-${(t.estadoTrabajo || 'pendiente').toLowerCase().replace(/\s+/g, '-')}`;
 
-              trabajosHTML += `
-                  <div style="border: 1px solid ${t.estadoTrabajo === 'Completado' ? 'gray' : t.estadoTrabajo === 'Cancelado' ? '#721c24' :'#5cb85c'}; margin: 15px 0; padding: 15px; border-radius: 5px; background-color: #1e1e1e;">
-                      <h5 style="margin-top:0; color: ${tituloColor};">Trabajo: ${t.vehiculoInfo || 'N/A'} (ID: ${id.substring(0,8)})</h5>
-                      <p><strong>Cliente:</strong> ${t.clienteNombre || 'N/A'} ${t.clienteTelefono ? `- Tel: ${t.clienteTelefono}`: ''}</p>
-                      <p><strong>Estado Actual del Trabajo:</strong> <span style="font-weight:bold; color:${tituloColor};">${t.estadoTrabajo || 'Pendiente'}</span></p>
-                      <p><strong>Total Presupuestado:</strong> $${t.total ? t.total.toFixed(2) : '0.00'}</p>
-                      <p><strong>ID Presupuesto Original:</strong> ${t.presupuestoOriginalId || 'N/A'}</p>
-                      <p><strong>Items del Presupuesto:</strong></p>
-                      <ul style="padding-left: 20px; margin-bottom: 10px;">
-                          ${t.items && t.items.length > 0 ? t.items.map(item => `<li>${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'}</li>`).join('') : '<li>No hay items detallados.</li>'}
-                          ${manoDeObraTrabajoHTML}
-                      </ul>
-                      <p style="font-size: 0.8em; color: #888;">Presupuesto Aceptado el: ${t.fechaAceptacionPresupuesto ? new Date(t.fechaAceptacionPresupuesto.seconds * 1000).toLocaleString() : 'N/A'}</p>
-                      <p style="font-size: 0.8em; color: #888;">Trabajo Iniciado el: ${t.fechaInicioTrabajo ? new Date(t.fechaInicioTrabajo.seconds * 1000).toLocaleString() : 'N/A'}</p>
-                      
-                      <div style="margin-top: 10px;">
-                          <label for="estado-trabajo-${id}">Cambiar Estado:</label>
-                          <select id="estado-trabajo-${id}" data-trabajo-id="${id}" class="cambiar-estado-trabajo-select" style="margin-bottom:10px; width:auto; padding: 8px;">
-                              <option value="Pendiente" ${t.estadoTrabajo === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-                              <option value="En Proceso" ${t.estadoTrabajo === 'En Proceso' ? 'selected' : ''}>En Proceso</option>
-                              <option value="Completado" ${t.estadoTrabajo === 'Completado' ? 'selected' : ''}>Completado</option>
-                              <option value="Cancelado" ${t.estadoTrabajo === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
-                          </select>
+                  trabajosHTML += `
+                      <div class="trabajo-item ${claseEstado}">
+                          <h5>Trabajo: ${t.vehiculoInfo || 'N/A'} (ID: ${id.substring(0,8)})</h5>
+                          <p><strong>Cliente:</strong> ${t.clienteNombre || 'N/A'} ${t.clienteTelefono ? `- Tel: ${t.clienteTelefono}`: ''}</p>
+                          <p><strong>Monto Total Presupuestado:</strong> <span style="font-weight:bold; color: #4CAF50;">$${t.total ? t.total.toFixed(2) : '0.00'}</span></p>
+                          <p><strong>Estado Actual:</strong> <span style="font-weight:bold;">${t.estadoTrabajo || 'Pendiente'}</span></p>
+                          <p><strong>ID Presupuesto Original:</strong> ${t.presupuestoOriginalId || 'N/A'}</p>
+                          <p><strong>Items del Presupuesto:</strong></p>
+                          <ul style="padding-left: 20px; margin-bottom: 10px;">
+                              ${t.items && t.items.length > 0 ? t.items.map(item => `<li>${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'}</li>`).join('') : '<li>No hay items detallados.</li>'}
+                              ${manoDeObraTrabajoHTML}
+                          </ul>
+                          <p style="font-size: 0.8em; color: #888;">Presup. Aceptado: ${t.fechaAceptacionPresupuesto ? new Date(t.fechaAceptacionPresupuesto.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                          <p style="font-size: 0.8em; color: #888;">Trabajo Iniciado: ${t.fechaInicioTrabajo ? new Date(t.fechaInicioTrabajo.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                          ${t.fechaCompletado ? `<p style="font-size: 0.8em; color: #28a745;">Completado el: ${new Date(t.fechaCompletado.seconds * 1000).toLocaleString()}</p>` : ''}
+                          ${t.fechaCancelado ? `<p style="font-size: 0.8em; color: #dc3545;">Cancelado el: ${new Date(t.fechaCancelado.seconds * 1000).toLocaleString()}</p>` : ''}
+                          
+                          <div style="margin-top: 10px;">
+                              <label for="estado-trabajo-${id}" style="display:inline-block; margin-right:5px;">Cambiar Estado:</label>
+                              <select id="estado-trabajo-${id}" data-trabajo-id="${id}" class="cambiar-estado-trabajo-select">
+                                  <option value="Pendiente" ${t.estadoTrabajo === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                                  <option value="En Proceso" ${t.estadoTrabajo === 'En Proceso' ? 'selected' : ''}>En Proceso</option>
+                                  <option value="Completado" ${t.estadoTrabajo === 'Completado' ? 'selected' : ''}>Completado</option>
+                                  <option value="Cancelado" ${t.estadoTrabajo === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                              </select>
+                              ${t.estadoTrabajo !== 'Completado' && t.estadoTrabajo !== 'Cancelado' ?
+                                `<button class="btn-action confirmar-cambio-estado" data-trabajo-id="${id}" style="background-color:#007bff; margin-left:10px;">Confirmar Cambio</button>`
+                                : ''
+                              }
                           </div>
-                  </div>`;
-          });
-          listaTrabajosDiv.innerHTML = trabajosHTML;
-
-          // Añadir event listeners a los nuevos selects para cambiar estado
-          listaTrabajosDiv.querySelectorAll('.cambiar-estado-trabajo-select').forEach(select => {
-              select.addEventListener('change', async (e) => {
-                  const trabajoId = e.target.dataset.trabajoId;
-                  const nuevoEstado = e.target.value;
-                  await actualizarEstadoTrabajo(trabajoId, nuevoEstado);
+                      </div>`;
               });
+              listaTrabajosDiv.innerHTML = trabajosHTML;
+
+              listaTrabajosDiv.querySelectorAll('.confirmar-cambio-estado').forEach(button => {
+                  button.addEventListener('click', async (e) => {
+                      const trabajoId = e.target.dataset.trabajoId;
+                      const selectEstado = document.getElementById(`estado-trabajo-${trabajoId}`);
+                      const nuevoEstado = selectEstado.value;
+                      
+                      if (nuevoEstado === "Completado" || nuevoEstado === "Cancelado") {
+                          if (!confirm(`¿Estás seguro de cambiar el estado a "${nuevoEstado}"? Esta acción podría ser final.`)) {
+                              // Revertir el select al estado original si el usuario cancela
+                              const docSnap = await db.collection("trabajos_en_curso").doc(trabajoId).get();
+                              if(docSnap.exists) selectEstado.value = docSnap.data().estadoTrabajo;
+                              return;
+                          }
+                      }
+                      await actualizarEstadoTrabajo(trabajoId, nuevoEstado);
+                  });
+              });
+              
+              // Listener para cambio directo en select si no hay botón de confirmar (para Pendiente -> En Proceso)
+              listaTrabajosDiv.querySelectorAll('.cambiar-estado-trabajo-select').forEach(select => {
+                  // Guardar el estado original para poder revertir si la confirmación de estados finales es cancelada
+                  select.addEventListener('focus', function () {
+                      this.previousValue = this.value;
+                  });
+
+                  select.addEventListener('change', async (e) => {
+                      const trabajoId = e.target.dataset.trabajoId;
+                      const nuevoEstado = e.target.value;
+                      const botonConfirmarAsociado = listaTrabajosDiv.querySelector(`.confirmar-cambio-estado[data-trabajo-id="${trabajoId}"]`);
+                      
+                      // Si no hay botón de confirmar (ya está completado/cancelado o es un cambio que no requiere confirmación)
+                      // O si el nuevo estado NO es Completado ni Cancelado, actualizar directamente.
+                      if (!botonConfirmarAsociado || (nuevoEstado !== "Completado" && nuevoEstado !== "Cancelado")) {
+                          await actualizarEstadoTrabajo(trabajoId, nuevoEstado);
+                      } else {
+                          // Si hay botón de confirmar y el estado es final, la confirmación se maneja por el botón.
+                          // El usuario debe hacer clic en "Confirmar Cambio".
+                          // Si el usuario cambia el select y luego cancela, el select se revierte en el listener del botón.
+                      }
+                  });
+              });
+
+
+          }, error => {
+              console.error("Error con la escucha en tiempo real de trabajos:", error);
+              if(listaTrabajosDiv) listaTrabajosDiv.innerHTML = "<p style='color:red;'>Error al cargar los trabajos.</p>";
           });
 
       } catch (error) { 
-          console.error("Error al mostrar trabajos:", error);
+          console.error("Error inicial al mostrar trabajos:", error);
           if(listaTrabajosDiv) listaTrabajosDiv.innerHTML = "<p style='color:red;'>Error al cargar los trabajos.</p>";
       }
   }
@@ -170,47 +240,41 @@ document.addEventListener('DOMContentLoaded', function() {
           alert("Faltan datos para actualizar el estado del trabajo.");
           return;
       }
+      console.log(`Actualizando trabajo ${trabajoId} a estado: ${nuevoEstado}`);
       try {
           const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
           let datosActualizar = { estadoTrabajo: nuevoEstado };
           
+          // Quitar fechas si se revierte de un estado final
+          datosActualizar.fechaCompletado = firebase.firestore.FieldValue.delete();
+          datosActualizar.fechaCancelado = firebase.firestore.FieldValue.delete();
+
           if (nuevoEstado === 'Completado') {
               datosActualizar.fechaCompletado = firebase.firestore.FieldValue.serverTimestamp();
           } else if (nuevoEstado === 'Cancelado') {
               datosActualizar.fechaCancelado = firebase.firestore.FieldValue.serverTimestamp();
           }
-          // Podrías querer quitar fechas si se cambia de Completado/Cancelado a otro estado
-          // Ejemplo: si se cambia de Completado a En Proceso, quitar fechaCompletado
-          // else {
-          //    datosActualizar.fechaCompletado = firebase.firestore.FieldValue.delete();
-          //    datosActualizar.fechaCancelado = firebase.firestore.FieldValue.delete();
-          // }
-
 
           await trabajoRef.update(datosActualizar);
           alert(`Estado del trabajo ID ${trabajoId.substring(0,8)} actualizado a: ${nuevoEstado}`);
-          mostrarTrabajos(); // Refrescar la lista para ver el cambio
+          // No es necesario llamar a mostrarTrabajos() aquí porque onSnapshot lo hará.
       } catch (error) {
           console.error("Error al actualizar estado del trabajo:", error);
           alert("Error al actualizar el estado: " + error.message);
       }
   }
 
-  // --- Event Listeners (si se añaden filtros) ---
-  // if (filtroEstadoTrabajoSelect) {
-  //     filtroEstadoTrabajoSelect.addEventListener('change', (e) => {
-  //         mostrarTrabajos(e.target.value);
-  //     });
-  // }
-
-
-  // --- Carga Inicial ---
-  if (typeof mostrarTrabajos === "function") {
-    mostrarTrabajos(); // Mostrar todos los trabajos al inicio
-  } else {
-    console.error("La función mostrarTrabajos no está definida al cargar la página.");
+  if (filtroEstadoTrabajoSelect) {
+      filtroEstadoTrabajoSelect.addEventListener('change', (e) => {
+          mostrarTrabajos(e.target.value);
+      });
   }
 
+  if (typeof mostrarTrabajos === "function") {
+    mostrarTrabajos(); 
+  } else {
+    console.error("La función mostrarTrabajos no está definida.");
+  }
 });
 </script>
 
