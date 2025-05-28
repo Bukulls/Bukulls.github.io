@@ -32,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const btnCerrarModalVerImagen = document.getElementById('cerrar-modal-ver-imagen');
   const imgVisualizadorNovedad = document.getElementById('imagen-novedad-visualizador');
 
+  let trabajosAbiertosAntesDeActualizar = new Set(); // Para guardar estado de desplegables
+
   if (btnCerrarModalEditarNovedad) {
     btnCerrarModalEditarNovedad.onclick = () => { if(modalEditarNovedad) modalEditarNovedad.style.display = "none"; }
   }
@@ -46,12 +48,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
   async function mostrarTrabajos(filtroEstado = "todos") {
       if (!listaTrabajosDiv) return;
-      listaTrabajosDiv.innerHTML = '<p>Cargando trabajos...</p>';
+      
       let query = db.collection("trabajos_en_curso");
       if (filtroEstado !== "todos") query = query.where("estadoTrabajo", "==", filtroEstado);
       query = query.orderBy("fechaInicioTrabajo", "desc");
 
       query.onSnapshot(snapshot => {
+          trabajosAbiertosAntesDeActualizar.clear();
+          listaTrabajosDiv.querySelectorAll('.trabajo-item.open').forEach(itemAbierto => {
+              trabajosAbiertosAntesDeActualizar.add(itemAbierto.id);
+          });
+
           if (snapshot.empty) {
               listaTrabajosDiv.innerHTML = `<p>No hay trabajos ${filtroEstado !== "todos" ? `con estado '${filtroEstado}'` : ''} registrados.</p>`;
               return;
@@ -59,7 +66,8 @@ document.addEventListener('DOMContentLoaded', function() {
           let trabajosHTML = "";
           snapshot.forEach(doc => {
               const t = doc.data();
-              const id = doc.id;
+              const id = doc.id; // Firestore doc ID
+              const trabajoItemId = `trabajo-${id}`; // HTML element ID
               const estadoTrabajoLower = (t.estadoTrabajo || 'pendiente').toLowerCase().replace(/\s+/g, '-');
               const claseEstado = `estado-${estadoTrabajoLower}`;
               const textoEncabezado = `${t.vehiculoInfo || 'Vehículo Desconocido'} - ${t.clienteNombre || 'Cliente Desconocido'}`;
@@ -112,9 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>`;
               }
               let manoDeObraTrabajoHTML = (t.manoDeObra && t.manoDeObra.monto > 0) ? `<li style="color: #ffc107;">Mano de Obra (${t.manoDeObra.descripcion || 'General'}): $${t.manoDeObra.monto.toFixed(2)}</li>` : '';
+              
+              const estabaAbierto = trabajosAbiertosAntesDeActualizar.has(trabajoItemId) ? 'open' : '';
 
               trabajosHTML += `
-                  <div class="trabajo-item ${claseEstado}" id="trabajo-${id}">
+                  <div class="trabajo-item ${claseEstado} ${estabaAbierto}" id="${trabajoItemId}">
                       <div class="trabajo-header" data-trabajo-id="${id}">
                           <h5>${textoEncabezado}</h5>
                           <span class="trabajo-estado-label">${t.estadoTrabajo || 'Pendiente'}</span>
@@ -148,36 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
           });
           listaTrabajosDiv.innerHTML = trabajosHTML;
 
-          listaTrabajosDiv.addEventListener('click', async (e) => {
-              const target = e.target;
-              const header = target.closest('.trabajo-header');
-              const trabajoItem = target.closest('.trabajo-item');
-
-              if (header && trabajoItem) {
-                  trabajoItem.classList.toggle('open'); return;
-              }
-              if (target.classList.contains('btn-ver-imagen-novedad')) {
-                  const imageUrl = target.dataset.imageUrl;
-                  if (imageUrl && modalVerImagenNovedad && imgVisualizadorNovedad) {
-                      imgVisualizadorNovedad.src = imageUrl;
-                      modalVerImagenNovedad.style.display = "block";
-                  }
-              } else if (target.classList.contains('btn-edit-novedad')) {
-                  abrirModalEditarNovedad(target.dataset.trabajoId, parseInt(target.dataset.novedadIndex), target.dataset.descripcion);
-              } else if (target.classList.contains('btn-delete-novedad')) {
-                  await eliminarNovedadDeTrabajo(target.dataset.trabajoId, parseInt(target.dataset.novedadIndex), target.dataset.imageUrl);
-              } else if (target.classList.contains('confirmar-cambio-estado')) {
-                  const selectEstado = document.getElementById(`estado-trabajo-select-${target.dataset.trabajoId}`);
-                  if (selectEstado) await actualizarEstadoTrabajo(target.dataset.trabajoId, selectEstado.value);
-              } else if (target.classList.contains('btn-whatsapp-novedad')) {
-                  await compartirNovedadPorWhatsApp(
-                      target.dataset.trabajoId,
-                      parseInt(target.dataset.novedadIndex),
-                      target.dataset.descripcion,
-                      target.dataset.imageUrl
-                  );
-              }
-          });
           listaTrabajosDiv.querySelectorAll('.form-agregar-novedad').forEach(form => {
             if (!form.dataset.listenerAttached) {
                 form.addEventListener('submit', async (e) => {
@@ -200,6 +180,48 @@ document.addEventListener('DOMContentLoaded', function() {
           if(listaTrabajosDiv) listaTrabajosDiv.innerHTML = '<p style="color:red;">Error al cargar trabajos.</p>';
       });
   }
+  
+  // Listener de clics delegado a listaTrabajosDiv (movido fuera de onSnapshot para que se adjunte una sola vez)
+  if (listaTrabajosDiv) {
+      listaTrabajosDiv.addEventListener('click', async (e) => {
+          const target = e.target;
+          const header = target.closest('.trabajo-header');
+          const trabajoItem = target.closest('.trabajo-item');
+
+          if (header && trabajoItem) {
+              trabajoItem.classList.toggle('open'); 
+              // Actualizar el set de trabajos abiertos por si el usuario abre/cierra manualmente
+              if (trabajoItem.classList.contains('open')) {
+                  trabajosAbiertosAntesDeActualizar.add(trabajoItem.id);
+              } else {
+                  trabajosAbiertosAntesDeActualizar.delete(trabajoItem.id);
+              }
+              return; 
+          }
+          if (target.classList.contains('btn-ver-imagen-novedad')) {
+              const imageUrl = target.dataset.imageUrl;
+              if (imageUrl && modalVerImagenNovedad && imgVisualizadorNovedad) {
+                  imgVisualizadorNovedad.src = imageUrl;
+                  modalVerImagenNovedad.style.display = "block";
+              }
+          } else if (target.classList.contains('btn-edit-novedad')) {
+              abrirModalEditarNovedad(target.dataset.trabajoId, parseInt(target.dataset.novedadIndex), target.dataset.descripcion);
+          } else if (target.classList.contains('btn-delete-novedad')) {
+              await eliminarNovedadDeTrabajo(target.dataset.trabajoId, parseInt(target.dataset.novedadIndex), target.dataset.imageUrl);
+          } else if (target.classList.contains('confirmar-cambio-estado')) {
+              const selectEstado = document.getElementById(`estado-trabajo-select-${target.dataset.trabajoId}`);
+              if (selectEstado) await actualizarEstadoTrabajo(target.dataset.trabajoId, selectEstado.value);
+          } else if (target.classList.contains('btn-whatsapp-novedad')) {
+              await compartirNovedadPorWhatsApp(
+                  target.dataset.trabajoId,
+                  parseInt(target.dataset.novedadIndex),
+                  target.dataset.descripcion,
+                  target.dataset.imageUrl
+              );
+          }
+      });
+  }
+
 
   async function compartirNovedadPorWhatsApp(trabajoId, novedadIndex, novedadDescripcion, novedadImageUrl) {
     if (!trabajoId) {
@@ -270,22 +292,23 @@ document.addEventListener('DOMContentLoaded', function() {
                   );
               });
           }
-          const nuevaNovedad = { // Objeto que se va a añadir al array
+          const nuevaNovedad = { 
               descripcion: descripcionNovedad || (imageUrl ? "Imagen adjunta" : "Actualización sin descripción"),
               imageUrl: imageUrl,
-              fecha: new Date() // Usar fecha del cliente, Firestore la convierte a Timestamp
+              fecha: new Date() 
           };
           const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
           await trabajoRef.update({ 
               novedades: firebase.firestore.FieldValue.arrayUnion(nuevaNovedad) 
           });
-          alert("Novedad agregada con éxito.");
+          // No necesitamos llamar a alert() aquí si onSnapshot ya actualiza la UI bien.
+          // alert("Novedad agregada con éxito."); 
           formElement.reset();
           if (progressContainer) progressContainer.style.display = 'none';
           if (progressBar) progressBar.textContent = '';
       } catch (error) {
           console.error("Error al agregar novedad:", error);
-          alert("Error al agregar la novedad: " + error.message); // Mostrar el error específico
+          alert("Error al agregar la novedad: " + error.message); 
       } finally {
           submitButton.disabled = false;
           submitButton.textContent = 'Agregar Novedad';
@@ -372,7 +395,8 @@ document.addEventListener('DOMContentLoaded', function() {
                   }
               }
               await trabajoRef.update({ novedades: novedades });
-              alert("Novedad eliminada.");
+              // No es necesario alert si onSnapshot actualiza la UI
+              // alert("Novedad eliminada.");
           } else { alert("Índice de novedad inválido."); }
       } catch (error) {
           console.error("Error al eliminar novedad:", error);
