@@ -9,13 +9,36 @@
 /* Estilos básicos del admin.html original */
 body { background-color: #000; color: #fff; font-family: Arial, sans-serif; margin:0; padding:0; } /* Estilos base */
 .admin-container { display: flex; min-height: 100vh; }
-.admin-menu { background-color: #222; color: #fff; width: 220px; flex-shrink: 0; padding: 20px; }
-.admin-menu h3 { margin-bottom: 15px; }
+
+.admin-menu {
+    background-color: #222;
+    color: #fff;
+    width: 220px;
+    flex-shrink: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+}
+.admin-menu-toggle {
+    display: none;
+    background-color: #ad0000;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 1.2em;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 101;
+}
+.admin-menu h3 { margin-bottom: 15px; margin-top: 0; }
 .admin-menu ul { list-style: none; padding: 0; }
 .admin-menu li { margin: 10px 0; }
 .admin-menu a { color: #fff; text-decoration: none; font-weight: bold; display: block; padding: 8px 0; }
 .admin-menu a:hover, .admin-menu a.active { color: #ad0000; } /* .active para la página actual */
-.admin-content { flex: 1; padding: 20px; }
+
+.admin-content { flex: 1; padding: 20px; box-sizing: border-box; overflow-x: hidden; }
 .hidden { display: none !important; }
 
 /* Estilos para formularios y tablas (copiados de admin.html) */
@@ -38,12 +61,123 @@ button.btn-delete { background-color: #dc3545; } button.btn-delete:hover { backg
 #previsualizacion-imagenes img, #previsualizacion-imagenes-editar img { border: 1px solid #444; border-radius: 3px; }
 
 /* Modal Styles (copiados de admin.html) */
-.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); }
-.modal-content { background-color: #282828; color: #fff; margin: 5% auto; padding: 25px; border: 1px solid #555; width: 80%; max-width: 700px; border-radius: 8px; position: relative; }
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); padding-top: 20px;}
+.modal-content { background-color: #282828; color: #fff; margin: 5% auto; padding: 25px; border: 1px solid #555; width: 80%; max-width: 700px; border-radius: 8px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
 .modal-content h3 { color: #ad0000; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; }
-.close-modal-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; position: absolute; top: 10px; right: 20px; }
+.close-modal-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; position: absolute; top: 10px; right: 20px; line-height: 1;}
 .close-modal-btn:hover, .close-modal-btn:focus { color: #ff0000; text-decoration: none; cursor: pointer; }
-header { background-color: #000; color: #ad0000; padding: 20px; text-align: center; } /* Header del admin */
+header { background-color: #000; color: #ad0000; padding: 15px 20px; text-align: center; } /* Header del admin */
+
+/* --- Media Queries para Responsividad del Menú --- */
+@media (max-width: 991.98px) {
+    .admin-menu {
+        width: 180px;
+        padding: 15px;
+    }
+    .admin-content {
+        padding: 15px;
+    }
+    .modal-content {
+        width: 90%;
+    }
+    input[type="text"], input[type="number"], input[type="tel"], textarea, select,
+    button, .btn-submit-form, .btn-action {
+        font-size: 0.95em;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .admin-container {
+        flex-direction: column;
+    }
+    .admin-menu {
+        width: 100%;
+        height: auto;
+        padding-bottom: 10px;
+    }
+    .admin-menu-toggle {
+        display: block;
+    }
+    .admin-menu h3 {
+        text-align: left;
+        margin-left: 10px;
+        margin-bottom: 0;
+        padding-top: 5px;
+    }
+    .admin-menu ul#adminMenuItems {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: #333;
+        padding: 10px 0;
+    }
+    .admin-menu.admin-menu-open ul#adminMenuItems {
+        display: flex;
+    }
+    .admin-menu li {
+        margin: 0;
+        width: 100%;
+        text-align: left;
+    }
+    .admin-menu li a {
+        padding: 12px 20px;
+        border-bottom: 1px solid #444;
+    }
+    .admin-menu li:last-child a {
+        border-bottom: none;
+    }
+    .admin-menu li a.active {
+        background-color: #ad0000;
+        color: white;
+    }
+     .admin-menu li a:hover {
+        background-color: #4e0000;
+    }
+
+    .admin-content {
+        padding: 10px;
+    }
+    header h1 {
+        font-size: 1.5em;
+    }
+    input[type="text"], input[type="number"], input[type="tel"], textarea, select,
+    button, .btn-submit-form, .btn-action {
+        padding: 12px;
+        font-size: 1em;
+    }
+    button, .btn-submit-form, .btn-action {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    button:last-child, .btn-submit-form:last-child, .btn-action:last-child {
+        margin-bottom: 0;
+    }
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    .modal-content h3 {
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .admin-menu h3 {
+        font-size: 1.1em;
+        padding-top: 8px;
+    }
+    .admin-menu-toggle {
+        top: 12px;
+        right: 12px;
+        padding: 6px 10px;
+    }
+    header h1 {
+        font-size: 1.3em;
+    }
+}
 </style>
 </head>
 <body>
@@ -53,9 +187,12 @@ header { background-color: #000; color: #ad0000; padding: 20px; text-align: cent
 </header>
 
 <div class="admin-container">
-  <aside class="admin-menu">
+  <aside class="admin-menu" id="adminMenu">
+    <button class="admin-menu-toggle" id="adminMenuToggle" aria-label="Abrir menú" aria-expanded="false">
+        &#9776;
+    </button>
     <h3>Menú</h3>
-    <ul>
+    <ul id="adminMenuItems">
       <li><a href="admin_vehiculos.html" class="active">Vehículos</a></li> <li><a href="admin_presupuestos.html">Presupuestos</a></li>
       <li><a href="admin_trabajos.html">Trabajos</a></li>
       <li><a href="admin_manuales.html">Manuales</a></li>
@@ -140,11 +277,26 @@ header { background-color: #000; color: #ad0000; padding: 20px; text-align: cent
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  // --- INICIO: Lógica para el menú responsive ---
+  const adminMenuToggle = document.getElementById('adminMenuToggle');
+  const adminMenu = document.getElementById('adminMenu');
+
+  if (adminMenuToggle && adminMenu) {
+    adminMenuToggle.addEventListener('click', function() {
+      adminMenu.classList.toggle('admin-menu-open');
+      const isExpanded = adminMenu.classList.contains('admin-menu-open');
+      this.setAttribute('aria-expanded', isExpanded);
+      this.innerHTML = isExpanded ? '&times;' : '&#9776;'; // Cambia entre hamburguesa y X
+      this.setAttribute('aria-label', isExpanded ? 'Cerrar menú' : 'Abrir menú');
+    });
+  }
+  // --- FIN: Lógica para el menú responsive ---
+
   // Verificar si Firebase está inicializado desde script.js
   if (typeof db === 'undefined' || typeof storage === 'undefined') {
     console.error("Firebase (db o storage) no está inicializado. Verifica que script.js se cargue correctamente ANTES de este script y que defina db y storage globalmente.");
     alert("Error crítico: No se pudo conectar a la base de datos. Por favor, recarga o contacta soporte.");
-    return; 
+    return;
   }
 
   // --- Elementos DOM para Vehículos ---
@@ -152,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const listaVehiculosDiv = document.getElementById('lista-vehiculos');
   const previsualizacionImagenesDiv = document.getElementById('previsualizacion-imagenes');
   const inputImagenesVehiculo = document.getElementById('vehiculo-imagenes');
-  
+
   // --- Modal de Edición de Vehículo ---
   const modalEditarVehiculo = document.getElementById('modal-editar-vehiculo');
   const btnCerrarModalEditar = document.getElementById('cerrar-modal-editar-vehiculo');
@@ -167,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if(modalEditarVehiculo) modalEditarVehiculo.style.display = "none";
     }
   }
-  window.onclick = function(event) {
+  window.onclick = function(event) { // Cuidado, esto puede interferir con otros modales si los tienes.
     if (event.target == modalEditarVehiculo) {
       if(modalEditarVehiculo) modalEditarVehiculo.style.display = "none";
     }
@@ -182,12 +334,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (files.length > maxNuevasImagenes) {
             alert(`Puedes añadir un máximo de ${maxNuevasImagenes} imágenes nuevas (para un total de 5).`);
-            inputImagenesEditar.value = ""; 
+            inputImagenesEditar.value = "";
             return;
         }
         for (const file of files) {
           const reader = new FileReader();
-          reader.onload = function(e) { 
+          reader.onload = function(e) {
             const img = document.createElement('img');
             img.src = e.target.result;
             img.style.maxWidth = '80px'; img.style.maxHeight = '80px'; img.style.margin = '2px'; img.style.border = '1px solid #555';
@@ -245,11 +397,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   async function abrirModalEditarVehiculo(vehiculoId) {
-      window.imagenesAEliminarDelVehiculo = []; 
+      window.imagenesAEliminarDelVehiculo = [];
       try {
           const docRef = db.collection("vehiculos").doc(vehiculoId);
           const docSnap = await docRef.get();
-          if (docSnap.exists) { 
+          if (docSnap.exists) {
               const data = docSnap.data();
               document.getElementById('vehiculo-id-editar').value = vehiculoId;
               document.getElementById('vehiculo-patente-editar').value = data.patente || '';
@@ -259,8 +411,8 @@ document.addEventListener('DOMContentLoaded', function() {
               document.getElementById('vehiculo-cliente-nombre-editar').value = data.clienteNombre || '';
               document.getElementById('vehiculo-cliente-telefono-editar').value = data.clienteTelefono || '';
               document.getElementById('vehiculo-descripcion-trabajo-editar').value = data.descripcionTrabajo || '';
-              
-              imagenesActualesEditarDiv.innerHTML = ''; 
+
+              imagenesActualesEditarDiv.innerHTML = '';
               if (data.imagenes && data.imagenes.length > 0) {
                   data.imagenes.forEach((url) => {
                       const imgContainer = document.createElement('div'); /* ... (código para mostrar imágenes con botón X) ... */
@@ -275,18 +427,18 @@ document.addEventListener('DOMContentLoaded', function() {
                       removeBtn.style.background = 'rgba(0,0,0,0.7)'; removeBtn.style.color = 'white';
                       removeBtn.style.border = 'none'; removeBtn.style.cursor = 'pointer'; removeBtn.style.padding = '2px 5px';
                       removeBtn.onclick = function() {
-                          imgContainer.style.opacity = '0.3'; 
+                          imgContainer.style.opacity = '0.3';
                           if (!window.imagenesAEliminarDelVehiculo.includes(url)) {
                               window.imagenesAEliminarDelVehiculo.push(url);
                           }
-                          removeBtn.disabled = true; 
+                          removeBtn.disabled = true;
                       };
                       imgContainer.appendChild(removeBtn);
                       imagenesActualesEditarDiv.appendChild(imgContainer);
                   });
               } else { imagenesActualesEditarDiv.innerHTML = '<p>No hay imágenes actuales.</p>'; }
               if (previsualizacionImagenesEditarDiv) previsualizacionImagenesEditarDiv.innerHTML = '';
-              if(inputImagenesEditar) inputImagenesEditar.value = ''; 
+              if(inputImagenesEditar) inputImagenesEditar.value = '';
               if(modalEditarVehiculo) modalEditarVehiculo.style.display = "block";
           } else { alert("Error: No se encontró el vehículo para editar."); }
       } catch (error) { alert("Error al cargar datos: " + error.message); }
@@ -297,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
           const vehiculoRef = db.collection("vehiculos").doc(vehiculoId);
           const docSnap = await vehiculoRef.get();
-          if (docSnap.exists) { 
+          if (docSnap.exists) {
               const vehiculoData = docSnap.data();
               if (vehiculoData.imagenes && vehiculoData.imagenes.length > 0) {
                   const deletePromises = vehiculoData.imagenes.map(imageUrl => {
@@ -321,7 +473,7 @@ document.addEventListener('DOMContentLoaded', function() {
       previsualizacionImagenesDiv.innerHTML = '';
       const files = event.target.files;
       if (files.length > 5) { alert("Máximo 5 imágenes."); inputImagenesVehiculo.value = ""; return; }
-      for (const file of files) { 
+      for (const file of files) {
           const reader = new FileReader();
           reader.onload = (e) => {
               const img = document.createElement('img'); img.src = e.target.result;
@@ -370,12 +522,12 @@ document.addEventListener('DOMContentLoaded', function() {
         alert("¡Vehículo guardado!");
         formIngresoVehiculo.reset();
         if (previsualizacionImagenesDiv) previsualizacionImagenesDiv.innerHTML = '';
-        if (typeof mostrarVehiculos === "function") mostrarVehiculos(); 
+        if (typeof mostrarVehiculos === "function") mostrarVehiculos();
       } catch (error) { alert("Error al guardar vehículo: " + error.message); }
       finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Vehículo'; }
     });
   }
-  
+
   if (formEditarVehiculo) {
       formEditarVehiculo.addEventListener('submit', async function(event) {
           event.preventDefault();
@@ -407,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   });
                   await Promise.all(deleteStoragePromises);
               }
-              
+
               let imagenesFinales = imagenesActualesEnFirestore.filter(url => !(window.imagenesAEliminarDelVehiculo && window.imagenesAEliminarDelVehiculo.includes(url)));
               imagenesFinales = imagenesFinales.concat(urlsNuevasImagenes);
               if (imagenesFinales.length > 5) {
@@ -435,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
           } catch (error) { alert("Error al actualizar el vehículo: " + error.message); }
           finally {
               submitButton.disabled = false; submitButton.textContent = 'Guardar Cambios';
-              window.imagenesAEliminarDelVehiculo = []; 
+              window.imagenesAEliminarDelVehiculo = [];
           }
       });
   }
