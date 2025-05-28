@@ -4,42 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel de Administración - Mecanico Automotriz Luis Díaz</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="admin_styles.css">
+<link rel="stylesheet" href="style.css"> <style>
+/* Estilos básicos del admin.html original (puedes moverlos a style.css si prefieres) */
+body { background-color: #000; color: #fff; font-family: Arial, sans-serif; margin:0; padding:0; } /* */
+.admin-container { display: flex; min-height: 100vh; } /* */
+.admin-menu { background-color: #222; color: #fff; width: 220px; flex-shrink: 0; padding: 20px; } /* */
+.admin-menu h3 { margin-bottom: 15px; } /* */
+.admin-menu ul { list-style: none; padding: 0; } /* */
+.admin-menu li { margin: 10px 0; } /* */
+.admin-menu a { color: #fff; text-decoration: none; font-weight: bold; display: block; padding: 8px 0; } /* */
+.admin-menu a:hover { color: #ad0000; } /* */
+.admin-content { flex: 1; padding: 20px; } /* */
+header { background-color: #000; color: #ad0000; padding: 20px; text-align: center; } /* */
+footer { background-color: #000; color: #ad0000; text-align: center; padding: 15px; border-top: 1px solid #333;} /* */
+</style>
 </head>
-<body class="admin-page">
+<body>
 
-<header class="admin-header">
-  <h1>Panel de Administración</h1>
-</header>
+<header>
+  <h1 style="color:#ad0000;">Panel de Administración</h1> </header>
 
-<div class="admin-container">
-  <aside class="admin-menu">
-    <h3>Menú</h3>
-    <ul>
+<div class="admin-container"> <aside class="admin-menu"> <h3>Menú</h3> <ul>
       <li><a href="admin_vehiculos.html">Vehículos</a></li>
       <li><a href="admin_presupuestos.html">Presupuestos</a></li>
       <li><a href="admin_trabajos.html">Trabajos</a></li>
       <li><a href="admin_manuales.html">Manuales</a></li>
-      <li><a href="index.html">Volver a Inicio</a></li>
-    </ul>
+      <li><a href="index.html">Volver a Inicio</a></li> </ul>
   </aside>
 
   <main class="admin-content">
     <h2>Bienvenido al Panel de Administración</h2>
     <p>Selecciona una opción del menú de la izquierda para comenzar.</p>
     <p>Este es el panel principal. Desde aquí puedes navegar a las diferentes secciones para gestionar la información de tu taller.</p>
-  </main>
+    </main>
 </div>
 
-<footer class="admin-footer">
-  <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
-</footer>
+<footer> <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p> </footer>
 
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
-<script src="script.js"></script>
-</body>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script> <script src="script.js"></script> </body>
 </html>
