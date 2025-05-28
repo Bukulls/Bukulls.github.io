@@ -1,4 +1,19 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // --- INICIO: Lógica para el menú responsive ---
+  const adminMenuToggle = document.getElementById('adminMenuToggle');
+  const adminMenu = document.getElementById('adminMenu');
+
+  if (adminMenuToggle && adminMenu) {
+    adminMenuToggle.addEventListener('click', function() {
+      adminMenu.classList.toggle('admin-menu-open');
+      const isExpanded = adminMenu.classList.contains('admin-menu-open');
+      this.setAttribute('aria-expanded', isExpanded);
+      this.innerHTML = isExpanded ? '&times;' : '&#9776;'; // Cambia entre hamburguesa y X
+      this.setAttribute('aria-label', isExpanded ? 'Cerrar menú' : 'Abrir menú');
+    });
+  }
+  // --- FIN: Lógica para el menú responsive ---
+
   if (typeof db === 'undefined') {
     console.error("Firebase (db) no está inicializado."); alert("Error crítico: DB no conectada."); return;
   }

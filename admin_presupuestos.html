@@ -13,9 +13,12 @@
 </header>
 
 <div class="admin-container">
-  <aside class="admin-menu">
+  <aside class="admin-menu" id="adminMenu">
+    <button class="admin-menu-toggle" id="adminMenuToggle" aria-label="Abrir menú" aria-expanded="false">
+        &#9776; 
+    </button>
     <h3>Menú</h3>
-    <ul>
+    <ul id="adminMenuItems">
       <li><a href="admin_vehiculos.html">Vehículos</a></li>
       <li><a href="admin_presupuestos.html" class="active">Presupuestos</a></li>
       <li><a href="admin_trabajos.html">Trabajos</a></li>
