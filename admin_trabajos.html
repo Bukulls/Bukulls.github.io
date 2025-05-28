@@ -12,9 +12,11 @@
 </header>
 
 <div class="admin-container">
-  <aside class="admin-menu">
+  <aside class="admin-menu" id="adminMenu">
+    <button class="admin-menu-toggle" id="adminMenuToggle" aria-label="Abrir menú" aria-expanded="false">
+        &#9776; </button>
     <h3>Menú</h3>
-    <ul>
+    <ul id="adminMenuItems">
       <li><a href="admin_vehiculos.html">Vehículos</a></li>
       <li><a href="admin_presupuestos.html">Presupuestos</a></li>
       <li><a href="admin_trabajos.html" class="active">Trabajos</a></li>
@@ -41,7 +43,7 @@
 
        <div id="lista-trabajos">
            <p>Cargando trabajos...</p>
-           </div>
+       </div>
     </section>
   </main>
 </div>
@@ -54,7 +56,8 @@
       <input type="hidden" id="editar-novedad-trabajo-id">
       <input type="hidden" id="editar-novedad-index">
       <label for="descripcion-novedad-editar">Descripción:</label>
-      <textarea id="descripcion-novedad-editar" rows="4" required></textarea> <button type="submit" class="btn-action" style="margin-top: 15px;">Guardar Cambios</button>
+      <textarea id="descripcion-novedad-editar" rows="4" required></textarea>
+      <button type="submit" class="btn-action" style="margin-top: 15px;">Guardar Cambios</button>
     </form>
   </div>
 </div>

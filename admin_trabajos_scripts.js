@@ -1,4 +1,24 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // --- Lógica para el Menú Hamburguesa ---
+  const adminMenuToggle = document.getElementById('adminMenuToggle');
+  const adminMenu = document.getElementById('adminMenu'); // El <aside>
+
+  if (adminMenuToggle && adminMenu) {
+    adminMenuToggle.addEventListener('click', function() {
+      adminMenu.classList.toggle('admin-menu-open');
+      const isExpanded = adminMenu.classList.contains('admin-menu-open');
+      this.setAttribute('aria-expanded', isExpanded);
+      if (isExpanded) {
+        this.innerHTML = '&times;'; // Cambiar a ícono de "X" (cerrar)
+        this.setAttribute('aria-label', 'Cerrar menú');
+      } else {
+        this.innerHTML = '&#9776;'; // Cambiar de nuevo a hamburguesa
+        this.setAttribute('aria-label', 'Abrir menú');
+      }
+    });
+  }
+
+  // --- Resto de tu código existente de admin_trabajos_scripts.js ---
   if (typeof db === 'undefined' || typeof storage === 'undefined') {
     console.error("Firebase (db y storage) no están inicializados.");
     alert("Error crítico: No se pudo conectar a los servicios de Firebase.");
@@ -8,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const listaTrabajosDiv = document.getElementById('lista-trabajos');
   const filtroEstadoTrabajoSelect = document.getElementById('filtro-estado-trabajo');
 
-  // --- Modal de Edición de Novedad ---
   const modalEditarNovedad = document.getElementById('modal-editar-novedad');
   const btnCerrarModalEditarNovedad = document.getElementById('cerrar-modal-editar-novedad');
   const formEditarNovedad = document.getElementById('form-editar-novedad');
@@ -16,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const inputNovedadIndexEditarNovedad = document.getElementById('editar-novedad-index');
   const textareaDescripcionNovedadEditar = document.getElementById('descripcion-novedad-editar');
 
-  // --- Modal de Visualización de Imagen de Novedad ---
   const modalVerImagenNovedad = document.getElementById('modal-ver-imagen-novedad');
   const btnCerrarModalVerImagen = document.getElementById('cerrar-modal-ver-imagen');
   const imgVisualizadorNovedad = document.getElementById('imagen-novedad-visualizador');
@@ -29,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
     btnCerrarModalVerImagen.onclick = () => { if(modalVerImagenNovedad) modalVerImagenNovedad.style.display = "none"; }
   }
 
-  // Cerrar modales al hacer clic fuera del contenido del modal
   window.addEventListener('click', function(event) {
     if (event.target == modalEditarNovedad) {
       modalEditarNovedad.style.display = "none";
@@ -68,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
                       let fechaNovedadStr = 'N/A';
                       if (nov.fecha && typeof nov.fecha.toDate === 'function') {
                           fechaNovedadStr = nov.fecha.toDate().toLocaleString();
-                      } else if (nov.fecha) { // Si es un timestamp de JS ya convertido (caso raro aquí)
+                      } else if (nov.fecha) {
                           try { fechaNovedadStr = new Date(nov.fecha).toLocaleString(); } catch(e){}
                       }
 
@@ -99,8 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="novedad-form-container" style="margin-top:15px;">
                         <h6 style="color:#17a2b8; margin-top:0;">Agregar Novedad al Trabajo</h6>
                         <form class="form-agregar-novedad" data-trabajo-id="${id}">
-                            <label for="novedad-descripcion-${id}">Descripción de la Novedad:</label>
-                            <textarea id="novedad-descripcion-${id}" rows="2"></textarea>
+                            <label for="novedad-descripcion-form-${id}">Descripción de la Novedad:</label> <textarea id="novedad-descripcion-form-${id}" rows="2"></textarea>
                             <label for="novedad-imagen-${id}">Imagen (Opcional):</label>
                             <input type="file" id="novedad-imagen-${id}" accept="image/*">
                             <div class="progress-bar-container" id="novedad-progress-container-${id}">
@@ -155,46 +171,33 @@ document.addEventListener('DOMContentLoaded', function() {
           });
           listaTrabajosDiv.innerHTML = trabajosHTML;
 
-          // --- Event Listeners (usando delegación para eficiencia) ---
           listaTrabajosDiv.addEventListener('click', async (e) => {
               const target = e.target;
+              const header = target.closest('.trabajo-header'); // Para asegurar que el clic en hijos del header también funcione
+              const trabajoItem = target.closest('.trabajo-item');
 
-              // Toggle para desplegar/colapsar trabajo
-              if (target.classList.contains('trabajo-header') || target.closest('.trabajo-header')) {
-                  const header = target.classList.contains('trabajo-header') ? target : target.closest('.trabajo-header');
-                  const trabajoItem = header.closest('.trabajo-item');
-                  if (trabajoItem) {
-                      trabajoItem.classList.toggle('open');
-                  }
+              if (header && trabajoItem) { // Si se hizo clic en un header o su hijo
+                  trabajoItem.classList.toggle('open');
+                  return; // Evitar que otros listeners en el mismo clic se activen si no es necesario
               }
 
-              // Botón para ver imagen de novedad
               if (target.classList.contains('btn-ver-imagen-novedad')) {
                   const imageUrl = target.dataset.imageUrl;
                   if (imageUrl && modalVerImagenNovedad && imgVisualizadorNovedad) {
                       imgVisualizadorNovedad.src = imageUrl;
                       modalVerImagenNovedad.style.display = "block";
                   }
-              }
-
-              // Botón para editar descripción de novedad
-              if (target.classList.contains('btn-edit-novedad')) {
+              } else if (target.classList.contains('btn-edit-novedad')) {
                   const trabajoId = target.dataset.trabajoId;
                   const novedadIndex = parseInt(target.dataset.novedadIndex);
                   const descripcionActual = target.dataset.descripcion;
                   abrirModalEditarNovedad(trabajoId, novedadIndex, descripcionActual);
-              }
-
-              // Botón para eliminar novedad
-              if (target.classList.contains('btn-delete-novedad')) {
+              } else if (target.classList.contains('btn-delete-novedad')) {
                   const trabajoId = target.dataset.trabajoId;
                   const novedadIndex = parseInt(target.dataset.novedadIndex);
                   const imageUrl = target.dataset.imageUrl;
                   await eliminarNovedadDeTrabajo(trabajoId, novedadIndex, imageUrl);
-              }
-
-              // Botón para confirmar cambio de estado
-              if (target.classList.contains('confirmar-cambio-estado')) {
+              } else if (target.classList.contains('confirmar-cambio-estado')) {
                   const trabajoId = target.dataset.trabajoId;
                   const selectEstado = document.getElementById(`estado-trabajo-select-${trabajoId}`);
                   if (selectEstado) {
@@ -203,37 +206,23 @@ document.addEventListener('DOMContentLoaded', function() {
               }
           });
 
-          // Listeners para formularios de agregar novedad (no necesitan delegación si se re-renderizan siempre)
           listaTrabajosDiv.querySelectorAll('.form-agregar-novedad').forEach(form => {
-              form.addEventListener('submit', async (e) => { // Asegurar que el listener se re-asigne si el DOM cambia mucho
-                  e.preventDefault();
-                  const trabajoId = e.target.dataset.trabajoId;
-                  const descripcionInput = document.getElementById(`novedad-descripcion-${trabajoId}`);
-                  const imagenInput = document.getElementById(`novedad-imagen-${trabajoId}`);
-                  const descripcionNovedad = descripcionInput ? descripcionInput.value.trim() : "";
-                  const imagenFile = imagenInput && imagenInput.files.length > 0 ? imagenInput.files[0] : null;
-                  if (!descripcionNovedad && !imagenFile) {
-                      alert("Debes añadir una descripción o una imagen para la novedad."); return;
-                  }
-                  await agregarNovedadAlTrabajo(trabajoId, imagenFile, descripcionNovedad, e.target);
-              });
+            if (!form.dataset.listenerAttached) { // Evitar duplicar listeners
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const trabajoId = e.target.dataset.trabajoId;
+                    const descripcionInput = document.getElementById(`novedad-descripcion-form-${trabajoId}`); // Corregido ID
+                    const imagenInput = document.getElementById(`novedad-imagen-${trabajoId}`);
+                    const descripcionNovedad = descripcionInput ? descripcionInput.value.trim() : "";
+                    const imagenFile = imagenInput && imagenInput.files.length > 0 ? imagenInput.files[0] : null;
+                    if (!descripcionNovedad && !imagenFile) {
+                        alert("Debes añadir una descripción o una imagen para la novedad."); return;
+                    }
+                    await agregarNovedadAlTrabajo(trabajoId, imagenFile, descripcionNovedad, e.target);
+                });
+                form.dataset.listenerAttached = 'true';
+            }
           });
-
-          // Listeners para select de cambio de estado
-          listaTrabajosDiv.querySelectorAll('.cambiar-estado-trabajo-select').forEach(select => {
-              select.addEventListener('focus', function () { this.previousValue = this.value; }); // Guardar valor previo
-              select.addEventListener('change', async (e) => {
-                  const trabajoId = e.target.dataset.trabajoId;
-                  const nuevoEstado = e.target.value;
-                  // Actualizar directo si no es un estado final o si no se requiere confirmación por botón
-                  // La confirmación por botón ya está manejada por el listener del botón 'confirmar-cambio-estado'
-                  // if (nuevoEstado !== "Completado" && nuevoEstado !== "Cancelado") {
-                  //    await actualizarEstadoTrabajo(trabajoId, nuevoEstado);
-                  // }
-              });
-          });
-
-
       }, error => {
           console.error("Error onSnapshot trabajos:", error);
           if (listaTrabajosDiv) listaTrabajosDiv.innerHTML = '<p style="color:red;">Error al cargar trabajos.</p>';
@@ -244,11 +233,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const submitButton = formElement.querySelector('button[type="submit"]');
       const progressContainer = document.getElementById(`novedad-progress-container-${trabajoId}`);
       const progressBar = document.getElementById(`novedad-progress-bar-${trabajoId}`);
-
       submitButton.disabled = true;
       submitButton.textContent = 'Agregando...';
       let imageUrl = null;
-
       try {
           if (imagenFile) {
               if (progressContainer) progressContainer.style.display = 'block';
@@ -257,7 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
               const storagePath = `trabajos_novedades/${trabajoId}/${imageName}`;
               const imageRef = storage.ref().child(storagePath);
               const uploadTask = imageRef.put(imagenFile);
-
               await new Promise((resolve, reject) => {
                   uploadTask.on('state_changed',
                       (snapshot) => {
@@ -266,26 +252,19 @@ document.addEventListener('DOMContentLoaded', function() {
                       },
                       (error) => reject(error),
                       async () => {
-                          try {
-                              imageUrl = await uploadTask.snapshot.ref.getDownloadURL();
-                              resolve();
-                          } catch (getUrlError){ reject(getUrlError); }
+                          try { imageUrl = await uploadTask.snapshot.ref.getDownloadURL(); resolve(); }
+                          catch (getUrlError){ reject(getUrlError); }
                       }
                   );
               });
           }
-
           const nuevaNovedad = {
               descripcion: descripcionNovedad || (imageUrl ? "Imagen adjunta" : "Actualización sin descripción"),
               imageUrl: imageUrl,
-              fecha: firebase.firestore.FieldValue.serverTimestamp() // Usar Timestamp de Firestore
+              fecha: firebase.firestore.FieldValue.serverTimestamp()
           };
-
           const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
-          await trabajoRef.update({
-              novedades: firebase.firestore.FieldValue.arrayUnion(nuevaNovedad)
-          });
-
+          await trabajoRef.update({ novedades: firebase.firestore.FieldValue.arrayUnion(nuevaNovedad) });
           alert("Novedad agregada con éxito.");
           formElement.reset();
           if (progressContainer) progressContainer.style.display = 'none';
@@ -301,7 +280,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   async function actualizarEstadoTrabajo(trabajoId, nuevoEstado) {
       if (!trabajoId || !nuevoEstado) { alert("Faltan datos para actualizar."); return; }
-      console.log(`Actualizando trabajo ${trabajoId} a estado: ${nuevoEstado}`);
       try {
           const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
           let datosActualizar = { estadoTrabajo: nuevoEstado };
@@ -336,18 +314,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const trabajoId = inputTrabajoIdEditarNovedad.value;
         const novedadIndex = parseInt(inputNovedadIndexEditarNovedad.value);
         const nuevaDescripcion = textareaDescripcionNovedadEditar.value.trim();
-
         if (!trabajoId || isNaN(novedadIndex) || !nuevaDescripcion) {
             alert("Faltan datos o la descripción está vacía."); return;
         }
         const submitButton = formEditarNovedad.querySelector('button[type="submit"]');
         submitButton.disabled = true; submitButton.textContent = 'Guardando...';
-
         try {
             const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
             const docSnap = await trabajoRef.get();
             if (!docSnap.exists()) throw new Error("Trabajo no encontrado");
-
             let novedades = docSnap.data().novedades || [];
             if (novedadIndex >= 0 && novedadIndex < novedades.length) {
                 const novedadActualizada = { ...novedades[novedadIndex], descripcion: nuevaDescripcion };
@@ -371,18 +346,15 @@ document.addEventListener('DOMContentLoaded', function() {
           const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
           const docSnap = await trabajoRef.get();
           if (!docSnap.exists()) throw new Error("Trabajo no encontrado");
-
           let novedades = docSnap.data().novedades || [];
           if (novedadIndex >= 0 && novedadIndex < novedades.length) {
-              const novedadAEliminar = novedades.splice(novedadIndex, 1)[0]; // Elimina y obtiene el elemento
-
-              if (novedadAEliminar && novedadAEliminar.imageUrl) { // Verificar si la novedad eliminada tenía imagen
+              const novedadAEliminar = novedades.splice(novedadIndex, 1)[0];
+              if (novedadAEliminar && novedadAEliminar.imageUrl) {
                   try {
                       const imageRef = storage.refFromURL(novedadAEliminar.imageUrl);
                       await imageRef.delete();
-                      console.log("Imagen de novedad eliminada de Storage:", novedadAEliminar.imageUrl);
                   } catch (storageError) {
-                      console.warn("Error al eliminar imagen de Storage (puede que ya no exista):", storageError.message);
+                      console.warn("Advertencia al eliminar imagen de Storage:", storageError.message);
                   }
               }
               await trabajoRef.update({ novedades: novedades });
@@ -397,5 +369,5 @@ document.addEventListener('DOMContentLoaded', function() {
   if (filtroEstadoTrabajoSelect) {
       filtroEstadoTrabajoSelect.addEventListener('change', (e) => mostrarTrabajos(e.target.value));
   }
-  mostrarTrabajos(); // Carga inicial
+  mostrarTrabajos();
 });
