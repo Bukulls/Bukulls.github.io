@@ -41,13 +41,13 @@
 
        <div id="lista-trabajos">
            <p>Cargando trabajos...</p>
-       </div>
+           </div>
     </section>
   </main>
 </div>
 
 <div id="modal-editar-novedad" class="modal">
-  <div class="modal-content">
+  <div class="modal-content modal-content-novedad-edit">
     <span class="close-modal-btn" id="cerrar-modal-editar-novedad">&times;</span>
     <h3>Editar Descripción de Novedad</h3>
     <form id="form-editar-novedad">
@@ -57,6 +57,13 @@
       <textarea id="descripcion-novedad-editar" rows="4" required style="width: calc(100% - 22px);"></textarea>
       <button type="submit" class="btn-action" style="margin-top: 15px;">Guardar Cambios</button>
     </form>
+  </div>
+</div>
+
+<div id="modal-ver-imagen-novedad" class="modal">
+  <span class="close-modal-btn" id="cerrar-modal-ver-imagen">&times;</span>
+  <div class="modal-content modal-content-image-view">
+    <img src="" alt="Imagen de Novedad" id="imagen-novedad-visualizador">
   </div>
 </div>
 

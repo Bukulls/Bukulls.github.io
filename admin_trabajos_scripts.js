@@ -16,14 +16,26 @@ document.addEventListener('DOMContentLoaded', function() {
   const inputNovedadIndexEditarNovedad = document.getElementById('editar-novedad-index');
   const textareaDescripcionNovedadEditar = document.getElementById('descripcion-novedad-editar');
 
+  // --- Modal de Visualización de Imagen de Novedad ---
+  const modalVerImagenNovedad = document.getElementById('modal-ver-imagen-novedad');
+  const btnCerrarModalVerImagen = document.getElementById('cerrar-modal-ver-imagen');
+  const imgVisualizadorNovedad = document.getElementById('imagen-novedad-visualizador');
+
+
   if (btnCerrarModalEditarNovedad) {
-    btnCerrarModalEditarNovedad.onclick = function() {
-      if (modalEditarNovedad) modalEditarNovedad.style.display = "none";
-    }
+    btnCerrarModalEditarNovedad.onclick = () => { if(modalEditarNovedad) modalEditarNovedad.style.display = "none"; }
   }
-  window.addEventListener('click', function(event) { // Usar window para cerrar cualquier modal abierto
+  if (btnCerrarModalVerImagen) {
+    btnCerrarModalVerImagen.onclick = () => { if(modalVerImagenNovedad) modalVerImagenNovedad.style.display = "none"; }
+  }
+
+  // Cerrar modales al hacer clic fuera del contenido del modal
+  window.addEventListener('click', function(event) {
     if (event.target == modalEditarNovedad) {
-      if (modalEditarNovedad) modalEditarNovedad.style.display = "none";
+      modalEditarNovedad.style.display = "none";
+    }
+    if (event.target == modalVerImagenNovedad) {
+      modalVerImagenNovedad.style.display = "none";
     }
   });
 
@@ -47,35 +59,31 @@ document.addEventListener('DOMContentLoaded', function() {
           snapshot.forEach(doc => {
               const t = doc.data();
               const id = doc.id;
-
-              let manoDeObraTrabajoHTML = '';
-              if (t.manoDeObra && t.manoDeObra.monto > 0) {
-                  manoDeObraTrabajoHTML = `<li style="color: #ffc107;">Mano de Obra (${t.manoDeObra.descripcion || 'General'}): $${t.manoDeObra.monto.toFixed(2)}</li>`;
-              }
-
-              let claseEstado = `estado-${(t.estadoTrabajo || 'pendiente').toLowerCase().replace(/\s+/g, '-')}`;
+              const estadoTrabajoLower = (t.estadoTrabajo || 'pendiente').toLowerCase().replace(/\s+/g, '-');
+              const claseEstado = `estado-${estadoTrabajoLower}`;
 
               let novedadesHTML = '<div class="novedades-lista"><h6>Novedades del Trabajo:</h6>';
               if (t.novedades && t.novedades.length > 0) {
-                  // Iterar en orden original para que los índices coincidan con Firestore
                   t.novedades.forEach((nov, index) => {
                       let fechaNovedadStr = 'N/A';
-                      if (nov.fecha) {
-                          if (typeof nov.fecha.toDate === 'function') {
-                              fechaNovedadStr = nov.fecha.toDate().toLocaleString();
-                          } else if (nov.fecha instanceof Date) {
-                              fechaNovedadStr = nov.fecha.toLocaleString();
-                          } else {
-                             try { fechaNovedadStr = new Date(nov.fecha).toLocaleString(); } catch(e){}
-                          }
+                      if (nov.fecha && typeof nov.fecha.toDate === 'function') {
+                          fechaNovedadStr = nov.fecha.toDate().toLocaleString();
+                      } else if (nov.fecha) { // Si es un timestamp de JS ya convertido (caso raro aquí)
+                          try { fechaNovedadStr = new Date(nov.fecha).toLocaleString(); } catch(e){}
                       }
+
+                      let imagenTag = '';
+                      if (nov.imageUrl) {
+                          imagenTag = `<button class="btn-action btn-ver-imagen-novedad" data-image-url="${nov.imageUrl}">Ver Imagen</button>`;
+                      }
+
                       novedadesHTML += `
                           <div class="novedad-item">
                               <p><strong>Descripción:</strong> <span id="novedad-desc-${id}-${index}">${nov.descripcion || 'N/A'}</span></p>
-                              ${nov.imageUrl ? `<img src="${nov.imageUrl}" alt="Imagen novedad ${nov.descripcion || ''}">` : ''}
+                              ${imagenTag}
                               <p style="font-size:0.8em; color:#888;">Fecha: ${fechaNovedadStr}</p>
                               <div class="novedad-actions">
-                                <button class="btn-action btn-edit-novedad" data-trabajo-id="${id}" data-novedad-index="${index}" data-descripcion="${nov.descripcion || ''}">Editar</button>
+                                <button class="btn-action btn-edit-novedad" data-trabajo-id="${id}" data-novedad-index="${index}" data-descripcion="${nov.descripcion || ''}">Editar Desc.</button>
                                 <button class="btn-action btn-delete-novedad" data-trabajo-id="${id}" data-novedad-index="${index}" data-image-url="${nov.imageUrl || ''}">Eliminar</button>
                               </div>
                           </div>`;
@@ -103,43 +111,101 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>`;
               }
 
+              let manoDeObraTrabajoHTML = '';
+              if (t.manoDeObra && t.manoDeObra.monto > 0) {
+                  manoDeObraTrabajoHTML = `<li style="color: #ffc107;">Mano de Obra (${t.manoDeObra.descripcion || 'General'}): $${t.manoDeObra.monto.toFixed(2)}</li>`;
+              }
+
               trabajosHTML += `
-                  <div class="trabajo-item ${claseEstado}">
-                      <h5>Trabajo: ${t.vehiculoInfo || 'N/A'} (ID: ${id.substring(0,8)})</h5>
-                      <p><strong>Cliente:</strong> ${t.clienteNombre || 'N/A'} ${t.clienteTelefono ? `- Tel: ${t.clienteTelefono}`: ''}</p>
-                      <p><strong>Monto Total Presupuestado:</strong> <span style="font-weight:bold; color: #4CAF50;">$${t.total ? t.total.toFixed(2) : '0.00'}</span></p>
-                      <p><strong>Estado Actual:</strong> <span style="font-weight:bold;">${t.estadoTrabajo || 'Pendiente'}</span></p>
-                      <p><strong>ID Presupuesto Original:</strong> ${t.presupuestoOriginalId || 'N/A'}</p>
-                      <p><strong>Items del Presupuesto:</strong></p>
-                      <ul style="padding-left: 20px; margin-bottom: 10px;">
-                          ${t.items && t.items.length > 0 ? t.items.map(item => `<li>${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'}</li>`).join('') : '<li>No hay items detallados.</li>'}
-                          ${manoDeObraTrabajoHTML}
-                      </ul>
-                      <p style="font-size: 0.8em; color: #888;">Presup. Aceptado: ${t.fechaAceptacionPresupuesto ? new Date(t.fechaAceptacionPresupuesto.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
-                      <p style="font-size: 0.8em; color: #888;">Trabajo Iniciado: ${t.fechaInicioTrabajo ? new Date(t.fechaInicioTrabajo.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
-                      ${t.fechaCompletado ? `<p style="font-size: 0.8em; color: #28a745;">Completado el: ${new Date(t.fechaCompletado.seconds * 1000).toLocaleString()}</p>` : ''}
-                      ${t.fechaCancelado ? `<p style="font-size: 0.8em; color: #dc3545;">Cancelado el: ${new Date(t.fechaCancelado.seconds * 1000).toLocaleString()}</p>` : ''}
+                  <div class="trabajo-item ${claseEstado}" id="trabajo-${id}">
+                      <div class="trabajo-header" data-trabajo-id="${id}">
+                          <h5>${t.vehiculoInfo || 'Vehículo N/A'} (Cliente: ${t.clienteNombre || 'N/A'})</h5>
+                          <span class="trabajo-estado-label">${t.estadoTrabajo || 'Pendiente'}</span>
+                      </div>
+                      <div class="trabajo-content">
+                          <p><strong>ID del Trabajo:</strong> ${id.substring(0,8)}</p>
+                          <p><strong>Cliente:</strong> ${t.clienteNombre || 'N/A'} ${t.clienteTelefono ? `- Tel: ${t.clienteTelefono}`: ''}</p>
+                          <p><strong>Monto Total Presupuestado:</strong> <span style="font-weight:bold; color: #4CAF50;">$${t.total ? t.total.toFixed(2) : '0.00'}</span></p>
+                          <p><strong>ID Presupuesto Original:</strong> ${t.presupuestoOriginalId || 'N/A'}</p>
+                          <p><strong>Items del Presupuesto:</strong></p>
+                          <ul style="padding-left: 20px; margin-bottom: 10px;">
+                              ${t.items && t.items.length > 0 ? t.items.map(item => `<li>${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'}</li>`).join('') : '<li>No hay items detallados.</li>'}
+                              ${manoDeObraTrabajoHTML}
+                          </ul>
+                          <p style="font-size: 0.8em; color: #888;">Presup. Aceptado: ${t.fechaAceptacionPresupuesto ? new Date(t.fechaAceptacionPresupuesto.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                          <p style="font-size: 0.8em; color: #888;">Trabajo Iniciado: ${t.fechaInicioTrabajo ? new Date(t.fechaInicioTrabajo.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                          ${t.fechaCompletado ? `<p style="font-size: 0.8em; color: #28a745;">Completado el: ${new Date(t.fechaCompletado.seconds * 1000).toLocaleString()}</p>` : ''}
+                          ${t.fechaCancelado ? `<p style="font-size: 0.8em; color: #dc3545;">Cancelado el: ${new Date(t.fechaCancelado.seconds * 1000).toLocaleString()}</p>` : ''}
 
-                      ${novedadesHTML}
-                      ${formNovedadHTML}
+                          ${novedadesHTML}
+                          ${formNovedadHTML}
 
-                      <div style="margin-top: 15px; border-top:1px solid #444; padding-top:10px;">
-                          <label for="estado-trabajo-${id}" style="display:inline-block; margin-right:5px;">Cambiar Estado del Trabajo:</label>
-                          <select id="estado-trabajo-${id}" data-trabajo-id="${id}" class="cambiar-estado-trabajo-select">
-                              <option value="Pendiente" ${t.estadoTrabajo === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-                              <option value="En Proceso" ${t.estadoTrabajo === 'En Proceso' ? 'selected' : ''}>En Proceso</option>
-                              <option value="Completado" ${t.estadoTrabajo === 'Completado' ? 'selected' : ''}>Completado</option>
-                              <option value="Cancelado" ${t.estadoTrabajo === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
-                          </select>
-                          <button class="btn-action confirmar-cambio-estado" data-trabajo-id="${id}" style="background-color:#007bff; margin-left:10px;">Confirmar Cambio de Estado</button>
+                          <div style="margin-top: 15px; border-top:1px solid #444; padding-top:10px;">
+                              <label for="estado-trabajo-select-${id}" style="display:inline-block; margin-right:5px;">Cambiar Estado:</label>
+                              <select id="estado-trabajo-select-${id}" data-trabajo-id="${id}" class="cambiar-estado-trabajo-select">
+                                  <option value="Pendiente" ${t.estadoTrabajo === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                                  <option value="En Proceso" ${t.estadoTrabajo === 'En Proceso' ? 'selected' : ''}>En Proceso</option>
+                                  <option value="Completado" ${t.estadoTrabajo === 'Completado' ? 'selected' : ''}>Completado</option>
+                                  <option value="Cancelado" ${t.estadoTrabajo === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                              </select>
+                              <button class="btn-action confirmar-cambio-estado" data-trabajo-id="${id}" style="background-color:#007bff; margin-left:10px;">Confirmar Estado</button>
+                          </div>
                       </div>
                   </div>`;
           });
           listaTrabajosDiv.innerHTML = trabajosHTML;
 
-          // --- Event Listeners Dinámicos (delegación podría ser mejor si hay muchos items) ---
+          // --- Event Listeners (usando delegación para eficiencia) ---
+          listaTrabajosDiv.addEventListener('click', async (e) => {
+              const target = e.target;
+
+              // Toggle para desplegar/colapsar trabajo
+              if (target.classList.contains('trabajo-header') || target.closest('.trabajo-header')) {
+                  const header = target.classList.contains('trabajo-header') ? target : target.closest('.trabajo-header');
+                  const trabajoItem = header.closest('.trabajo-item');
+                  if (trabajoItem) {
+                      trabajoItem.classList.toggle('open');
+                  }
+              }
+
+              // Botón para ver imagen de novedad
+              if (target.classList.contains('btn-ver-imagen-novedad')) {
+                  const imageUrl = target.dataset.imageUrl;
+                  if (imageUrl && modalVerImagenNovedad && imgVisualizadorNovedad) {
+                      imgVisualizadorNovedad.src = imageUrl;
+                      modalVerImagenNovedad.style.display = "block";
+                  }
+              }
+
+              // Botón para editar descripción de novedad
+              if (target.classList.contains('btn-edit-novedad')) {
+                  const trabajoId = target.dataset.trabajoId;
+                  const novedadIndex = parseInt(target.dataset.novedadIndex);
+                  const descripcionActual = target.dataset.descripcion;
+                  abrirModalEditarNovedad(trabajoId, novedadIndex, descripcionActual);
+              }
+
+              // Botón para eliminar novedad
+              if (target.classList.contains('btn-delete-novedad')) {
+                  const trabajoId = target.dataset.trabajoId;
+                  const novedadIndex = parseInt(target.dataset.novedadIndex);
+                  const imageUrl = target.dataset.imageUrl;
+                  await eliminarNovedadDeTrabajo(trabajoId, novedadIndex, imageUrl);
+              }
+
+              // Botón para confirmar cambio de estado
+              if (target.classList.contains('confirmar-cambio-estado')) {
+                  const trabajoId = target.dataset.trabajoId;
+                  const selectEstado = document.getElementById(`estado-trabajo-select-${trabajoId}`);
+                  if (selectEstado) {
+                    await actualizarEstadoTrabajo(trabajoId, selectEstado.value);
+                  }
+              }
+          });
+
+          // Listeners para formularios de agregar novedad (no necesitan delegación si se re-renderizan siempre)
           listaTrabajosDiv.querySelectorAll('.form-agregar-novedad').forEach(form => {
-              form.addEventListener('submit', async (e) => {
+              form.addEventListener('submit', async (e) => { // Asegurar que el listener se re-asigne si el DOM cambia mucho
                   e.preventDefault();
                   const trabajoId = e.target.dataset.trabajoId;
                   const descripcionInput = document.getElementById(`novedad-descripcion-${trabajoId}`);
@@ -153,43 +219,20 @@ document.addEventListener('DOMContentLoaded', function() {
               });
           });
 
-          listaTrabajosDiv.querySelectorAll('.confirmar-cambio-estado').forEach(button => {
-              button.addEventListener('click', async (e) => {
-                  const trabajoId = e.target.dataset.trabajoId;
-                  const selectEstado = document.getElementById(`estado-trabajo-${trabajoId}`);
-                  await actualizarEstadoTrabajo(trabajoId, selectEstado.value);
-              });
-          });
-
+          // Listeners para select de cambio de estado
           listaTrabajosDiv.querySelectorAll('.cambiar-estado-trabajo-select').forEach(select => {
-              select.addEventListener('focus', function () { this.previousValue = this.value; });
+              select.addEventListener('focus', function () { this.previousValue = this.value; }); // Guardar valor previo
               select.addEventListener('change', async (e) => {
                   const trabajoId = e.target.dataset.trabajoId;
                   const nuevoEstado = e.target.value;
-                  if (nuevoEstado !== "Completado" && nuevoEstado !== "Cancelado") { // Actualizar directo si no es estado final
-                     await actualizarEstadoTrabajo(trabajoId, nuevoEstado);
-                  }
-                  // Para estados finales, se espera confirmación del botón.
+                  // Actualizar directo si no es un estado final o si no se requiere confirmación por botón
+                  // La confirmación por botón ya está manejada por el listener del botón 'confirmar-cambio-estado'
+                  // if (nuevoEstado !== "Completado" && nuevoEstado !== "Cancelado") {
+                  //    await actualizarEstadoTrabajo(trabajoId, nuevoEstado);
+                  // }
               });
           });
 
-          listaTrabajosDiv.querySelectorAll('.btn-edit-novedad').forEach(btn => {
-              btn.addEventListener('click', (e) => {
-                  const trabajoId = e.target.dataset.trabajoId;
-                  const novedadIndex = parseInt(e.target.dataset.novedadIndex);
-                  const descripcionActual = e.target.dataset.descripcion;
-                  abrirModalEditarNovedad(trabajoId, novedadIndex, descripcionActual);
-              });
-          });
-
-          listaTrabajosDiv.querySelectorAll('.btn-delete-novedad').forEach(btn => {
-              btn.addEventListener('click', async (e) => {
-                  const trabajoId = e.target.dataset.trabajoId;
-                  const novedadIndex = parseInt(e.target.dataset.novedadIndex);
-                  const imageUrl = e.target.dataset.imageUrl;
-                  await eliminarNovedadDeTrabajo(trabajoId, novedadIndex, imageUrl);
-              });
-          });
 
       }, error => {
           console.error("Error onSnapshot trabajos:", error);
@@ -235,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
           const nuevaNovedad = {
               descripcion: descripcionNovedad || (imageUrl ? "Imagen adjunta" : "Actualización sin descripción"),
               imageUrl: imageUrl,
-              fecha: new Date() // Usar objeto Date de JS, Firestore lo convertirá a Timestamp
+              fecha: firebase.firestore.FieldValue.serverTimestamp() // Usar Timestamp de Firestore
           };
 
           const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
@@ -246,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
           alert("Novedad agregada con éxito.");
           formElement.reset();
           if (progressContainer) progressContainer.style.display = 'none';
-          if (progressBar) progressBar.textContent = ''; // Limpiar texto de progreso
+          if (progressBar) progressBar.textContent = '';
       } catch (error) {
           console.error("Error al agregar novedad:", error);
           alert("Error al agregar la novedad: " + error.message);
@@ -264,16 +307,15 @@ document.addEventListener('DOMContentLoaded', function() {
           let datosActualizar = { estadoTrabajo: nuevoEstado };
           if (nuevoEstado === 'Completado') {
             datosActualizar.fechaCompletado = firebase.firestore.FieldValue.serverTimestamp();
-            datosActualizar.fechaCancelado = firebase.firestore.FieldValue.delete(); // Asegurar que no haya fecha de cancelación
+            datosActualizar.fechaCancelado = firebase.firestore.FieldValue.delete();
           } else if (nuevoEstado === 'Cancelado') {
             datosActualizar.fechaCancelado = firebase.firestore.FieldValue.serverTimestamp();
-            datosActualizar.fechaCompletado = firebase.firestore.FieldValue.delete(); // Asegurar que no haya fecha de completado
-          } else { // Pendiente o En Proceso
+            datosActualizar.fechaCompletado = firebase.firestore.FieldValue.delete();
+          } else {
             datosActualizar.fechaCompletado = firebase.firestore.FieldValue.delete();
             datosActualizar.fechaCancelado = firebase.firestore.FieldValue.delete();
           }
           await trabajoRef.update(datosActualizar);
-          // onSnapshot refrescará la UI
       } catch (error) {
           console.error("Error al actualizar estado del trabajo:", error);
           alert("Error al actualizar el estado: " + error.message);
@@ -281,10 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function abrirModalEditarNovedad(trabajoId, novedadIndex, descripcionActual) {
-      if (!modalEditarNovedad || !inputTrabajoIdEditarNovedad || !inputNovedadIndexEditarNovedad || !textareaDescripcionNovedadEditar) {
-          console.error("Elementos del modal de edición de novedad no encontrados.");
-          return;
-      }
+      if (!modalEditarNovedad || !inputTrabajoIdEditarNovedad || !inputNovedadIndexEditarNovedad || !textareaDescripcionNovedadEditar) return;
       inputTrabajoIdEditarNovedad.value = trabajoId;
       inputNovedadIndexEditarNovedad.value = novedadIndex;
       textareaDescripcionNovedadEditar.value = descripcionActual;
@@ -299,97 +338,64 @@ document.addEventListener('DOMContentLoaded', function() {
         const nuevaDescripcion = textareaDescripcionNovedadEditar.value.trim();
 
         if (!trabajoId || isNaN(novedadIndex) || !nuevaDescripcion) {
-            alert("Faltan datos o la descripción está vacía.");
-            return;
+            alert("Faltan datos o la descripción está vacía."); return;
         }
-
         const submitButton = formEditarNovedad.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        submitButton.textContent = 'Guardando...';
+        submitButton.disabled = true; submitButton.textContent = 'Guardando...';
 
         try {
             const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
-            const doc = await trabajoRef.get();
-            if (!doc.exists) {
-                alert("El trabajo ya no existe."); throw new Error("Trabajo no encontrado");
-            }
+            const docSnap = await trabajoRef.get();
+            if (!docSnap.exists()) throw new Error("Trabajo no encontrado");
 
-            let novedades = doc.data().novedades || [];
+            let novedades = docSnap.data().novedades || [];
             if (novedadIndex >= 0 && novedadIndex < novedades.length) {
-                // Crear un nuevo objeto para la novedad actualizada para asegurar que se detecte el cambio
-                const novedadActualizada = {
-                    ...novedades[novedadIndex], // Copiar propiedades existentes (fecha, imageUrl)
-                    descripcion: nuevaDescripcion
-                };
+                const novedadActualizada = { ...novedades[novedadIndex], descripcion: nuevaDescripcion };
                 novedades[novedadIndex] = novedadActualizada;
-
                 await trabajoRef.update({ novedades: novedades });
                 alert("Descripción de la novedad actualizada.");
                 if (modalEditarNovedad) modalEditarNovedad.style.display = "none";
-                // onSnapshot debería refrescar la UI, pero si no, aquí se podría actualizar el span directamente
-                // document.getElementById(`novedad-desc-${trabajoId}-${novedadIndex}`).textContent = nuevaDescripcion;
-            } else {
-                alert("Índice de novedad inválido.");
-            }
+            } else { alert("Índice de novedad inválido."); }
         } catch (error) {
             console.error("Error al actualizar descripción de novedad:", error);
             alert("Error al actualizar: " + error.message);
         } finally {
-            submitButton.disabled = false;
-            submitButton.textContent = 'Guardar Cambios';
+            submitButton.disabled = false; submitButton.textContent = 'Guardar Cambios';
         }
     });
   }
 
   async function eliminarNovedadDeTrabajo(trabajoId, novedadIndex, imageUrl) {
       if (!confirm("¿Estás seguro de eliminar esta novedad?")) return;
-
       try {
           const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
-          const doc = await trabajoRef.get();
-          if (!doc.exists) {
-              alert("El trabajo ya no existe."); throw new Error("Trabajo no encontrado");
-          }
+          const docSnap = await trabajoRef.get();
+          if (!docSnap.exists()) throw new Error("Trabajo no encontrado");
 
-          let novedades = doc.data().novedades || [];
+          let novedades = docSnap.data().novedades || [];
           if (novedadIndex >= 0 && novedadIndex < novedades.length) {
-              const novedadAEliminar = novedades[novedadIndex]; // Guardamos la novedad antes de quitarla del array
-              novedades.splice(novedadIndex, 1); // Eliminar la novedad del array
+              const novedadAEliminar = novedades.splice(novedadIndex, 1)[0]; // Elimina y obtiene el elemento
 
-              // Si la novedad tiene una imagen, eliminarla de Storage
-              if (novedadAEliminar.imageUrl) { // Usamos la imageUrl del objeto que obtuvimos
+              if (novedadAEliminar && novedadAEliminar.imageUrl) { // Verificar si la novedad eliminada tenía imagen
                   try {
                       const imageRef = storage.refFromURL(novedadAEliminar.imageUrl);
                       await imageRef.delete();
                       console.log("Imagen de novedad eliminada de Storage:", novedadAEliminar.imageUrl);
                   } catch (storageError) {
                       console.warn("Error al eliminar imagen de Storage (puede que ya no exista):", storageError.message);
-                      // Continuar incluso si la imagen no se pudo borrar de Storage
                   }
               }
-
               await trabajoRef.update({ novedades: novedades });
               alert("Novedad eliminada.");
-              // onSnapshot se encargará de refrescar la UI.
-          } else {
-              alert("Índice de novedad inválido.");
-          }
+          } else { alert("Índice de novedad inválido."); }
       } catch (error) {
           console.error("Error al eliminar novedad:", error);
           alert("Error al eliminar la novedad: " + error.message);
       }
   }
 
-  // Carga inicial y filtro
   if (filtroEstadoTrabajoSelect) {
-      filtroEstadoTrabajoSelect.addEventListener('change', (e) => {
-          mostrarTrabajos(e.target.value);
-      });
+      filtroEstadoTrabajoSelect.addEventListener('change', (e) => mostrarTrabajos(e.target.value));
   }
-
-  if (typeof mostrarTrabajos === "function") {
-    mostrarTrabajos();
-  } else {
-      console.error("Función mostrarTrabajos no está definida al inicio.");
-  }
+  mostrarTrabajos(); // Carga inicial
 });

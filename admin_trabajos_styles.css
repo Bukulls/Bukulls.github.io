@@ -24,14 +24,55 @@ button, .btn-action {
 button:hover, .btn-action:hover { background-color: #ff0000; }
 
 #lista-trabajos .trabajo-item {
-    background-color: #1e1e1e; border: 1px solid #383838; padding: 15px;
+    background-color: #1e1e1e; border: 1px solid #383838;
     margin-bottom: 15px; border-radius: 5px;
+    /* No padding aquí, se maneja en header y content */
 }
-#lista-trabajos h5 { margin-top:0; }
-#lista-trabajos .estado-pendiente h5 { color: #ffc107; }
-#lista-trabajos .estado-en-proceso h5 { color: #17a2b8; }
-#lista-trabajos .estado-completado h5 { color: #28a745; }
-#lista-trabajos .estado-cancelado h5 { color: #dc3545; }
+
+/* Estilos para el desplegable (acordeón) del trabajo */
+.trabajo-header {
+    padding: 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #2f2f2f; /* Línea sutil si el contenido está cerrado */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.trabajo-item.open .trabajo-header {
+    border-bottom: 1px solid #444; /* Línea más visible cuando está abierto */
+}
+.trabajo-header h5 {
+    margin:0;
+    flex-grow: 1;
+}
+.trabajo-estado-label { /* Para mostrar el estado en el header */
+    font-size: 0.9em;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: 15px;
+    color: #fff;
+}
+.estado-pendiente .trabajo-estado-label { background-color: #ffc107; color: #000; }
+.estado-en-proceso .trabajo-estado-label { background-color: #17a2b8; }
+.estado-completado .trabajo-estado-label { background-color: #28a745; }
+.estado-cancelado .trabajo-estado-label { background-color: #dc3545; }
+
+
+.trabajo-content {
+    padding: 0 15px 15px 15px; /* Sin padding superior, ya lo da el header */
+    display: none; /* Oculto por defecto */
+    border-top: none; /* El header ya tiene el borde */
+}
+.trabajo-item.open .trabajo-content {
+    display: block;
+}
+
+
+#lista-trabajos h5 { margin-top:0; } /* Movido a .trabajo-header h5 */
+#lista-trabajos .estado-pendiente .trabajo-header h5 { color: #ffc107; }
+#lista-trabajos .estado-en-proceso .trabajo-header h5 { color: #17a2b8; }
+#lista-trabajos .estado-completado .trabajo-header h5 { color: #28a745; }
+#lista-trabajos .estado-cancelado .trabajo-header h5 { color: #dc3545; }
 
 header { background-color: #000; color: #ad0000; padding: 20px; text-align: center; }
 footer { background-color: #000; color: #ad0000; text-align: center; padding: 15px; border-top: 1px solid #333;}
@@ -42,13 +83,24 @@ footer { background-color: #000; color: #ad0000; text-align: center; padding: 15
 .novedades-lista { margin-top: 15px; padding-left: 20px; border-top: 1px dashed #444; padding-top:10px;}
 .novedad-item {
     margin-bottom: 15px; padding-bottom:10px; border-bottom: 1px dotted #333;
-    position: relative; /* Para posicionar botones de acción de novedad */
+    position: relative;
 }
 .novedad-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom:0;}
-.novedad-item img { max-width: 150px; max-height: 150px; border-radius: 3px; margin-top: 5px; display:block; border: 1px solid #555; }
 .novedad-item p { margin: 5px 0; }
 
-.novedad-actions { /* Contenedor para botones de editar/eliminar novedad */
+.btn-ver-imagen-novedad { /* Estilo para el botón de ver imagen */
+    background-color: #007bff;
+    color: white;
+    padding: 3px 8px;
+    font-size: 0.8em;
+    margin-top: 5px;
+    display: inline-block;
+}
+.btn-ver-imagen-novedad:hover {
+    background-color: #0056b3;
+}
+
+.novedad-actions {
     margin-top: 8px;
 }
 .novedad-actions .btn-action {
@@ -69,26 +121,65 @@ footer { background-color: #000; color: #ad0000; text-align: center; padding: 15
     text-align: center; line-height: 10px; color: white; font-size: 0.7em;
 }
 
-/* Estilos para el Modal de Edición de Novedad */
+/* Estilos para Modales (general) */
 .modal {
     display: none; position: fixed; z-index: 1000;
     left: 0; top: 0; width: 100%; height: 100%;
-    overflow: auto; background-color: rgba(0,0,0,0.7);
+    overflow: auto; background-color: rgba(0,0,0,0.8); /* Más oscuro para imagen */
+    padding-top: 50px; /* Espacio para cerrar botón si la imagen es grande */
 }
 .modal-content {
     background-color: #282828; color: #fff;
-    margin: 10% auto; padding: 25px; border: 1px solid #555;
-    width: 80%; max-width: 500px; /* Ajusta según necesidad */
+    margin: auto; /* Centrado vertical y horizontal */
+    padding: 25px; border: 1px solid #555;
+    width: 80%;
     border-radius: 8px; position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
-.modal-content h3 {
+.modal-content-novedad-edit { /* Específico para el modal de editar novedad */
+    max-width: 500px;
+    margin-top: 10%; /* Ajuste para que no esté tan arriba */
+}
+
+.modal-content-image-view { /* Específico para el modal de imagen */
+    background-color: transparent; /* Sin fondo para que la imagen destaque */
+    padding: 0;
+    width: auto; /* Se ajustará a la imagen */
+    max-width: 90%;
+    max-height: 90%;
+    border: none;
+    box-shadow: none;
+    text-align: center; /* Centrar la imagen */
+}
+#imagen-novedad-visualizador {
+    max-width: 100%;
+    max-height: calc(100vh - 100px); /* Ajusta para que quepa con el botón de cerrar */
+    border-radius: 5px;
+    border: 3px solid #444;
+}
+
+
+.modal-content h3 { /* Para el modal de editar novedad */
     color: #ad0000; margin-top: 0;
     border-bottom: 1px solid #444; padding-bottom: 10px;
 }
 .close-modal-btn {
-    color: #aaa; float: right; font-size: 28px; font-weight: bold;
-    position: absolute; top: 10px; right: 20px;
+    color: #fff; /* Blanco para mejor contraste sobre overlay oscuro */
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 35px;
+    font-weight: bold;
+    line-height: 0.5;
 }
 .close-modal-btn:hover, .close-modal-btn:focus {
     color: #ff0000; text-decoration: none; cursor: pointer;
+}
+/* Ajuste para el botón de cerrar en el modal de imagen si es necesario */
+.modal-content-image-view .close-modal-btn {
+    top: -25px; /* O ajusta según el padding-top del .modal */
+    right: 5px;
+    background-color: rgba(0,0,0,0.5);
+    padding: 0 5px;
+    border-radius: 50%;
 }
