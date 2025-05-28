@@ -36,10 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   let vehiculosCargadosParaPresupuesto = [];
 
-  // --- Funciones para Presupuestos (DEFINICIONES COMPLETAS) ---
   async function cargarVehiculosParaPresupuesto(selectElement = vehiculoSelect, currentVehiculoId = null) {
       if (!selectElement) { console.warn("Select element for vehicles not found."); return; }
-      console.log("Cargando vehículos para el select:", selectElement.id);
       try {
         const snapshot = await db.collection("vehiculos").orderBy("registradoEl", "desc").get();
         vehiculosCargadosParaPresupuesto = [];
@@ -49,19 +47,20 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             snapshot.forEach(doc => {
                 const veh = doc.data(); const vehId = doc.id;
+                // Guardamos el objeto completo para tener acceso a patente, marca, modelo, etc.
                 vehiculosCargadosParaPresupuesto.push({id: vehId, ...veh });
+                const optionText = `${veh.patente || 'N/P'} - ${veh.marca || 'N/M'} ${veh.modelo || ''} (${veh.clienteNombre || 'Cliente S/N'})`.trim();
                 const option = document.createElement('option');
                 option.value = vehId;
-                option.textContent = `${veh.patente || 'N/P'} - ${veh.marca || 'N/M'} (${veh.clienteNombre || 'Cliente S/N'})`;
+                option.textContent = optionText;
                 if (currentVehiculoId === vehId) {
                     option.selected = true;
                 }
                 selectElement.appendChild(option);
             });
-            console.log("Array vehiculosCargadosParaPresupuesto después de cargar:", vehiculosCargadosParaPresupuesto);
         }
-        if (currentVehiculoId && selectElement === vehiculoSelectEditar) { // Usar el elemento DOM directamente
-            selectElement.dispatchEvent(new Event('change'));
+        if (currentVehiculoId && selectElement.id === vehiculoSelectEditar.id) {
+            selectElement.dispatchEvent(new Event('change')); // Disparar change para actualizar info cliente en modal editar
         }
       } catch (e) {
           console.error("Error cargando vehículos para el select:", e);
@@ -74,10 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const currentManoObraMontoInput = esModalDeEdicion ? inputManoObraMontoEditar : inputManoObraMonto;
       const currentTotalSpan = esModalDeEdicion ? totalSpanEditar : totalSpan;
 
-      if (!currentTablaBody || !currentTotalSpan || !currentManoObraMontoInput) {
-          console.warn("ActualizarTotal: Elementos DOM faltantes para", esModalDeEdicion ? "modal editar" : "crear nuevo");
-          return;
-      }
+      if (!currentTablaBody || !currentTotalSpan || !currentManoObraMontoInput) return;
       let totalItems = 0;
       currentTablaBody.querySelectorAll('tr').forEach(row => {
         const montoInput = row.querySelector('.item-monto');
@@ -89,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function agregarItemPresupuesto(tbodyElement, esModalDeEdicion = false) {
-      if (!tbodyElement) { console.warn("agregarItem: tbodyElement no encontrado"); return; }
+      if (!tbodyElement) return;
       const fila = document.createElement('tr');
       fila.innerHTML = `
         <td><input type="text" class="item-repuesto" placeholder="Repuesto/Servicio"></td>
@@ -97,14 +93,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <td><input type="url" class="item-link" placeholder="Link (opcional)"></td>
         <td><button type="button" class="borrar-item btn-action" style="background-color: #555;">Borrar</button></td>`;
       tbodyElement.appendChild(fila);
-      // MUY IMPORTANTE: Añadir listener al nuevo input de monto
       const nuevoMontoInput = fila.querySelector('.item-monto');
       if (nuevoMontoInput) {
           nuevoMontoInput.addEventListener('input', () => actualizarTotalPresupuesto(esModalDeEdicion));
       }
-      // Es opcional llamar a actualizarTotalPresupuesto aquí si todos los montos iniciales son 0.
-      // Se actualizará cuando el usuario ingrese un valor.
-      // actualizarTotalPresupuesto(esModalDeEdicion);
   }
 
   async function mostrarPresupuestosGuardados() {
@@ -116,10 +108,8 @@ document.addEventListener('DOMContentLoaded', function() {
           let html = "";
           snapshot.forEach(doc => {
               const p = doc.data(); const id = doc.id;
-              let manoDeObraHTML = '';
-              if (p.manoDeObra && p.manoDeObra.monto >= 0 && (p.manoDeObra.descripcion || p.manoDeObra.monto > 0) ) {
-                  manoDeObraHTML = `<li style="color: #ffc107;">Mano de Obra (${p.manoDeObra.descripcion || 'General'}): $${p.manoDeObra.monto.toFixed(2)}</li>`;
-              }
+              let manoDeObraHTML = (p.manoDeObra && p.manoDeObra.monto >= 0 && (p.manoDeObra.descripcion || p.manoDeObra.monto > 0)) ?
+                  `<li style="color: #ffc107;">Mano de Obra (${p.manoDeObra.descripcion || 'General'}): $${p.manoDeObra.monto.toFixed(2)}</li>` : '';
 
               html += `
                   <div>
@@ -162,22 +152,43 @@ document.addEventListener('DOMContentLoaded', function() {
           });
           listaPresupuestosGuardadosDiv.querySelectorAll('.ver-trabajo-btn').forEach(btn => {
               btn.addEventListener('click', (e) => {
-                  const presupuestoId = e.target.dataset.presupuestoId;
-                  window.location.href = `admin_trabajos.html?presupuestoId=${presupuestoId}`;
+                  window.location.href = `admin_trabajos.html?presupuestoId=${e.target.dataset.presupuestoId}`;
               });
           });
       }, error => { console.error("Error onSnapshot lista presupuestos:", error); if (listaPresupuestosGuardadosDiv) listaPresupuestosGuardadosDiv.innerHTML = "<p style='color:red;'>Error al cargar.</p>"; });
   }
 
-  async function aceptarPresupuesto(id, data) {
-      if (!confirm(`ACEPTAR presupuesto para "${data.vehiculoInfo}" y mover a trabajos?`)) return;
+  async function aceptarPresupuesto(id, dataPresupuesto) {
+      if (!confirm(`ACEPTAR presupuesto para "${dataPresupuesto.vehiculoInfo}" y mover a trabajos?`)) return;
+
+      let vehiculoParaTrabajoInfo = dataPresupuesto.vehiculoInfo; // Default
+      let vehiculoDataCompleta = {};
+
+      if (dataPresupuesto.vehiculoDocId) {
+          try {
+              const vehiculoDoc = await db.collection("vehiculos").doc(dataPresupuesto.vehiculoDocId).get();
+              if (vehiculoDoc.exists) {
+                  vehiculoDataCompleta = vehiculoDoc.data();
+                  vehiculoParaTrabajoInfo = `${vehiculoDataCompleta.patente || ''} ${vehiculoDataCompleta.marca || ''} ${vehiculoDataCompleta.modelo || ''}`.trim().replace(/\s+/g, ' ');
+              }
+          } catch (e) {
+              console.warn("No se pudo obtener detalle completo del vehículo para el trabajo:", e);
+          }
+      }
+
       try {
           const trabajo = {
-              presupuestoOriginalId: id, vehiculoOriginalId: data.vehiculoDocId, vehiculoInfo: data.vehiculoInfo,
-              clienteNombre: data.clienteNombre, clienteTelefono: data.clienteTelefono, items: data.items,
-              manoDeObra: data.manoDeObra || { descripcion: '', monto: 0 },
-              total: data.total, estadoTrabajo: 'Pendiente',
-              fechaAceptacionPresupuesto: data.creadoEl, fechaInicioTrabajo: firebase.firestore.FieldValue.serverTimestamp()
+              presupuestoOriginalId: id,
+              vehiculoOriginalId: dataPresupuesto.vehiculoDocId,
+              vehiculoInfo: vehiculoParaTrabajoInfo, // Usar la info formateada
+              clienteNombre: dataPresupuesto.clienteNombre, // Usar el nombre del cliente del presupuesto
+              clienteTelefono: dataPresupuesto.clienteTelefono, // Usar el teléfono del cliente del presupuesto
+              items: dataPresupuesto.items,
+              manoDeObra: dataPresupuesto.manoDeObra || { descripcion: '', monto: 0 },
+              total: dataPresupuesto.total,
+              estadoTrabajo: 'Pendiente',
+              fechaAceptacionPresupuesto: dataPresupuesto.creadoEl,
+              fechaInicioTrabajo: firebase.firestore.FieldValue.serverTimestamp()
           };
           await db.collection("trabajos_en_curso").add(trabajo);
           await db.collection("presupuestos").doc(id).update({ estado: 'Aceptado', movidoATrabajosEl: firebase.firestore.FieldValue.serverTimestamp() });
@@ -195,7 +206,6 @@ document.addEventListener('DOMContentLoaded', function() {
           }
           await presupuestoRef.delete();
           alert("Presupuesto eliminado con éxito.");
-          // onSnapshot se encargará de actualizar la lista
       } catch (error) {
           console.error("Error al eliminar presupuesto:", error);
           alert("Error al eliminar el presupuesto: " + error.message);
@@ -221,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
       doc.setFontSize(11);
       doc.text(`Cliente: ${data.clienteNombre || 'No especificado'}`, 15, 55);
       doc.text(`Teléfono Cliente: ${data.clienteTelefono || 'N/A'}`, 15, 60);
-      doc.text(`Vehículo: ${data.vehiculoInfo || 'N/A'}`, 15, 67);
+      doc.text(`Vehículo: ${data.vehiculoInfo || 'N/A'}`, 15, 67); // Muestra el vehiculoInfo del presupuesto
       let y = 78;
       doc.setFontSize(12); doc.text("Detalle del Presupuesto:", 15, y); y += 2;
       doc.setFontSize(10); doc.setFillColor(230, 230, 230); doc.setTextColor(0);
@@ -236,14 +246,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const descLines = doc.splitTextToSize(item.repuesto + (item.link ? ` (Ver: ${item.link})` : ''), 130);
             const montoStr = `$${item.monto ? item.monto.toFixed(2) : '0.00'}`;
             let itemHeight = (descLines.length * 5) + 4;
-            if (y + itemHeight > 260) { doc.addPage(); y = 20; /* Podrías re-dibujar encabezados de tabla aquí */ }
+            if (y + itemHeight > 260) { doc.addPage(); y = 20; }
             doc.text(descLines, 17, y + 5);
             doc.text(montoStr, 152, y + 5);
             y += itemHeight;
             doc.line(15, y, 195, y);
           });
       }
-
       if (data.manoDeObra && data.manoDeObra.monto >= 0 && (data.manoDeObra.descripcion || data.manoDeObra.monto > 0) ) {
           doc.setTextColor(50,50,50);
           const descManoObra = data.manoDeObra.descripcion || "Mano de Obra General";
@@ -258,7 +267,6 @@ document.addEventListener('DOMContentLoaded', function() {
           y += itemHeight;
           doc.line(15, y, 195, y);
       }
-
       y += 7;
       doc.setFontSize(12); doc.setFont(undefined, "bold");
       doc.text(`TOTAL PRESUPUESTO:`, 105, y);
@@ -269,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
       doc.text(`Condiciones pueden aplicar.`, 15, y);
       doc.setFontSize(9); doc.setTextColor(150);
       doc.text("Gracias por su confianza.", 105, Math.max(y + 20, 280), null, null, "center");
-      const nombreArchivo = `Presupuesto_${(data.clienteNombre || idPresupuesto.substring(0,5))}.pdf`;
+      const nombreArchivo = `Presupuesto_${(data.clienteNombre || idPresupuesto.substring(0,5)).replace(/\s/g, '_')}.pdf`;
       doc.save(nombreArchivo);
   }
 
@@ -284,7 +292,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if (data.manoDeObra && (data.manoDeObra.monto > 0 || data.manoDeObra.descripcion) ) {
           mensajeItems += `\n- Mano de Obra (${data.manoDeObra.descripcion || 'General'}): $${data.manoDeObra.monto.toFixed(2)}`;
       }
-
       let mensajeLinks = "";
       if (linksSeleccionados && linksSeleccionados.length > 0) {
           mensajeLinks = "\n\nLinks de interés:";
@@ -292,13 +299,24 @@ document.addEventListener('DOMContentLoaded', function() {
               mensajeLinks += `\n* ${link.descripcion}: ${link.url}`;
           });
       } else if (linksSeleccionados === null && data.items && data.items.some(item => item.link)) {
-          mensajeLinks = "\n\nLinks de interés:";
+          mensajeLinks = "\n\nLinks de interés (principales):"; // Modificado para claridad
           data.items.forEach(item => {
               if (item.link) mensajeLinks += `\n* ${item.repuesto}: ${item.link}`;
           });
       }
-
       const telCliente = data.clienteTelefono ? data.clienteTelefono.replace(/\D/g,'') : '';
+      let numeroLimpioWA = '';
+      if (telCliente) {
+          if (telCliente.length > 9 && telCliente.startsWith('56')) {
+             numeroLimpioWA = telCliente; // Ya tiene 56
+          } else if (telCliente.length === 9) {
+             numeroLimpioWA = '56' + telCliente; // Añadir 56 si es número local de 9 dígitos
+          } else {
+              // Número no parece ser chileno válido, intentar enviar sin código de país
+              // o mostrar advertencia. Por ahora, enviar tal cual.
+              numeroLimpioWA = telCliente;
+          }
+      }
       const mensaje =
 `Estimado/a ${data.clienteNombre || 'Cliente'},
 Le enviamos el presupuesto (ID: ${idPresupuesto.substring(0,6)}) de ${nombreTaller} para el vehículo: ${data.vehiculoInfo || 'N/A'}.
@@ -310,52 +328,45 @@ Estado: ${data.estado || 'Pendiente'}
 
 Para confirmar o cualquier consulta, por favor contáctenos.
 ¡Gracias!`;
-
-      const linkWA = `https://wa.me/${telCliente ? '56' + telCliente.slice(-8) : ''}?text=${encodeURIComponent(mensaje)}`;
+      const linkWA = `https://wa.me/${numeroLimpioWA}?text=${encodeURIComponent(mensaje)}`;
       window.open(linkWA, '_blank');
   }
 
-  // --- Lógica para Modal Editar Presupuesto ---
   if(btnCerrarModalEditarPresupuesto) btnCerrarModalEditarPresupuesto.onclick = () => { modalEditarPresupuesto.style.display = "none"; }
-  window.onclick = function(event) {
+  window.addEventListener('click', function(event) { // Usar addEventListener para no sobreescribir otros
     if (event.target == modalEditarPresupuesto) modalEditarPresupuesto.style.display = "none";
     if (event.target == modalWhatsAppLinks) modalWhatsAppLinks.style.display = "none";
-  }
+  });
 
   async function abrirModalEditarPresupuesto(presupuestoId, dataPresupuesto) {
-      if (!presupuestoIdEditarInput || !vehiculoSelectEditar || !tablaBodyEditar || !inputManoObraDescripcionEditar || !inputManoObraMontoEditar || !totalSpanEditar || !modalEditarPresupuesto) {
-          console.error("Faltan elementos DOM para el modal de edición."); return;
-      }
+      if (!presupuestoIdEditarInput || !vehiculoSelectEditar || !tablaBodyEditar || !inputManoObraDescripcionEditar || !inputManoObraMontoEditar || !totalSpanEditar || !modalEditarPresupuesto) return;
       if (!dataPresupuesto) {
           const doc = await db.collection('presupuestos').doc(presupuestoId).get();
           if (!doc.exists) { alert('Presupuesto no encontrado.'); return; }
           dataPresupuesto = doc.data();
       }
       presupuestoIdEditarInput.value = presupuestoId;
-      await cargarVehiculosParaPresupuesto(vehiculoSelectEditar, dataPresupuesto.vehiculoDocId);
-
+      await cargarVehiculosParaPresupuesto(vehiculoSelectEditar, dataPresupuesto.vehiculoDocId); // Cargar y seleccionar
+      
       tablaBodyEditar.innerHTML = '';
       if(dataPresupuesto.items && dataPresupuesto.items.length > 0){
           dataPresupuesto.items.forEach(item => {
               agregarItemPresupuesto(tablaBodyEditar, true);
               const ultimaFila = tablaBodyEditar.lastElementChild;
-              if(ultimaFila && ultimaFila.cells.length >=3) { // Verificar que la fila y celdas existan
+              if(ultimaFila && ultimaFila.cells.length >=3) {
                 ultimaFila.querySelector('.item-repuesto').value = item.repuesto;
                 ultimaFila.querySelector('.item-monto').value = item.monto.toFixed(2);
                 ultimaFila.querySelector('.item-link').value = item.link || '';
-              } else {
-                  console.warn("No se pudo poblar la última fila de items en edición, o no tiene suficientes celdas.", ultimaFila);
               }
           });
       }
       inputManoObraDescripcionEditar.value = dataPresupuesto.manoDeObra ? dataPresupuesto.manoDeObra.descripcion : '';
       inputManoObraMontoEditar.value = dataPresupuesto.manoDeObra ? dataPresupuesto.manoDeObra.monto.toFixed(2) : '0.00';
-      actualizarTotalPresupuesto(true);
+      actualizarTotalPresupuesto(true); // Actualizar total después de poblar
       modalEditarPresupuesto.style.display = "block";
   }
 
   if(btnAgregarItemEditar) btnAgregarItemEditar.onclick = () => agregarItemPresupuesto(tablaBodyEditar, true);
-
   if(tablaBodyEditar) {
       tablaBodyEditar.addEventListener('click', e => {
         if (e.target.classList.contains('borrar-item')) {
@@ -365,7 +376,7 @@ Para confirmar o cualquier consulta, por favor contáctenos.
       });
   }
   if(inputManoObraMontoEditar) inputManoObraMontoEditar.addEventListener('input', () => actualizarTotalPresupuesto(true));
-  if(inputManoObraDescripcionEditar) inputManoObraDescripcionEditar.addEventListener('input', () => actualizarTotalPresupuesto(true));
+  if(inputManoObraDescripcionEditar) inputManoObraDescripcionEditar.addEventListener('input', () => {/* No afecta el total directamente, pero bueno tenerlo */});
 
   if(vehiculoSelectEditar && infoClientePresupuestoEditarP) {
       vehiculoSelectEditar.addEventListener('change', function() {
@@ -380,13 +391,11 @@ Para confirmar o cualquier consulta, por favor contáctenos.
       });
   }
 
-
   if(formEditarPresupuesto) {
       formEditarPresupuesto.addEventListener('submit', async (e) => {
           e.preventDefault();
           const id = presupuestoIdEditarInput.value;
           if (!id) { alert("Error: ID de presupuesto no encontrado."); return; }
-
           const submitButton = formEditarPresupuesto.querySelector('button[type="submit"]');
           submitButton.disabled = true; submitButton.textContent = 'Guardando...';
 
@@ -403,21 +412,18 @@ Para confirmar o cualquier consulta, por favor contáctenos.
                 const repuesto = repuestoInput.value.trim();
                 const monto = parseFloat(montoInput.value) || 0;
                 const link = linkInput.value.trim();
-                if (repuesto) itemsEditados.push({ repuesto, monto: parseFloat(monto.toFixed(2)), link, tipo: 'repuesto_servicio' });
+                if (repuesto) itemsEditados.push({ repuesto, monto: parseFloat(monto.toFixed(2)), link });
             }
           });
-
           const manoObraDescEditada = inputManoObraDescripcionEditar.value.trim();
           const manoObraMontoEditado = parseFloat(inputManoObraMontoEditar.value) || 0;
-
           if (itemsEditados.length === 0 && manoObraMontoEditado <= 0 && !manoObraDescEditada) {
              alert("El presupuesto editado debe tener al menos un item o detalle de mano de obra.");
              submitButton.disabled = false; submitButton.textContent = 'Guardar Cambios del Presupuesto'; return;
           }
-
           const presupuestoActualizado = {
               vehiculoDocId: vehiculoIdFirestore,
-              vehiculoInfo: `${vehiculoSeleccionado.patente} - ${vehiculoSeleccionado.marca} (${vehiculoSeleccionado.clienteNombre || 'S/N'})`,
+              vehiculoInfo: `${vehiculoSeleccionado.patente || ''} ${vehiculoSeleccionado.marca || ''} ${vehiculoSeleccionado.modelo || ''}`.trim().replace(/\s+/g, ' '),
               clienteNombre: vehiculoSeleccionado.clienteNombre || '',
               clienteTelefono: vehiculoSeleccionado.clienteTelefono || '',
               items: itemsEditados,
@@ -425,7 +431,6 @@ Para confirmar o cualquier consulta, por favor contáctenos.
               total: parseFloat(totalSpanEditar.textContent),
               actualizadoEl: firebase.firestore.FieldValue.serverTimestamp()
           };
-
           try {
               await db.collection("presupuestos").doc(id).update(presupuestoActualizado);
               alert("¡Presupuesto actualizado con éxito!");
@@ -439,9 +444,7 @@ Para confirmar o cualquier consulta, por favor contáctenos.
       });
   }
 
-  // --- Lógica para Modal WhatsApp Links ---
   if(btnCerrarModalWhatsAppLinks) btnCerrarModalWhatsAppLinks.onclick = () => { modalWhatsAppLinks.style.display = "none"; }
-
   function prepararWhatsAppModal(dataPresupuesto, presupuestoId) {
       whatsappLinksListDiv.innerHTML = '';
       let hasLinks = false;
@@ -467,7 +470,7 @@ Para confirmar o cualquier consulta, por favor contáctenos.
       } else {
           btnEnviarWhatsAppSeleccionados.style.display = 'block';
       }
-      whatsappPresupuestoIdDataInput.value = JSON.stringify({ ...dataPresupuesto, presupuestoId });
+      whatsappPresupuestoIdDataInput.value = JSON.stringify({ ...dataPresupuesto, presupuestoId }); // Guardar todo el objeto
       modalWhatsAppLinks.style.display = 'block';
   }
 
@@ -483,7 +486,6 @@ Para confirmar o cualquier consulta, por favor contáctenos.
       });
   }
 
-  // --- Event Listeners para Crear Presupuesto ---
   if (vehiculoSelect && infoClientePresupuestoP) {
       vehiculoSelect.addEventListener('change', function() {
             const selectedVehiculoId = this.value;
@@ -511,17 +513,9 @@ Para confirmar o cualquier consulta, por favor contáctenos.
 
   if (btnGuardarPresupuesto) {
     btnGuardarPresupuesto.addEventListener('click', async () => {
-      console.log("--- Iniciando guardado de presupuesto ---");
-      if (!vehiculoSelect || !tablaBody || !totalSpan || !inputManoObraDescripcion || !inputManoObraMonto || !db) {
-          alert("Error de config. interna. Revisa la consola.");
-          console.error("Elementos faltantes:", { vehiculoSelect, tablaBody, totalSpan, inputManoObraDescripcion, inputManoObraMonto, db });
-          return;
-      }
+      if (!vehiculoSelect || !tablaBody || !totalSpan || !inputManoObraDescripcion || !inputManoObraMonto || !db) return;
       const vehiculoIdFirestore = vehiculoSelect.value;
-      console.log("Vehículo ID seleccionado:", vehiculoIdFirestore);
-
       if (!vehiculosCargadosParaPresupuesto || vehiculosCargadosParaPresupuesto.length === 0) {
-          console.warn("vehiculosCargadosParaPresupuesto no disponible. Intentando recargar...");
           await cargarVehiculosParaPresupuesto();
           if (!vehiculosCargadosParaPresupuesto || vehiculosCargadosParaPresupuesto.length === 0) {
               alert("No se pudieron cargar datos de vehículos. Refresca la página e inténtalo de nuevo."); return;
@@ -529,15 +523,11 @@ Para confirmar o cualquier consulta, por favor contáctenos.
       }
       const vehiculoSeleccionado = vehiculosCargadosParaPresupuesto.find(v => v.id === vehiculoIdFirestore);
       if (!vehiculoIdFirestore || !vehiculoSeleccionado) {
-          alert("Selecciona un vehículo válido.");
-          console.error("Vehículo no seleccionado o no encontrado en 'vehiculosCargadosParaPresupuesto'.", vehiculoSeleccionado); return;
+          alert("Selecciona un vehículo válido."); return;
       }
-      console.log("Vehículo seleccionado (datos):", vehiculoSeleccionado);
-
-      const vehiculoInfoTexto = `${vehiculoSeleccionado.patente} - ${vehiculoSeleccionado.marca} (${vehiculoSeleccionado.clienteNombre || 'S/N'})`;
+      const vehiculoInfoTexto = `${vehiculoSeleccionado.patente || ''} ${vehiculoSeleccionado.marca || ''} ${vehiculoSeleccionado.modelo || ''}`.trim().replace(/\s+/g, ' ');
       const items = [];
-      console.log("Procesando items de la tabla...");
-      tablaBody.querySelectorAll('tr').forEach((row, index) => {
+      tablaBody.querySelectorAll('tr').forEach((row) => {
         const repuestoInput = row.querySelector('.item-repuesto');
         const montoInput = row.querySelector('.item-monto');
         const linkInput = row.querySelector('.item-link');
@@ -545,23 +535,14 @@ Para confirmar o cualquier consulta, por favor contáctenos.
             const repuesto = repuestoInput.value.trim();
             const monto = parseFloat(montoInput.value) || 0;
             const link = linkInput.value.trim();
-            console.log(`Item ${index + 1}: R='${repuesto}', M=${monto}, L='${link}'`);
-            if (repuesto) {
-                items.push({ repuesto, monto: parseFloat(monto.toFixed(2)), link, tipo: 'repuesto_servicio' });
-            } else if (monto > 0 || link) { console.warn(`Item ${index + 1} omitido: sin desc.`); }
-        } else { console.warn(`Fila item ${index + 1} incompleta.`, row); }
+            if (repuesto) items.push({ repuesto, monto: parseFloat(monto.toFixed(2)), link });
+        }
       });
-      console.log("Items recolectados:", items);
-
       const manoObraDesc = inputManoObraDescripcion.value.trim();
       const manoObraMontoVal = parseFloat(inputManoObraMonto.value) || 0;
-      console.log(`Mano de Obra: Desc='${manoObraDesc}', Monto=${manoObraMontoVal}`);
-
       if (items.length === 0 && manoObraMontoVal <= 0 && !manoObraDesc) {
-           alert("Agrega items o detalle de mano de obra.");
-           console.warn("Intento de guardar presupuesto vacío."); return;
+           alert("Agrega items o detalle de mano de obra."); return;
       }
-
       const presupuesto = {
         vehiculoDocId: vehiculoIdFirestore, vehiculoInfo: vehiculoInfoTexto,
         clienteNombre: vehiculoSeleccionado.clienteNombre || '', clienteTelefono: vehiculoSeleccionado.clienteTelefono || '',
@@ -569,36 +550,24 @@ Para confirmar o cualquier consulta, por favor contáctenos.
         total: parseFloat(totalSpan.textContent),
         creadoEl: firebase.firestore.FieldValue.serverTimestamp(), estado: "Pendiente"
       };
-      console.log("Objeto presupuesto a guardar:", presupuesto);
-
       const submitButton = btnGuardarPresupuesto;
       submitButton.disabled = true; submitButton.textContent = 'Guardando...';
-
       try {
         const docRef = await db.collection("presupuestos").add(presupuesto);
         alert(`¡Presupuesto guardado! ID: ${docRef.id}`);
-        console.log("Presupuesto guardado con ID:", docRef.id);
         if (tablaBody) tablaBody.innerHTML = "";
         totalSpan.textContent = "0.00"; vehiculoSelect.value = "";
         if (inputManoObraDescripcion) inputManoObraDescripcion.value = "";
         if (inputManoObraMonto) inputManoObraMonto.value = "";
         if (infoClientePresupuestoP) infoClientePresupuestoP.textContent = "";
-        actualizarTotalPresupuesto(false);
+        actualizarTotalPresupuesto(false); // Para resetear el total a 0.00
       } catch (e) {
         alert("Error al guardar presupuesto: " + e.message);
-        console.error("Error Firestore al guardar presupuesto:", e);
       } finally {
         submitButton.disabled = false; submitButton.textContent = 'Guardar Nuevo Presupuesto';
       }
     });
   }
-
-  // --- Carga Inicial ---
-  if (typeof cargarVehiculosParaPresupuesto === "function") {
-    cargarVehiculosParaPresupuesto();
-  }
-  if (typeof mostrarPresupuestosGuardados === "function") {
-    mostrarPresupuestosGuardados();
-  }
-
+  cargarVehiculosParaPresupuesto();
+  mostrarPresupuestosGuardados();
 });
