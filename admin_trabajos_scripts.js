@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const btnCerrarModalVerImagen = document.getElementById('cerrar-modal-ver-imagen');
   const imgVisualizadorNovedad = document.getElementById('imagen-novedad-visualizador');
 
-  let trabajosAbiertosAntesDeActualizar = new Set(); // Para guardar estado de desplegables
+  let trabajosAbiertosAntesDeActualizar = new Set(); 
 
   if (btnCerrarModalEditarNovedad) {
     btnCerrarModalEditarNovedad.onclick = () => { if(modalEditarNovedad) modalEditarNovedad.style.display = "none"; }
@@ -66,8 +66,8 @@ document.addEventListener('DOMContentLoaded', function() {
           let trabajosHTML = "";
           snapshot.forEach(doc => {
               const t = doc.data();
-              const id = doc.id; // Firestore doc ID
-              const trabajoItemId = `trabajo-${id}`; // HTML element ID
+              const id = doc.id; 
+              const trabajoItemId = `trabajo-${id}`; 
               const estadoTrabajoLower = (t.estadoTrabajo || 'pendiente').toLowerCase().replace(/\s+/g, '-');
               const claseEstado = `estado-${estadoTrabajoLower}`;
               const textoEncabezado = `${t.vehiculoInfo || 'Vehículo Desconocido'} - ${t.clienteNombre || 'Cliente Desconocido'}`;
@@ -181,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   }
   
-  // Listener de clics delegado a listaTrabajosDiv (movido fuera de onSnapshot para que se adjunte una sola vez)
   if (listaTrabajosDiv) {
       listaTrabajosDiv.addEventListener('click', async (e) => {
           const target = e.target;
@@ -190,7 +189,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
           if (header && trabajoItem) {
               trabajoItem.classList.toggle('open'); 
-              // Actualizar el set de trabajos abiertos por si el usuario abre/cierra manualmente
               if (trabajoItem.classList.contains('open')) {
                   trabajosAbiertosAntesDeActualizar.add(trabajoItem.id);
               } else {
@@ -207,29 +205,28 @@ document.addEventListener('DOMContentLoaded', function() {
           } else if (target.classList.contains('btn-edit-novedad')) {
               abrirModalEditarNovedad(target.dataset.trabajoId, parseInt(target.dataset.novedadIndex), target.dataset.descripcion);
           } else if (target.classList.contains('btn-delete-novedad')) {
-              await eliminarNovedadDeTrabajo(target.dataset.trabajoId, parseInt(target.dataset.novedadIndex), target.dataset.imageUrl);
+              await eliminarNovedadDeTrabajo(target.dataset.trabajoId, parseInt(target.dataset.novedadIndex)); // No necesitamos pasar imageUrl aquí si la obtenemos dentro
           } else if (target.classList.contains('confirmar-cambio-estado')) {
               const selectEstado = document.getElementById(`estado-trabajo-select-${target.dataset.trabajoId}`);
               if (selectEstado) await actualizarEstadoTrabajo(target.dataset.trabajoId, selectEstado.value);
           } else if (target.classList.contains('btn-whatsapp-novedad')) {
               await compartirNovedadPorWhatsApp(
                   target.dataset.trabajoId,
-                  parseInt(target.dataset.novedadIndex),
-                  target.dataset.descripcion,
+                  parseInt(target.dataset.novedadIndex), // Usaremos esto para obtener la novedad de nuevo
+                  target.dataset.descripcion, // Podríamos incluso omitir pasar desc e imgURL si las vamos a buscar de nuevo
                   target.dataset.imageUrl
               );
           }
       });
   }
 
-
-  async function compartirNovedadPorWhatsApp(trabajoId, novedadIndex, novedadDescripcion, novedadImageUrl) {
+  async function compartirNovedadPorWhatsApp(trabajoId, novedadIndex, novedadDescripcion, novedadImageUrl) { // Mantenemos desc e imgUrl por si acaso, pero idealmente se obtendrían de nuevo
     if (!trabajoId) {
         alert("ID de trabajo no encontrado para compartir por WhatsApp."); return;
     }
     try {
         const trabajoDoc = await db.collection("trabajos_en_curso").doc(trabajoId).get();
-        if (!trabajoDoc.exists) {
+        if (!trabajoDoc.exists) { // CORREGIDO
             alert("Trabajo no encontrado en la base de datos."); return;
         }
         const trabajoData = trabajoDoc.data();
@@ -240,9 +237,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!clienteTelefono) {
             alert("El cliente no tiene un número de teléfono registrado para este trabajo."); return;
         }
-        let mensaje = `Hola ${clienteNombre},\n\nNovedad sobre el trabajo de ${vehiculoInfo}:\n\n*Descripción:* ${novedadDescripcion}`;
-        if (novedadImageUrl) {
-            mensaje += `\n*Imagen:* ${novedadImageUrl}`;
+
+        // Obtener la novedad específica para asegurar datos actualizados, especialmente si la descripción o imagen pudieron cambiar
+        let descNovedadActual = novedadDescripcion;
+        let imgUrlNovedadActual = novedadImageUrl;
+
+        if (trabajoData.novedades && novedadIndex >= 0 && novedadIndex < trabajoData.novedades.length) {
+            const novedadEspecifica = trabajoData.novedades[novedadIndex];
+            descNovedadActual = novedadEspecifica.descripcion || "Sin descripción";
+            imgUrlNovedadActual = novedadEspecifica.imageUrl || null;
+        }
+
+
+        let mensaje = `Hola ${clienteNombre},\n\nNovedad sobre el trabajo de ${vehiculoInfo}:\n\n*Descripción:* ${descNovedadActual}`;
+        if (imgUrlNovedadActual) {
+            mensaje += `\n*Imagen:* ${imgUrlNovedadActual}`;
         }
         mensaje += `\n\nSaludos,\n${"Mecanico Automotriz Luis Díaz"}`;
         let numeroLimpio = clienteTelefono.replace(/\D/g, '');
@@ -295,14 +304,12 @@ document.addEventListener('DOMContentLoaded', function() {
           const nuevaNovedad = { 
               descripcion: descripcionNovedad || (imageUrl ? "Imagen adjunta" : "Actualización sin descripción"),
               imageUrl: imageUrl,
-              fecha: new Date() 
+              fecha: new Date() // CORREGIDO: Usar fecha del cliente
           };
           const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
           await trabajoRef.update({ 
               novedades: firebase.firestore.FieldValue.arrayUnion(nuevaNovedad) 
           });
-          // No necesitamos llamar a alert() aquí si onSnapshot ya actualiza la UI bien.
-          // alert("Novedad agregada con éxito."); 
           formElement.reset();
           if (progressContainer) progressContainer.style.display = 'none';
           if (progressBar) progressBar.textContent = '';
@@ -358,8 +365,10 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.disabled = true; submitButton.textContent = 'Guardando...';
         try {
             const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
-            const docSnap = await trabajoRef.get();
-            if (!docSnap.exists()) throw new Error("Trabajo no encontrado");
+            const docSnap = await trabajoRef.get(); // docSnap
+            if (!docSnap.exists) { // CORREGIDO: usar .exists como propiedad
+                throw new Error("Trabajo no encontrado");
+            }
             let novedades = docSnap.data().novedades || [];
             if (novedadIndex >= 0 && novedadIndex < novedades.length) {
                 const novedadActualizada = { ...novedades[novedadIndex], descripcion: nuevaDescripcion };
@@ -377,27 +386,31 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  async function eliminarNovedadDeTrabajo(trabajoId, novedadIndex, imageUrl) {
+  async function eliminarNovedadDeTrabajo(trabajoId, novedadIndex) { // No necesitamos pasar imageUrl si la vamos a buscar
       if (!confirm("¿Estás seguro de eliminar esta novedad?")) return;
       try {
           const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
-          const docSnap = await trabajoRef.get();
-          if (!docSnap.exists()) throw new Error("Trabajo no encontrado");
+          const docSnap = await trabajoRef.get(); // docSnap
+          if (!docSnap.exists) { // CORREGIDO: usar .exists como propiedad
+              throw new Error("Trabajo no encontrado");
+          }
           let novedades = docSnap.data().novedades || [];
           if (novedadIndex >= 0 && novedadIndex < novedades.length) {
-              const novedadAEliminar = novedades.splice(novedadIndex, 1)[0];
+              const novedadAEliminar = novedades.splice(novedadIndex, 1)[0]; 
               if (novedadAEliminar && novedadAEliminar.imageUrl) {
                   try {
                       const imageRef = storage.refFromURL(novedadAEliminar.imageUrl);
                       await imageRef.delete();
+                      console.log("Imagen de novedad eliminada de Storage:", novedadAEliminar.imageUrl);
                   } catch (storageError) {
                       console.warn("Advertencia al eliminar imagen de Storage:", storageError.message);
                   }
               }
               await trabajoRef.update({ novedades: novedades });
-              // No es necesario alert si onSnapshot actualiza la UI
-              // alert("Novedad eliminada.");
-          } else { alert("Índice de novedad inválido."); }
+              // alert("Novedad eliminada."); // Opcional, ya que onSnapshot actualiza
+          } else { 
+              alert("Índice de novedad inválido."); 
+          }
       } catch (error) {
           console.error("Error al eliminar novedad:", error);
           alert("Error al eliminar la novedad: " + error.message);
