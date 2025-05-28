@@ -1,24 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // --- Lógica para el Menú Hamburguesa ---
   const adminMenuToggle = document.getElementById('adminMenuToggle');
-  const adminMenu = document.getElementById('adminMenu'); // El <aside>
+  const adminMenu = document.getElementById('adminMenu'); 
 
   if (adminMenuToggle && adminMenu) {
     adminMenuToggle.addEventListener('click', function() {
       adminMenu.classList.toggle('admin-menu-open');
       const isExpanded = adminMenu.classList.contains('admin-menu-open');
       this.setAttribute('aria-expanded', isExpanded);
-      if (isExpanded) {
-        this.innerHTML = '&times;'; // Cambiar a ícono de "X" (cerrar)
-        this.setAttribute('aria-label', 'Cerrar menú');
-      } else {
-        this.innerHTML = '&#9776;'; // Cambiar de nuevo a hamburguesa
-        this.setAttribute('aria-label', 'Abrir menú');
-      }
+      this.innerHTML = isExpanded ? '&times;' : '&#9776;';
+      this.setAttribute('aria-label', isExpanded ? 'Cerrar menú' : 'Abrir menú');
     });
   }
 
-  // --- Resto de tu código existente de admin_trabajos_scripts.js ---
   if (typeof db === 'undefined' || typeof storage === 'undefined') {
     console.error("Firebase (db y storage) no están inicializados.");
     alert("Error crítico: No se pudo conectar a los servicios de Firebase.");
@@ -39,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const btnCerrarModalVerImagen = document.getElementById('cerrar-modal-ver-imagen');
   const imgVisualizadorNovedad = document.getElementById('imagen-novedad-visualizador');
 
-
   if (btnCerrarModalEditarNovedad) {
     btnCerrarModalEditarNovedad.onclick = () => { if(modalEditarNovedad) modalEditarNovedad.style.display = "none"; }
   }
@@ -48,23 +40,15 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   window.addEventListener('click', function(event) {
-    if (event.target == modalEditarNovedad) {
-      modalEditarNovedad.style.display = "none";
-    }
-    if (event.target == modalVerImagenNovedad) {
-      modalVerImagenNovedad.style.display = "none";
-    }
+    if (event.target == modalEditarNovedad) modalEditarNovedad.style.display = "none";
+    if (event.target == modalVerImagenNovedad) modalVerImagenNovedad.style.display = "none";
   });
-
 
   async function mostrarTrabajos(filtroEstado = "todos") {
       if (!listaTrabajosDiv) return;
       listaTrabajosDiv.innerHTML = '<p>Cargando trabajos...</p>';
-
       let query = db.collection("trabajos_en_curso");
-      if (filtroEstado !== "todos") {
-          query = query.where("estadoTrabajo", "==", filtroEstado);
-      }
+      if (filtroEstado !== "todos") query = query.where("estadoTrabajo", "==", filtroEstado);
       query = query.orderBy("fechaInicioTrabajo", "desc");
 
       query.onSnapshot(snapshot => {
@@ -78,30 +62,30 @@ document.addEventListener('DOMContentLoaded', function() {
               const id = doc.id;
               const estadoTrabajoLower = (t.estadoTrabajo || 'pendiente').toLowerCase().replace(/\s+/g, '-');
               const claseEstado = `estado-${estadoTrabajoLower}`;
+              const textoEncabezado = `${t.vehiculoInfo || 'Vehículo Desconocido'} - ${t.clienteNombre || 'Cliente Desconocido'}`;
 
               let novedadesHTML = '<div class="novedades-lista"><h6>Novedades del Trabajo:</h6>';
               if (t.novedades && t.novedades.length > 0) {
                   t.novedades.forEach((nov, index) => {
                       let fechaNovedadStr = 'N/A';
-                      if (nov.fecha && typeof nov.fecha.toDate === 'function') {
-                          fechaNovedadStr = nov.fecha.toDate().toLocaleString();
-                      } else if (nov.fecha) {
-                          try { fechaNovedadStr = new Date(nov.fecha).toLocaleString(); } catch(e){}
-                      }
-
-                      let imagenTag = '';
-                      if (nov.imageUrl) {
-                          imagenTag = `<button class="btn-action btn-ver-imagen-novedad" data-image-url="${nov.imageUrl}">Ver Imagen</button>`;
-                      }
-
+                      if (nov.fecha && typeof nov.fecha.toDate === 'function') fechaNovedadStr = nov.fecha.toDate().toLocaleString();
+                      else if (nov.fecha) try { fechaNovedadStr = new Date(nov.fecha).toLocaleString(); } catch(e){}
+                      
+                      let imagenBtnHTML = nov.imageUrl ? `<button class="btn-action btn-ver-imagen-novedad" data-image-url="${nov.imageUrl}">Ver Imagen</button>` : '';
+                      let whatsappBtnHTML = `<button class="btn-action btn-whatsapp-novedad" 
+                                                  data-trabajo-id="${id}" 
+                                                  data-novedad-index="${index}" 
+                                                  data-descripcion="${nov.descripcion || ''}"
+                                                  data-image-url="${nov.imageUrl || ''}">WhatsApp</button>`;
                       novedadesHTML += `
                           <div class="novedad-item">
                               <p><strong>Descripción:</strong> <span id="novedad-desc-${id}-${index}">${nov.descripcion || 'N/A'}</span></p>
-                              ${imagenTag}
+                              ${imagenBtnHTML}
                               <p style="font-size:0.8em; color:#888;">Fecha: ${fechaNovedadStr}</p>
                               <div class="novedad-actions">
                                 <button class="btn-action btn-edit-novedad" data-trabajo-id="${id}" data-novedad-index="${index}" data-descripcion="${nov.descripcion || ''}">Editar Desc.</button>
                                 <button class="btn-action btn-delete-novedad" data-trabajo-id="${id}" data-novedad-index="${index}" data-image-url="${nov.imageUrl || ''}">Eliminar</button>
+                                ${whatsappBtnHTML}
                               </div>
                           </div>`;
                   });
@@ -116,7 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="novedad-form-container" style="margin-top:15px;">
                         <h6 style="color:#17a2b8; margin-top:0;">Agregar Novedad al Trabajo</h6>
                         <form class="form-agregar-novedad" data-trabajo-id="${id}">
-                            <label for="novedad-descripcion-form-${id}">Descripción de la Novedad:</label> <textarea id="novedad-descripcion-form-${id}" rows="2"></textarea>
+                            <label for="novedad-descripcion-form-${id}">Descripción:</label>
+                            <textarea id="novedad-descripcion-form-${id}" rows="2"></textarea>
                             <label for="novedad-imagen-${id}">Imagen (Opcional):</label>
                             <input type="file" id="novedad-imagen-${id}" accept="image/*">
                             <div class="progress-bar-container" id="novedad-progress-container-${id}">
@@ -126,36 +111,28 @@ document.addEventListener('DOMContentLoaded', function() {
                         </form>
                     </div>`;
               }
-
-              let manoDeObraTrabajoHTML = '';
-              if (t.manoDeObra && t.manoDeObra.monto > 0) {
-                  manoDeObraTrabajoHTML = `<li style="color: #ffc107;">Mano de Obra (${t.manoDeObra.descripcion || 'General'}): $${t.manoDeObra.monto.toFixed(2)}</li>`;
-              }
+              let manoDeObraTrabajoHTML = (t.manoDeObra && t.manoDeObra.monto > 0) ? `<li style="color: #ffc107;">Mano de Obra (${t.manoDeObra.descripcion || 'General'}): $${t.manoDeObra.monto.toFixed(2)}</li>` : '';
 
               trabajosHTML += `
                   <div class="trabajo-item ${claseEstado}" id="trabajo-${id}">
                       <div class="trabajo-header" data-trabajo-id="${id}">
-                          <h5>${t.vehiculoInfo || 'Vehículo N/A'} (Cliente: ${t.clienteNombre || 'N/A'})</h5>
+                          <h5>${textoEncabezado}</h5>
                           <span class="trabajo-estado-label">${t.estadoTrabajo || 'Pendiente'}</span>
                       </div>
                       <div class="trabajo-content">
-                          <p><strong>ID del Trabajo:</strong> ${id.substring(0,8)}</p>
                           <p><strong>Cliente:</strong> ${t.clienteNombre || 'N/A'} ${t.clienteTelefono ? `- Tel: ${t.clienteTelefono}`: ''}</p>
                           <p><strong>Monto Total Presupuestado:</strong> <span style="font-weight:bold; color: #4CAF50;">$${t.total ? t.total.toFixed(2) : '0.00'}</span></p>
-                          <p><strong>ID Presupuesto Original:</strong> ${t.presupuestoOriginalId || 'N/A'}</p>
                           <p><strong>Items del Presupuesto:</strong></p>
                           <ul style="padding-left: 20px; margin-bottom: 10px;">
                               ${t.items && t.items.length > 0 ? t.items.map(item => `<li>${item.repuesto}: $${item.monto ? item.monto.toFixed(2) : '0.00'}</li>`).join('') : '<li>No hay items detallados.</li>'}
                               ${manoDeObraTrabajoHTML}
                           </ul>
-                          <p style="font-size: 0.8em; color: #888;">Presup. Aceptado: ${t.fechaAceptacionPresupuesto ? new Date(t.fechaAceptacionPresupuesto.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
-                          <p style="font-size: 0.8em; color: #888;">Trabajo Iniciado: ${t.fechaInicioTrabajo ? new Date(t.fechaInicioTrabajo.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
-                          ${t.fechaCompletado ? `<p style="font-size: 0.8em; color: #28a745;">Completado el: ${new Date(t.fechaCompletado.seconds * 1000).toLocaleString()}</p>` : ''}
-                          ${t.fechaCancelado ? `<p style="font-size: 0.8em; color: #dc3545;">Cancelado el: ${new Date(t.fechaCancelado.seconds * 1000).toLocaleString()}</p>` : ''}
-
+                          <p style="font-size: 0.8em; color: #888;">Presup. Aceptado: ${t.fechaAceptacionPresupuesto && t.fechaAceptacionPresupuesto.seconds ? new Date(t.fechaAceptacionPresupuesto.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                          <p style="font-size: 0.8em; color: #888;">Trabajo Iniciado: ${t.fechaInicioTrabajo && t.fechaInicioTrabajo.seconds ? new Date(t.fechaInicioTrabajo.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+                          ${t.fechaCompletado && t.fechaCompletado.seconds ? `<p style="font-size: 0.8em; color: #28a745;">Completado: ${new Date(t.fechaCompletado.seconds * 1000).toLocaleString()}</p>` : ''}
+                          ${t.fechaCancelado && t.fechaCancelado.seconds ? `<p style="font-size: 0.8em; color: #dc3545;">Cancelado: ${new Date(t.fechaCancelado.seconds * 1000).toLocaleString()}</p>` : ''}
                           ${novedadesHTML}
                           ${formNovedadHTML}
-
                           <div style="margin-top: 15px; border-top:1px solid #444; padding-top:10px;">
                               <label for="estado-trabajo-select-${id}" style="display:inline-block; margin-right:5px;">Cambiar Estado:</label>
                               <select id="estado-trabajo-select-${id}" data-trabajo-id="${id}" class="cambiar-estado-trabajo-select">
@@ -173,14 +150,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
           listaTrabajosDiv.addEventListener('click', async (e) => {
               const target = e.target;
-              const header = target.closest('.trabajo-header'); // Para asegurar que el clic en hijos del header también funcione
+              const header = target.closest('.trabajo-header');
               const trabajoItem = target.closest('.trabajo-item');
 
-              if (header && trabajoItem) { // Si se hizo clic en un header o su hijo
-                  trabajoItem.classList.toggle('open');
-                  return; // Evitar que otros listeners en el mismo clic se activen si no es necesario
+              if (header && trabajoItem) {
+                  trabajoItem.classList.toggle('open'); return;
               }
-
               if (target.classList.contains('btn-ver-imagen-novedad')) {
                   const imageUrl = target.dataset.imageUrl;
                   if (imageUrl && modalVerImagenNovedad && imgVisualizadorNovedad) {
@@ -188,30 +163,27 @@ document.addEventListener('DOMContentLoaded', function() {
                       modalVerImagenNovedad.style.display = "block";
                   }
               } else if (target.classList.contains('btn-edit-novedad')) {
-                  const trabajoId = target.dataset.trabajoId;
-                  const novedadIndex = parseInt(target.dataset.novedadIndex);
-                  const descripcionActual = target.dataset.descripcion;
-                  abrirModalEditarNovedad(trabajoId, novedadIndex, descripcionActual);
+                  abrirModalEditarNovedad(target.dataset.trabajoId, parseInt(target.dataset.novedadIndex), target.dataset.descripcion);
               } else if (target.classList.contains('btn-delete-novedad')) {
-                  const trabajoId = target.dataset.trabajoId;
-                  const novedadIndex = parseInt(target.dataset.novedadIndex);
-                  const imageUrl = target.dataset.imageUrl;
-                  await eliminarNovedadDeTrabajo(trabajoId, novedadIndex, imageUrl);
+                  await eliminarNovedadDeTrabajo(target.dataset.trabajoId, parseInt(target.dataset.novedadIndex), target.dataset.imageUrl);
               } else if (target.classList.contains('confirmar-cambio-estado')) {
-                  const trabajoId = target.dataset.trabajoId;
-                  const selectEstado = document.getElementById(`estado-trabajo-select-${trabajoId}`);
-                  if (selectEstado) {
-                    await actualizarEstadoTrabajo(trabajoId, selectEstado.value);
-                  }
+                  const selectEstado = document.getElementById(`estado-trabajo-select-${target.dataset.trabajoId}`);
+                  if (selectEstado) await actualizarEstadoTrabajo(target.dataset.trabajoId, selectEstado.value);
+              } else if (target.classList.contains('btn-whatsapp-novedad')) {
+                  await compartirNovedadPorWhatsApp(
+                      target.dataset.trabajoId,
+                      parseInt(target.dataset.novedadIndex),
+                      target.dataset.descripcion,
+                      target.dataset.imageUrl
+                  );
               }
           });
-
           listaTrabajosDiv.querySelectorAll('.form-agregar-novedad').forEach(form => {
-            if (!form.dataset.listenerAttached) { // Evitar duplicar listeners
+            if (!form.dataset.listenerAttached) {
                 form.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const trabajoId = e.target.dataset.trabajoId;
-                    const descripcionInput = document.getElementById(`novedad-descripcion-form-${trabajoId}`); // Corregido ID
+                    const descripcionInput = document.getElementById(`novedad-descripcion-form-${trabajoId}`);
                     const imagenInput = document.getElementById(`novedad-imagen-${trabajoId}`);
                     const descripcionNovedad = descripcionInput ? descripcionInput.value.trim() : "";
                     const imagenFile = imagenInput && imagenInput.files.length > 0 ? imagenInput.files[0] : null;
@@ -225,9 +197,49 @@ document.addEventListener('DOMContentLoaded', function() {
           });
       }, error => {
           console.error("Error onSnapshot trabajos:", error);
-          if (listaTrabajosDiv) listaTrabajosDiv.innerHTML = '<p style="color:red;">Error al cargar trabajos.</p>';
+          if(listaTrabajosDiv) listaTrabajosDiv.innerHTML = '<p style="color:red;">Error al cargar trabajos.</p>';
       });
   }
+
+  async function compartirNovedadPorWhatsApp(trabajoId, novedadIndex, novedadDescripcion, novedadImageUrl) {
+    if (!trabajoId) {
+        alert("ID de trabajo no encontrado para compartir por WhatsApp."); return;
+    }
+    try {
+        const trabajoDoc = await db.collection("trabajos_en_curso").doc(trabajoId).get();
+        if (!trabajoDoc.exists) {
+            alert("Trabajo no encontrado en la base de datos."); return;
+        }
+        const trabajoData = trabajoDoc.data();
+        const clienteNombre = trabajoData.clienteNombre || "Cliente";
+        const clienteTelefono = trabajoData.clienteTelefono;
+        const vehiculoInfo = trabajoData.vehiculoInfo || "su vehículo";
+
+        if (!clienteTelefono) {
+            alert("El cliente no tiene un número de teléfono registrado para este trabajo."); return;
+        }
+        let mensaje = `Hola ${clienteNombre},\n\nNovedad sobre el trabajo de ${vehiculoInfo}:\n\n*Descripción:* ${novedadDescripcion}`;
+        if (novedadImageUrl) {
+            mensaje += `\n*Imagen:* ${novedadImageUrl}`;
+        }
+        mensaje += `\n\nSaludos,\n${"Mecanico Automotriz Luis Díaz"}`;
+        let numeroLimpio = clienteTelefono.replace(/\D/g, '');
+        if (numeroLimpio.length === 9 && !numeroLimpio.startsWith('56')) { 
+             numeroLimpio = '56' + numeroLimpio;
+        } else if (numeroLimpio.length > 9 && numeroLimpio.startsWith('56')) {
+            // Ya está bien
+        } else if (numeroLimpio.length > 0) { 
+            console.warn("Formato de número de teléfono no estándar para Chile:", clienteTelefono);
+        } else {
+            alert("Número de teléfono del cliente no es válido."); return;
+        }
+        const linkWA = `https://wa.me/${numeroLimpio}?text=${encodeURIComponent(mensaje)}`;
+        window.open(linkWA, '_blank');
+    } catch (error) {
+        console.error("Error al preparar mensaje de WhatsApp para novedad:", error);
+        alert("Error al intentar compartir por WhatsApp: " + error.message);
+    }
+}
 
   async function agregarNovedadAlTrabajo(trabajoId, imagenFile, descripcionNovedad, formElement) {
       const submitButton = formElement.querySelector('button[type="submit"]');
@@ -258,20 +270,22 @@ document.addEventListener('DOMContentLoaded', function() {
                   );
               });
           }
-          const nuevaNovedad = {
+          const nuevaNovedad = { // Objeto que se va a añadir al array
               descripcion: descripcionNovedad || (imageUrl ? "Imagen adjunta" : "Actualización sin descripción"),
               imageUrl: imageUrl,
-              fecha: firebase.firestore.FieldValue.serverTimestamp()
+              fecha: new Date() // Usar fecha del cliente, Firestore la convierte a Timestamp
           };
           const trabajoRef = db.collection("trabajos_en_curso").doc(trabajoId);
-          await trabajoRef.update({ novedades: firebase.firestore.FieldValue.arrayUnion(nuevaNovedad) });
+          await trabajoRef.update({ 
+              novedades: firebase.firestore.FieldValue.arrayUnion(nuevaNovedad) 
+          });
           alert("Novedad agregada con éxito.");
           formElement.reset();
           if (progressContainer) progressContainer.style.display = 'none';
           if (progressBar) progressBar.textContent = '';
       } catch (error) {
           console.error("Error al agregar novedad:", error);
-          alert("Error al agregar la novedad: " + error.message);
+          alert("Error al agregar la novedad: " + error.message); // Mostrar el error específico
       } finally {
           submitButton.disabled = false;
           submitButton.textContent = 'Agregar Novedad';
