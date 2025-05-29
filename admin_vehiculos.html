@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vehículos - Panel de Administración</title>
-<link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="admin_styles.css"> <link rel="stylesheet" href="admin_vehiculos_styles.css"> </head>
+<link rel="icon" href="/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="style.css"> 
+<link rel="stylesheet" href="admin_styles.css"> 
+<link rel="stylesheet" href="admin_vehiculos_styles.css"> 
+</head>
 <body>
 
 <header>
@@ -12,9 +16,12 @@
 </header>
 
 <div class="admin-container">
-  <aside class="admin-menu">
+  <aside class="admin-menu" id="adminMenu">
+    <button class="admin-menu-toggle" id="adminMenuToggle" aria-label="Abrir menú" aria-expanded="false">
+        &#9776; 
+    </button>
     <h3>Menú</h3>
-    <ul>
+    <ul id="adminMenuItems">
       <li><a href="admin_vehiculos.html" class="active">Vehículos</a></li>
       <li><a href="admin_presupuestos.html">Presupuestos</a></li>
       <li><a href="admin_trabajos.html">Trabajos</a></li>
@@ -41,19 +48,22 @@
           
           <label for="vehiculo-ano">Año:</label>
           <input type="number" id="vehiculo-ano" min="1900" max="2099" step="1" required>
+
+          <label for="vehiculo-vin">VIN (Opcional):</label>
+          <input type="text" id="vehiculo-vin" maxlength="17">
           
           <label for="vehiculo-cliente-nombre">Nombre del Cliente:</label>
           <input type="text" id="vehiculo-cliente-nombre">
           
           <label for="vehiculo-cliente-telefono">Teléfono del Cliente:</label>
-          <input type="tel" id="vehiculo-cliente-telefono">
+          <input type="tel" id="vehiculo-cliente-telefono" placeholder="+569XXXXXXXX" value="+569">
           
           <label for="vehiculo-descripcion-trabajo">Descripción del Trabajo/Problema:</label>
           <textarea id="vehiculo-descripcion-trabajo" rows="4" required></textarea>
           
           <label for="vehiculo-imagenes">Imágenes del vehículo (máx. 5):</label>
           <input type="file" id="vehiculo-imagenes" multiple accept="image/*">
-          <div id="previsualizacion-imagenes" style="margin-top:10px; display: flex; flex-wrap: wrap; gap: 10px;">
+          <div id="previsualizacion-imagenes" class="previsualizacion-container">
             </div>
           
           <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Vehículo</button>
@@ -90,29 +100,42 @@
       
       <label for="vehiculo-ano-editar">Año:</label>
       <input type="number" id="vehiculo-ano-editar" min="1900" max="2099" step="1" required>
+
+      <label for="vehiculo-vin-editar">VIN (Opcional):</label>
+      <input type="text" id="vehiculo-vin-editar" maxlength="17">
       
       <label for="vehiculo-cliente-nombre-editar">Nombre del Cliente:</label>
       <input type="text" id="vehiculo-cliente-nombre-editar">
       
       <label for="vehiculo-cliente-telefono-editar">Teléfono del Cliente:</label>
-      <input type="tel" id="vehiculo-cliente-telefono-editar">
+      <input type="tel" id="vehiculo-cliente-telefono-editar" placeholder="+569XXXXXXXX">
       
       <label for="vehiculo-descripcion-trabajo-editar">Descripción del Trabajo/Problema:</label>
       <textarea id="vehiculo-descripcion-trabajo-editar" rows="4" required></textarea>
       
       <label style="margin-top:15px;">Imágenes Actuales (clic en 'X' para marcar/desmarcar para eliminar al guardar):</label>
-      <div id="imagenes-actuales-editar" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 5px;">
-        </div>
+      <div id="imagenes-actuales-editar" class="previsualizacion-container" style="margin-bottom: 10px;">
+      </div>
       
       <label for="vehiculo-imagenes-editar">Añadir/Reemplazar Imágenes (máx. 5 en total):</label>
       <input type="file" id="vehiculo-imagenes-editar" multiple accept="image/*">
-      <div id="previsualizacion-imagenes-editar" style="margin-top:10px; display: flex; flex-wrap: wrap; gap: 10px;">
-        </div>
+      <div id="previsualizacion-imagenes-editar" class="previsualizacion-container">
+      </div>
       
       <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Cambios</button>
     </form>
   </div>
 </div>
+
+<div id="modal-ver-imagenes-vehiculo" class="modal">
+  <span class="close-modal-btn" id="cerrar-modal-ver-imagenes-vehiculo">&times;</span>
+  <div class="modal-content modal-content-image-view">
+    <h4 id="modal-ver-imagenes-vehiculo-titulo" style="color: #fff; text-align: center; margin-bottom: 15px;">Imágenes del Vehículo</h4>
+    <div id="galeria-imagenes-vehiculo" class="previsualizacion-container" style="gap: 15px; justify-content: center;">
+      </div>
+  </div>
+</div>
+
 
 <footer style="background-color: #000; color: #ad0000; text-align: center; padding: 15px; border-top: 1px solid #333;">
   <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
@@ -123,5 +146,8 @@
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script> 
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
 
-<script src="script.js"></script> <script src="admin_vehiculos_scripts.js"></script> </body>
+<script src="script.js"></script> 
+<script src="admin_vehiculos_scripts.js"></script> 
+
+</body>
 </html>

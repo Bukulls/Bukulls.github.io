@@ -1,80 +1,160 @@
-/* Estilos básicos del admin.html original */
-body { background-color: #000; color: #fff; font-family: Arial, sans-serif; margin:0; padding:0; } /* Estilos base */
+/* Estilos básicos del admin */
+body { background-color: #000; color: #fff; font-family: Arial, sans-serif; margin:0; padding:0; }
 .admin-container { display: flex; min-height: 100vh; }
-.admin-menu { background-color: #222; color: #fff; width: 220px; flex-shrink: 0; padding: 20px; }
-.admin-menu h3 { margin-bottom: 15px; }
+.admin-menu { background-color: #222; color: #fff; width: 220px; flex-shrink: 0; padding: 20px; box-sizing: border-box; position: relative;}
+.admin-menu-toggle { display: none; background-color: #ad0000; color: white; border: none; padding: 8px 12px; font-size: 1.2em; cursor: pointer; position: absolute; top: 15px; right: 15px; z-index: 101;}
+.admin-menu h3 { margin-bottom: 15px; margin-top: 0;}
 .admin-menu ul { list-style: none; padding: 0; }
 .admin-menu li { margin: 10px 0; }
 .admin-menu a { color: #fff; text-decoration: none; font-weight: bold; display: block; padding: 8px 0; }
-.admin-menu a:hover, .admin-menu a.active { color: #ad0000; } /* .active para la página actual */
-.admin-content { flex: 1; padding: 20px; }
+.admin-menu a:hover, .admin-menu a.active { color: #ad0000; }
+.admin-content { flex: 1; padding: 20px; box-sizing: border-box; overflow-x: hidden; }
 .hidden { display: none !important; }
 
-/* Estilos para formularios y tablas (copiados de admin.html) */
+/* Estilos para formularios y tablas */
 label { display: block; margin-top: 10px; margin-bottom: 5px; color: #ccc; }
 input[type="text"], input[type="number"], input[type="tel"], textarea, select {
-    width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border-radius: 4px;
+    width: 100%; /* Full width para mejor responsividad */
+    padding: 10px; margin-bottom: 10px; border-radius: 4px;
     border: 1px solid #555; background-color: #333; color: #fff; box-sizing: border-box;
 }
-input[type="file"] { color: #ccc; margin-bottom: 10px; }
+input[type="file"] { color: #ccc; margin-bottom: 10px; width: 100%;} /* Full width */
 textarea { resize: vertical; }
 button, .btn-submit-form, .btn-action {
     background-color: #ad0000; color: white; padding: 10px 15px; border: none;
     border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px; margin-right: 5px;
+    display: inline-block;
 }
 button:hover, .btn-submit-form:hover, .btn-action:hover { background-color: #ff0000; }
 button.btn-edit { background-color: #007bff; } button.btn-edit:hover { background-color: #0056b3; }
 button.btn-delete { background-color: #dc3545; } button.btn-delete:hover { background-color: #c82333; }
 
-#lista-vehiculos ul { 
+/* Estilos para la lista de vehículos y desplegables */
+/* La ul ya no es necesaria como contenedor directo si cada item es un div */
+.vehiculo-item {
     background-color: #1e1e1e; 
     border: 1px solid #383838; 
-    padding: 0; /* Quitar padding para que los li controlen su propio padding */
     margin-bottom: 15px; 
-    border-radius: 5px; 
-    list-style:none; 
+    border-radius: 5px;
 }
-/* Estilo para cada item de vehículo si se usa li directamente dentro del div#lista-vehiculos */
-#lista-vehiculos > ul > li {
-    border: 1px solid #333; 
-    padding: 15px; 
-    margin-bottom: 15px; /* Espacio entre items si la ul no tiene padding */
-    border-radius: 5px; 
-    background-color: #1e1e1e; /* Fondo ya está en la ul, pero puede ser redundante o específico para li */
+.vehiculo-header {
+    padding: 12px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #2f2f2f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-#lista-vehiculos > ul > li:last-child {
-    margin-bottom: 0; /* Quitar margen del último item */
+.vehiculo-item.open .vehiculo-header {
+    border-bottom: 1px solid #444; 
 }
+.vehiculo-header h4 { 
+    color: #ad0000; 
+    margin:0; 
+    font-size: 1.1em;
+}
+.vehiculo-content {
+    padding: 0 15px 15px 15px;
+    display: none; 
+}
+.vehiculo-item.open .vehiculo-content {
+    display: block;
+}
+.vehiculo-content p { margin: 8px 0; }
+.vehiculo-content strong { color: #ddd; }
 
-#lista-vehiculos h4 { color: #ad0000; margin-top:0; }
-#previsualizacion-imagenes img, #previsualizacion-imagenes-editar img { 
-    border: 1px solid #444; 
-    border-radius: 3px; 
-    max-width: 100px; /* Para asegurar que no se desborden */
-    max-height: 100px;
-    margin: 5px; /* Añadido para espaciado */
-    object-fit: cover; /* Para que las imágenes se vean bien sin distorsionarse */
+/* Estilos para previsualización de imágenes */
+.previsualizacion-container {
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 10px;
+    margin-top: 10px;
 }
-#imagenes-actuales-editar img { /* Aplicar también a imágenes actuales en edición */
+.previsualizacion-container img { 
     border: 1px solid #444; 
     border-radius: 3px; 
-    max-width: 80px;
-    max-height: 80px;
-    margin: 2px;
+    max-width: 100px; 
+    max-height: 100px;
     object-fit: cover;
 }
+#imagenes-actuales-editar .img-container-editable { /* Contenedor para imagen y botón X */
+    position: relative; 
+    display: inline-block; /* o flex si se prefiere */
+    margin: 2px;
+    border: 1px solid #666;
+}
+#imagenes-actuales-editar img {
+    display: block; /* Para que el contenedor se ajuste */
+    width: 80px; 
+    height: 80px;
+    object-fit: cover;
+}
+#imagenes-actuales-editar .remove-img-btn {
+    position: absolute; 
+    top: 0; right: 0;
+    background: rgba(255,0,0,0.7); color: white;
+    border: none; cursor: pointer; 
+    padding: 1px 4px; font-size: 0.8em;
+    border-radius: 0 0 0 3px;
+}
 
 
-/* Modal Styles (copiados de admin.html) */
-.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); }
-.modal-content { background-color: #282828; color: #fff; margin: 5% auto; padding: 25px; border: 1px solid #555; width: 80%; max-width: 700px; border-radius: 8px; position: relative; }
-.modal-content h3 { color: #ad0000; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; }
-.close-modal-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; position: absolute; top: 10px; right: 20px; }
+/* Modal Styles */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); padding-top: 20px;}
+.modal-content { background-color: #282828; color: #fff; margin: 5% auto; padding: 25px; border: 1px solid #555; width: 80%; max-width: 700px; border-radius: 8px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.modal-content h3, .modal-content h4 { color: #ad0000; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; }
+.close-modal-btn { color: #fff; position: absolute; top: 10px; right: 15px; font-size: 30px; font-weight: bold; line-height: 1;}
 .close-modal-btn:hover, .close-modal-btn:focus { color: #ff0000; text-decoration: none; cursor: pointer; }
 
-/* Header del admin (ya debería estar en style.css o admin_styles.css, pero se incluye por si acaso) */
-/* Si ya tienes estos estilos en un CSS global, puedes omitirlos aquí para evitar redundancia */
-/*
-header { background-color: #000; color: #ad0000; padding: 20px; text-align: center; }
-footer { background-color: #000; color: #ad0000; text-align: center; padding: 15px; border-top: 1px solid #333;}
-*/
+/* Modal para visualizar imágenes de vehículo */
+.modal-content-image-view {
+    background-color: #282828; /* Puede ser el mismo fondo o transparente */
+    padding: 20px;
+    text-align: center;
+    max-width: 90%; /* Para permitir ver múltiples imágenes */
+}
+.modal-content-image-view #galeria-imagenes-vehiculo img {
+    max-width: 150px; /* Tamaño de las imágenes en la galería del modal */
+    max-height: 150px;
+    margin: 5px;
+    border: 2px solid #555;
+    border-radius: 4px;
+    object-fit: cover;
+    cursor: pointer; /* Si se quiere ampliar al hacer clic */
+}
+
+
+/* Media Queries (adaptadas de admin_trabajos_styles.css) */
+@media (max-width: 991.98px) {
+    .admin-menu { width: 180px; padding: 15px; }
+    .admin-content { padding: 15px; }
+    .vehiculo-header h4 { font-size: 1em; }
+}
+
+@media (max-width: 767.98px) {
+    .admin-container { flex-direction: column; }
+    .admin-menu { width: 100%; height: auto; padding-bottom: 10px; }
+    .admin-menu-toggle { display: block; }
+    .admin-menu h3 { text-align: left; margin-left: 10px; margin-bottom: 0; padding-top: 5px; }
+    .admin-menu ul#adminMenuItems { display: none; flex-direction: column; width: 100%; background-color: #333; padding: 10px 0; }
+    .admin-menu.admin-menu-open ul#adminMenuItems { display: flex; }
+    .admin-menu li { margin: 0; width: 100%; text-align: left; }
+    .admin-menu li a { padding: 12px 20px; border-bottom: 1px solid #444; }
+    .admin-menu li:last-child a { border-bottom: none; }
+    .admin-menu li a.active { background-color: #ad0000; color: white; }
+    .admin-menu li a:hover { background-color: #4e0000; }
+
+    .admin-content { padding: 10px; }
+    header h1 { font-size: 1.5em; }
+    .vehiculo-header { flex-direction: column; align-items: flex-start;}
+    .vehiculo-header h4 { margin-bottom: 5px; }
+    
+    #form-ingreso-vehiculo-container, .modal-content { padding: 15px; width: 95%;}
+    .modal-content h3, .modal-content h4 { font-size: 1.2em; }
+}
+
+@media (max-width: 575.98px) {
+    .admin-menu h3 { font-size: 1.1em; padding-top: 8px; }
+    .admin-menu-toggle { top: 12px; right: 12px; padding: 6px 10px; }
+    .vehiculo-header h4 { font-size: 1em; }
+}
