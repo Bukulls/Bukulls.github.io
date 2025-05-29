@@ -4,84 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel de Administración - Mecanico Automotriz Luis Díaz</title>
-<link rel="icon" href="/favicon.png" type="image/png"> {/* Asumiendo que tienes un favicon.png en la raíz */}
+<link rel="icon" href="/favicon.png" type="image/png"> {/* Asumiendo favicon.png en la raíz */}
 <link rel="stylesheet" href="style.css"> 
 <link rel="stylesheet" href="admin_styles.css"> 
-<style>
-    /* Estilos específicos para el dashboard */
-    .dashboard-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px; /* Espacio entre tarjetas */
-        margin-top: 20px;
-    }
-    .dashboard-card {
-        background-color: #2a2a2a;
-        padding: 20px;
-        border-radius: 8px;
-        border: 1px solid #383838;
-        flex-basis: calc(33.333% - 20px); /* Aproximadamente 3 tarjetas por fila, ajusta según necesidad */
-        box-sizing: border-box;
-        min-width: 200px; /* Ancho mínimo para tarjetas */
-        text-align: center;
-    }
-    .dashboard-card h4 {
-        margin-top: 0;
-        color: #ffc107; /* Amarillo para títulos de tarjeta */
-        margin-bottom: 15px;
-    }
-    .dashboard-card .count {
-        font-size: 2.5em;
-        font-weight: bold;
-        color: #ffffff;
-        display: block;
-        margin-bottom: 10px;
-    }
-    .dashboard-card .card-link {
-        display: inline-block;
-        margin-top: 15px;
-        padding: 8px 15px;
-        background-color: #ad0000;
-        color: white;
-        text-decoration: none;
-        border-radius: 4px;
-        font-weight: bold;
-    }
-    .dashboard-card .card-link:hover {
-        background-color: #ff0000;
-    }
-
-    .dashboard-actions {
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #444;
-        text-align: center;
-    }
-    .dashboard-actions .btn-action-large {
-        padding: 12px 25px;
-        font-size: 1.1em;
-        margin: 0 10px 10px 10px;
-    }
-
-    /* Responsividad para las tarjetas */
-    @media (max-width: 991.98px) {
-        .dashboard-card {
-            flex-basis: calc(50% - 10px); /* 2 tarjetas por fila */
-        }
-    }
-    @media (max-width: 767.98px) {
-        .dashboard-card {
-            flex-basis: 100%; /* 1 tarjeta por fila */
-        }
-        .dashboard-actions .btn-action-large {
-            display: block;
-            width: calc(100% - 20px); /* Ajustar para padding */
-            margin-left: auto;
-            margin-right: auto;
-        }
-    }
-
-</style>
+<link rel="stylesheet" href="admin_dashboard_styles.css"> {/* Nuevo CSS para el dashboard */}
 </head>
 <body class="admin-page"> 
 <header>
@@ -123,20 +49,12 @@
             <span class="count" id="count-trabajos-proceso">Cargando...</span>
             <a href="admin_trabajos.html" class="card-link">Gestionar Trabajos</a>
         </div>
-        {/* Puedes añadir más tarjetas aquí, por ejemplo:
-        <div class="dashboard-card">
-            <h4>Trabajos Completados (Hoy)</h4>
-            <span class="count" id="count-trabajos-completados-hoy">Cargando...</span>
-            <a href="admin_trabajos.html?filtro=completado" class="card-link">Ver Trabajos</a>
-        </div>
-        */}
     </div>
 
     <div class="dashboard-actions">
         <h3>Acciones Rápidas</h3>
         <a href="admin_vehiculos.html#form-ingreso-vehiculo-container" class="btn-action btn-action-large">Ingresar Vehículo</a>
         <a href="admin_presupuestos.html#presupuestos-section" class="btn-action btn-action-large">Crear Presupuesto</a>
-        {/* <a href="admin_trabajos.html" class="btn-action btn-action-large">Ver Todos los Trabajos</a> */}
     </div>
 
   </main>
@@ -150,63 +68,7 @@
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
-<script src="script.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Lógica del menú hamburguesa (si no está en script.js global)
-    const adminMenuToggle = document.getElementById('adminMenuToggle');
-    const adminMenu = document.getElementById('adminMenu'); 
-    if (adminMenuToggle && adminMenu) {
-        adminMenuToggle.addEventListener('click', function() {
-        adminMenu.classList.toggle('admin-menu-open');
-        const isExpanded = adminMenu.classList.contains('admin-menu-open');
-        this.setAttribute('aria-expanded', isExpanded);
-        this.innerHTML = isExpanded ? '&times;' : '&#9776;';
-        this.setAttribute('aria-label', isExpanded ? 'Cerrar menú' : 'Abrir menú');
-        });
-    }
-
-    // Verificar si Firebase está inicializado (db debería estar definido en script.js)
-    if (typeof db === 'undefined') {
-        console.error("Firebase Firestore (db) no está inicializado. Asegúrate de que script.js se cargue correctamente y defina 'db'.");
-        // Actualizar contadores con mensaje de error
-        document.getElementById('count-vehiculos').textContent = 'Error DB';
-        document.getElementById('count-presupuestos-pendientes').textContent = 'Error DB';
-        document.getElementById('count-trabajos-proceso').textContent = 'Error DB';
-        return;
-    }
-
-    // Función para obtener y mostrar contadores
-    async function cargarContadoresDashboard() {
-        const countVehiculosSpan = document.getElementById('count-vehiculos');
-        const countPresupuestosPendientesSpan = document.getElementById('count-presupuestos-pendientes');
-        const countTrabajosProcesoSpan = document.getElementById('count-trabajos-proceso');
-
-        try {
-            // Contar vehículos
-            const vehiculosSnapshot = await db.collection("vehiculos").get();
-            countVehiculosSpan.textContent = vehiculosSnapshot.size;
-
-            // Contar presupuestos pendientes
-            const presupuestosSnapshot = await db.collection("presupuestos").where("estado", "==", "Pendiente").get();
-            countPresupuestosPendientesSpan.textContent = presupuestosSnapshot.size;
-
-            // Contar trabajos en proceso
-            const trabajosSnapshot = await db.collection("trabajos_en_curso").where("estadoTrabajo", "==", "En Proceso").get();
-            countTrabajosProcesoSpan.textContent = trabajosSnapshot.size;
-
-        } catch (error) {
-            console.error("Error al cargar contadores del dashboard: ", error);
-            if(countVehiculosSpan) countVehiculosSpan.textContent = 'Error';
-            if(countPresupuestosPendientesSpan) countPresupuestosPendientesSpan.textContent = 'Error';
-            if(countTrabajosProcesoSpan) countTrabajosProcesoSpan.textContent = 'Error';
-        }
-    }
-
-    // Cargar los contadores al cargar la página
-    cargarContadoresDashboard();
-});
-</script>
+<script src="script.js"></script> {/* Tu script global de Firebase y autenticación */}
+<script src="admin_dashboard_scripts.js"></script> {/* Nuevo script para el dashboard */}
 </body>
 </html>

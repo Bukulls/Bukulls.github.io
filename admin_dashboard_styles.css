@@ -1,0 +1,72 @@
+/* Estilos específicos para el dashboard en admin.html */
+.dashboard-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Espacio entre tarjetas */
+    margin-top: 20px;
+}
+.dashboard-card {
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #383838;
+    flex-basis: calc(33.333% - 20px); /* Aproximadamente 3 tarjetas por fila, ajusta según necesidad */
+    box-sizing: border-box;
+    min-width: 200px; /* Ancho mínimo para tarjetas */
+    text-align: center;
+}
+.dashboard-card h4 {
+    margin-top: 0;
+    color: #ffc107; /* Amarillo para títulos de tarjeta */
+    margin-bottom: 15px;
+}
+.dashboard-card .count {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #ffffff;
+    display: block;
+    margin-bottom: 10px;
+}
+.dashboard-card .card-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 8px 15px;
+    background-color: #ad0000;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+}
+.dashboard-card .card-link:hover {
+    background-color: #ff0000;
+}
+
+.dashboard-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    text-align: center;
+}
+.dashboard-actions .btn-action-large {
+    padding: 12px 25px;
+    font-size: 1.1em;
+    margin: 0 10px 10px 10px;
+}
+
+/* Responsividad para las tarjetas del dashboard */
+@media (max-width: 991.98px) {
+    .dashboard-card {
+        flex-basis: calc(50% - 10px); /* 2 tarjetas por fila */
+    }
+}
+@media (max-width: 767.98px) {
+    .dashboard-card {
+        flex-basis: 100%; /* 1 tarjeta por fila */
+    }
+    .dashboard-actions .btn-action-large {
+        display: block;
+        width: calc(100% - 20px); /* Ajustar para padding */
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
