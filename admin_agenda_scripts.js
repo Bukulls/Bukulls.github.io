@@ -14,7 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (typeof db === 'undefined' || typeof FullCalendar === 'undefined') {
         console.error("Firebase (db) o FullCalendar no están inicializados.");
-        alert("Error crítico: No se pudo cargar la agenda. Revisa la consola.");
+        const calendarioElCheck = document.getElementById('calendario');
+        if (calendarioElCheck) {
+            calendarioElCheck.innerHTML = '<p style="color:red; text-align:center;">Error al cargar la agenda. Verifique la consola del navegador.</p>';
+        }
+        // alert("Error crítico: No se pudo cargar la agenda. Revisa la consola.");
         return;
     }
 
@@ -37,14 +41,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnCrearCita = document.getElementById('btn-crear-cita');
 
     let calendario;
-    let vehiculosCargados = []; // Para el select de vehículos
+    let vehiculosCargados = []; 
 
-    // --- CARGAR VEHÍCULOS PARA EL SELECT ---
     async function cargarVehiculosParaSelect() {
         try {
             const snapshot = await db.collection("vehiculos").orderBy("patente").get();
             vehiculosCargados = [];
-            citaVehiculoSelect.innerHTML = '<option value="">-- Ninguno --</option>'; // Opción por defecto
+            citaVehiculoSelect.innerHTML = '<option value="">-- Ninguno --</option>'; 
             snapshot.forEach(doc => {
                 const v = doc.data();
                 const vehiculo = { id: doc.id, ...v };
@@ -66,210 +69,169 @@ document.addEventListener('DOMContentLoaded', function() {
                 const vehiculo = vehiculosCargados.find(v => v.id === selectedId);
                 if (vehiculo) {
                     infoVehiculoCitaDiv.textContent = `Cliente: ${vehiculo.clienteNombre || 'N/A'}, Tel: ${vehiculo.clienteTelefono || 'N/A'}`;
-                } else {
-                    infoVehiculoCitaDiv.textContent = '';
-                }
-            } else {
-                infoVehiculoCitaDiv.textContent = '';
-            }
+                } else { infoVehiculoCitaDiv.textContent = ''; }
+            } else { infoVehiculoCitaDiv.textContent = ''; }
         });
     }
 
-
-    // --- MANEJO DEL MODAL DE CITAS ---
-    function abrirModalCita(data = {}) { // data puede ser info de un clic en fecha o un evento existente
+    function dateToLocalISOString(dateObj, includeTime = true) {
+        if (!dateObj) return '';
+        const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+        const localISOTime = (new Date(dateObj.getTime() - tzoffset)).toISOString().slice(0, -1);
+        return includeTime ? localISOTime.substring(0, 16) : localISOTime.substring(0, 10);
+    }
+    
+    function abrirModalCita(data = {}) { 
         formCita.reset();
-        infoVehiculoCitaDiv.textContent = ''; // Limpiar info del vehículo
-        citaIdInput.value = data.id || ''; // Si es un evento existente, tendrá id
+        infoVehiculoCitaDiv.textContent = ''; 
+        citaIdInput.value = data.id || ''; 
         citaTituloInput.value = data.title || '';
         citaTipoSelect.value = data.extendedProps?.tipoCita || 'recepcion';
         citaColorInput.value = data.color || data.backgroundColor || '#ad0000';
         citaDescripcionTextarea.value = data.extendedProps?.description || '';
-        
         citaTodoElDiaCheckbox.checked = data.allDay || false;
-        citaFechaFinInput.disabled = data.allDay || false;
+        
+        citaFechaFinInput.disabled = citaTodoElDiaCheckbox.checked;
 
-
-        if (data.start) { // Fecha de inicio
-            // FullCalendar devuelve fechas en formato que datetime-local puede necesitar ajuste
-            // Si data.start es un objeto Date de JS:
-            let startStr = '';
-            if (data.start instanceof Date) {
-                startStr = data.allDay ? data.start.toISOString().substring(0, 10) + "T00:00" : data.start.toISOString().substring(0, 16);
-            } else if (typeof data.startStr === 'string') { // Si es startStr de FullCalendar
-                 startStr = data.allDay ? data.startStr.substring(0, 10) + "T00:00" : data.startStr.substring(0, 16);
-            }
-            citaFechaInicioInput.value = startStr;
+        if (data.start) {
+            citaFechaInicioInput.value = dateToLocalISOString(data.start, !data.allDay);
         } else {
-             // Poner fecha y hora actual por defecto si es nueva cita desde botón
-            const ahora = new Date();
-            ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset()); // Ajustar a zona horaria local para input
-            citaFechaInicioInput.value = ahora.toISOString().substring(0, 16);
+            citaFechaInicioInput.value = dateToLocalISOString(new Date()); // Hora actual para nueva cita
         }
 
-
-        if (data.end) { // Fecha de fin
-            let endStr = '';
-            if (data.end instanceof Date) {
-                endStr = data.allDay ? data.end.toISOString().substring(0, 10) + "T00:00" : data.end.toISOString().substring(0, 16);
-            } else if (typeof data.endStr === 'string') {
-                endStr = data.allDay ? data.endStr.substring(0, 10) + "T00:00" : data.endStr.substring(0, 16);
-            }
-             citaFechaFinInput.value = endStr;
-        } else if (data.start && !data.allDay) { // Si hay inicio pero no fin, sugerir 1 hora después
-            const inicio = new Date(citaFechaInicioInput.value);
+        if (data.end && !data.allDay) {
+            citaFechaFinInput.value = dateToLocalISOString(data.end);
+        } else if (data.start && !data.allDay && !data.end) { // Si hay inicio pero no fin (y no es todo el dia)
+            const inicio = new Date(data.start);
             inicio.setHours(inicio.getHours() + 1);
-            citaFechaFinInput.value = inicio.toISOString().substring(0,16);
+            citaFechaFinInput.value = dateToLocalISOString(inicio);
+        } else {
+            citaFechaFinInput.value = ''; // Limpiar si es todo el día o no hay fin
+        }
+        
+        if (citaTodoElDiaCheckbox.checked && citaFechaInicioInput.value) { // Ajustar hora a 00:00 si es todo el día
+             citaFechaInicioInput.value = citaFechaInicioInput.value.substring(0,10) + "T00:00";
         }
 
 
         if (data.extendedProps?.vehiculoId) {
             citaVehiculoSelect.value = data.extendedProps.vehiculoId;
-            citaVehiculoSelect.dispatchEvent(new Event('change')); // Para mostrar info del vehículo
+            citaVehiculoSelect.dispatchEvent(new Event('change')); 
+        } else {
+            citaVehiculoSelect.value = ""; // Deseleccionar si no hay vehiculoId
         }
-
 
         modalCitaTitulo.textContent = data.id ? "Editar Cita" : "Agregar Nueva Cita";
         btnEliminarCita.style.display = data.id ? 'inline-block' : 'none';
         modalCita.style.display = 'block';
     }
 
-    if (btnCrearCita) {
-        btnCrearCita.onclick = () => abrirModalCita();
-    }
-    if (btnCerrarModalCita && modalCita) {
-        btnCerrarModalCita.onclick = () => { modalCita.style.display = 'none'; }
-    }
-    window.addEventListener('click', function(event) {
-        if (event.target == modalCita && modalCita) modalCita.style.display = 'none';
-    });
+    if (btnCrearCita) btnCrearCita.onclick = () => abrirModalCita({start: new Date()}); // Pasar fecha actual
+    if (btnCerrarModalCita && modalCita) btnCerrarModalCita.onclick = () => { modalCita.style.display = 'none'; }
     
     citaTodoElDiaCheckbox.addEventListener('change', function() {
         citaFechaFinInput.disabled = this.checked;
-        if (this.checked) {
-            citaFechaFinInput.value = ''; // Limpiar fecha fin si es todo el día
-            // Ajustar hora de inicio a las 00:00 si se marca todo el día
-            const inicio = new Date(citaFechaInicioInput.value);
-            inicio.setHours(0,0,0,0);
-            citaFechaInicioInput.value = inicio.toISOString().substring(0,10) + "T00:00";
+        const esTodoElDia = this.checked;
+        let inicioVal = citaFechaInicioInput.value;
 
-        } else {
-             // Si se desmarca, y no hay fecha fin, poner una hora después del inicio
-            if (!citaFechaFinInput.value && citaFechaInicioInput.value) {
-                const inicio = new Date(citaFechaInicioInput.value);
-                inicio.setHours(inicio.getHours() + 1);
-                citaFechaFinInput.value = inicio.toISOString().substring(0,16);
+        if (esTodoElDia) {
+            citaFechaFinInput.value = '';
+            if (inicioVal) { // Si hay valor de inicio, ajustar a T00:00
+                citaFechaInicioInput.value = inicioVal.substring(0,10) + "T00:00";
+            }
+        } else { // No es todo el día
+            if (inicioVal && !citaFechaFinInput.value) { // Si hay inicio pero no fin
+                const inicioDate = new Date(inicioVal);
+                inicioDate.setHours(inicioDate.getHours() + 1); // Sugerir 1 hora después
+                citaFechaFinInput.value = dateToLocalISOString(inicioDate);
             }
         }
     });
 
-
-    // --- INICIALIZACIÓN DE FULLCALENDAR ---
     if (calendarioEl) {
         calendario = new FullCalendar.Calendar(calendarioEl, {
-            locale: 'es', // Para idioma español
-            initialView: 'dayGridMonth', // Vista inicial
+            locale: 'es', 
+            initialView: 'dayGridMonth', 
             headerToolbar: {
-                left: 'prev,next today btnCrearCitaDesdeHeader', // Añadido botón al header
+                left: 'prev,next today btnCrearCitaDesdeHeader', 
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
             },
             customButtons: {
-                btnCrearCitaDesdeHeader: {
-                    text: 'Nueva Cita',
-                    click: function() {
-                        abrirModalCita({ start: new Date() }); // Abrir modal con fecha actual
-                    }
-                }
+                btnCrearCitaDesdeHeader: { text: 'Nueva Cita', click: () => abrirModalCita({start: new Date()}) }
             },
-            editable: true,       // Permite arrastrar y redimensionar eventos
-            selectable: true,     // Permite seleccionar fechas/horas
+            editable: true,      
+            selectable: true,    
             selectMirror: true,
-            dayMaxEvents: true,   // Permite "more" link cuando hay muchos eventos
-            events: cargarCitasDesdeFirestore, // Función que carga los eventos
-
-            select: function(arg) { // Al seleccionar un rango de fechas/horas
-                abrirModalCita({ start: arg.start, end: arg.end, allDay: arg.allDay });
-            },
-            eventClick: function(arg) { // Al hacer clic en un evento existente
-                const data = {
-                    id: arg.event.id,
-                    title: arg.event.title,
-                    start: arg.event.start,
-                    end: arg.event.end,
-                    allDay: arg.event.allDay,
-                    color: arg.event.backgroundColor,
+            dayMaxEvents: true,  
+            events: cargarCitasDesdeFirestore, 
+            select: (arg) => abrirModalCita({ start: arg.start, end: arg.end, allDay: arg.allDay }),
+            eventClick: (arg) => {
+                abrirModalCita({
+                    id: arg.event.id, title: arg.event.title,
+                    start: arg.event.start, end: arg.event.end,
+                    allDay: arg.event.allDay, color: arg.event.backgroundColor,
                     extendedProps: arg.event.extendedProps
-                };
-                abrirModalCita(data);
+                });
             },
-            eventDrop: async function(arg) { // Al arrastrar un evento a una nueva fecha/hora
+            eventDrop: async (arg) => {
                 try {
                     await db.collection('citas').doc(arg.event.id).update({
                         start: firebase.firestore.Timestamp.fromDate(arg.event.start),
                         end: arg.event.end ? firebase.firestore.Timestamp.fromDate(arg.event.end) : null,
                         allDay: arg.event.allDay
                     });
-                    console.log("Cita actualizada por arrastre.");
-                } catch (error) {
-                    console.error("Error actualizando cita por arrastre:", error);
-                    arg.revert(); // Revertir el cambio visual si falla la BD
-                    alert("Error al mover la cita.");
-                }
+                } catch (error) { console.error("Error actualizando cita por arrastre:", error); arg.revert(); alert("Error al mover la cita."); }
             },
-            // eventResize: function(arg) { ... } // Para cuando se redimensiona un evento
+            eventResize: async (arg) => { // Manejar redimensionamiento
+                 try {
+                    await db.collection('citas').doc(arg.event.id).update({
+                        start: firebase.firestore.Timestamp.fromDate(arg.event.start),
+                        end: firebase.firestore.Timestamp.fromDate(arg.event.end), // End siempre existe al redimensionar
+                        allDay: arg.event.allDay
+                    });
+                } catch (error) { console.error("Error actualizando cita por redimensionar:", error); arg.revert(); alert("Error al redimensionar la cita."); }
+            }
         });
         calendario.render();
-        cargarVehiculosParaSelect(); // Cargar vehículos al inicio
+        cargarVehiculosParaSelect(); 
     }
 
-
-    // --- CARGAR CITAS DESDE FIRESTORE ---
     function cargarCitasDesdeFirestore(fetchInfo, successCallback, failureCallback) {
         db.collection('citas').onSnapshot(snapshot => {
             const eventos = [];
             snapshot.forEach(doc => {
                 const data = doc.data();
                 eventos.push({
-                    id: doc.id,
-                    title: data.title,
-                    start: data.start.toDate(), // Convertir Timestamp de Firestore a Date de JS
+                    id: doc.id, title: data.title,
+                    start: data.start.toDate(), 
                     end: data.end ? data.end.toDate() : null,
                     allDay: data.allDay || false,
-                    backgroundColor: data.color || '#ad0000', // Usar color guardado o default
+                    backgroundColor: data.color || '#ad0000', 
                     borderColor: data.color ? darkenColor(data.color, 20) : '#830000',
                     extendedProps: {
-                        description: data.description,
-                        vehiculoId: data.vehiculoId,
-                        patenteVehiculo: data.patenteVehiculo,
-                        clienteNombre: data.clienteNombre,
+                        description: data.description, vehiculoId: data.vehiculoId,
+                        patenteVehiculo: data.patenteVehiculo, clienteNombre: data.clienteNombre,
                         tipoCita: data.tipoCita
                     }
                 });
             });
             successCallback(eventos);
-        }, error => {
-            console.error("Error cargando citas: ", error);
-            failureCallback(error);
-        });
+        }, error => { console.error("Error cargando citas: ", error); failureCallback(error); });
     }
     
-    function darkenColor(color, percent) { // Helper para oscurecer el borde
+    function darkenColor(color, percent) {
         let num = parseInt(color.replace("#",""),16),
         amt = Math.round(2.55 * percent),
-        R = (num >> 16) - amt,
-        G = (num >> 8 & 0x00FF) - amt,
-        B = (num & 0x0000FF) - amt;
+        R = (num >> 16) - amt, G = (num >> 8 & 0x00FF) - amt, B = (num & 0x0000FF) - amt;
         return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
     }
 
-
-    // --- GUARDAR/ACTUALIZAR CITA ---
     if (formCita) {
         formCita.addEventListener('submit', async function(event) {
             event.preventDefault();
             const id = citaIdInput.value;
-            const titulo = citaTituloInput.value.trim();
+            const tituloForm = citaTituloInput.value.trim(); // Renombrado para evitar confusión
             const tipo = citaTipoSelect.value;
             const fechaInicioStr = citaFechaInicioInput.value;
             const fechaFinStr = citaFechaFinInput.value;
@@ -278,14 +240,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const descripcion = citaDescripcionTextarea.value.trim();
             const colorEvento = citaColorInput.value;
 
-            if (!titulo || !fechaInicioStr) {
-                alert("El título y la fecha de inicio son obligatorios.");
-                return;
+            if (!tituloForm || !fechaInicioStr) {
+                alert("El título y la fecha de inicio son obligatorios."); return;
             }
-
-            let vehiculoSeleccionado = null;
-            let patenteDelVehiculo = '';
-            let nombreDelCliente = '';
+            let vehiculoSeleccionado = null, patenteDelVehiculo = '', nombreDelCliente = '';
             if (vehiculoId) {
                 vehiculoSeleccionado = vehiculosCargados.find(v => v.id === vehiculoId);
                 if (vehiculoSeleccionado) {
@@ -294,60 +252,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
+            const tituloCompleto = `${tituloForm} ${patenteDelVehiculo ? '('+patenteDelVehiculo+')': ''} ${nombreDelCliente ? '- '+nombreDelCliente : ''}`.trim();
+
             const evento = {
-                title: `${titulo} ${patenteDelVehiculo ? '('+patenteDelVehiculo+')': ''} ${nombreDelCliente ? '- '+nombreDelCliente : ''}`.trim(),
+                title: tituloCompleto,
                 start: firebase.firestore.Timestamp.fromDate(new Date(fechaInicioStr)),
                 allDay: todoElDia,
                 description: descripcion,
-                vehiculoId: vehiculoId || null,
+                vehiculoId: vehiculoId || firebase.firestore.FieldValue.delete(), // Eliminar si está vacío
                 patenteVehiculo: patenteDelVehiculo,
                 clienteNombre: nombreDelCliente,
                 tipoCita: tipo,
                 color: colorEvento
             };
-
             if (!todoElDia && fechaFinStr) {
                 evento.end = firebase.firestore.Timestamp.fromDate(new Date(fechaFinStr));
-            } else if (todoElDia) {
-                evento.end = null; // O ajustar el 'end' para que cubra todo el día según FullCalendar
+            } else { // Si es todo el día o no hay fecha fin, no guardamos 'end' o lo ponemos a null
+                evento.end = null; // O firebase.firestore.FieldValue.delete()
             }
-
-
             try {
-                if (id) { // Actualizar cita existente
+                if (id) { 
                     await db.collection('citas').doc(id).update(evento);
-                    alert("Cita actualizada con éxito.");
-                } else { // Crear nueva cita
+                    alert("Cita actualizada.");
+                } else { 
                     await db.collection('citas').add(evento);
-                    alert("Cita creada con éxito.");
+                    alert("Cita creada.");
                 }
                 modalCita.style.display = 'none';
-                if (calendario) calendario.refetchEvents(); // Recargar eventos en el calendario
             } catch (error) {
                 console.error("Error guardando cita:", error);
-                alert("Error al guardar la cita: " + error.message);
+                alert("Error al guardar: " + error.message);
             }
         });
     }
 
-    // --- ELIMINAR CITA ---
     if (btnEliminarCita) {
         btnEliminarCita.addEventListener('click', async function() {
             const id = citaIdInput.value;
-            if (!id) {
-                alert("No hay cita seleccionada para eliminar.");
-                return;
-            }
-            if (confirm("¿Estás seguro de que quieres eliminar esta cita?")) {
+            if (!id) return;
+            if (confirm("¿Eliminar esta cita?")) {
                 try {
                     await db.collection('citas').doc(id).delete();
-                    alert("Cita eliminada con éxito.");
+                    alert("Cita eliminada.");
                     modalCita.style.display = 'none';
-                    if (calendario) calendario.refetchEvents();
-                } catch (error) {
-                    console.error("Error eliminando cita:", error);
-                    alert("Error al eliminar la cita: " + error.message);
-                }
+                } catch (error) { console.error("Error eliminando:", error); alert("Error al eliminar: " + error.message); }
             }
         });
     }

@@ -1,67 +1,182 @@
 /* admin_agenda_styles.css */
 
+/* Contenedor principal de la sección de agenda */
+#agenda-section h2 {
+    /* Ya debería heredar estilos de h2 globales si existen */
+    margin-bottom: 20px;
+}
+
+#botones-agenda {
+    margin-bottom: 20px;
+    text-align: right; /* O left, o center, según preferencia */
+}
+
 #calendario {
     max-width: 1100px; /* O el ancho que prefieras */
-    margin: 0 auto;
-    background-color: #1e1e1e; /* Fondo oscuro para el calendario */
+    margin: 20px auto; /* Añadido margen superior */
+    background-color: #181818; /* Un fondo ligeramente diferente al de las tarjetas para destacar */
     padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #333;
+    border-radius: 8px; /* Bordes más redondeados como las tarjetas */
+    border: 1px solid #383838; /* Borde similar a las tarjetas */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Sombra sutil */
 }
 
-/* Ajustes de color para FullCalendar en tema oscuro */
-:root {
-    --fc-border-color: #333;
+/*
+   Estilos para FullCalendar.
+   Estos intentan adaptar FullCalendar a un tema oscuro.
+   Muchos de estos se basan en las variables CSS que FullCalendar v5 expone.
+*/
+:root { /* Estas variables son leídas por FullCalendar */
+    --fc-border-color: #444; /* Un borde un poco más visible */
     --fc-daygrid-event-dot-width: 8px;
     --fc-list-event-dot-width: 10px;
-    --fc-event-bg-color: #ad0000; /* Color por defecto de evento */
-    --fc-event-border-color: #830000;
+    --fc-event-bg-color: #ad0000; /* Color por defecto de evento, rojo principal */
+    --fc-event-border-color: #830000; /* Borde un poco más oscuro */
     --fc-event-text-color: #fff;
-    --fc-event-selected-overlay-bg-color: rgba(173, 0, 0, 0.25);
-    --fc-more-link-bg-color: #2c3e50;
+    --fc-event-selected-overlay-bg-color: rgba(173, 0, 0, 0.3);
+    --fc-more-link-bg-color: #333;
     --fc-more-link-text-color: #e0e0e0;
-    --fc-today-bg-color: rgba(173, 0, 0, 0.15); /* Fondo para el día actual */
-    --fc-page-bg-color: #1e1e1e; /* Fondo de la página del calendario */
-    --fc-neutral-bg-color: #1a1a1a; /* Fondo de celdas, etc. */
-    --fc-neutral-text-color: #ccc; /* Color de texto para números de día, etc. */
+    --fc-today-bg-color: rgba(173, 0, 0, 0.2); /* Rojo más sutil para "hoy" */
+    --fc-page-bg-color: #181818; /* Fondo general del área del calendario */
+    --fc-neutral-bg-color: #2a2a2a; /* Fondo de celdas de día, más claro que el page-bg */
+    --fc-neutral-text-color: #ccc;
     --fc-popover-bg-color: #282828;
-    --fc-popover-border-color: #444;
+    --fc-popover-border-color: #555;
     --fc-popover-header-bg-color: #222;
+
+    /* Colores de los botones de FullCalendar (prev, next, today, month, week, day) */
     --fc-button-text-color: #fff;
     --fc-button-bg-color: #ad0000;
-    --fc-button-border-color: #830000;
+    --fc-button-border-color: #ad0000; /* Mismo color para borde solido */
     --fc-button-hover-bg-color: #ff0000;
-    --fc-button-hover-border-color: #ad0000;
+    --fc-button-hover-border-color: #ff0000;
     --fc-button-active-bg-color: #830000;
-    --fc-button-active-border-color: #5a0000;
-    --fc-highlight-color: rgba(173, 0, 0, 0.3);
+    --fc-button-active-border-color: #830000;
+    --fc-button-disabled-bg-color: #555; /* Color para botones deshabilitados */
+    --fc-button-disabled-border-color: #555;
+    --fc-button-disabled-text-color: #999;
+
+    --fc-highlight-color: rgba(173, 0, 0, 0.35); /* Color al seleccionar un rango de fechas */
 }
 
-.fc-toolbar-title { /* Título del mes/semana/día */
-    color: #ffc107 !important;
+/* Títulos de la barra de herramientas del calendario (Mes, botones) */
+.fc .fc-toolbar-title {
+    color: #ffc107 !important; /* Amarillo como otros títulos de sección */
+    font-size: 1.5em; /* Un poco más grande */
+}
+.fc .fc-button { /* Asegurar que los botones de FC usen las variables */
+    background-color: var(--fc-button-bg-color);
+    border-color: var(--fc-button-border-color);
+    color: var(--fc-button-text-color);
+    text-transform: capitalize; /* ej. 'month' -> 'Month' */
+    padding: 0.4em 0.8em;
+}
+.fc .fc-button:hover {
+    background-color: var(--fc-button-hover-bg-color);
+    border-color: var(--fc-button-hover-border-color);
+}
+.fc .fc-button-primary:disabled {
+    background-color: var(--fc-button-disabled-bg-color);
+    border-color: var(--fc-button-disabled-border-color);
+    color: var(--fc-button-disabled-text-color);
 }
 
-.fc-daygrid-day-number, .fc-col-header-cell-cushion { /* Números de día y encabezados de columna */
-    color: #ccc !important; 
+
+/* Números de día y encabezados de columna */
+.fc .fc-daygrid-day-number, 
+.fc .fc-col-header-cell-cushion { /* Nombre de los días de la semana */
+    color: #e0e0e0 !important; 
+    text-decoration: none; /* Quitar subrayado si lo hubiera */
+}
+.fc .fc-day-today .fc-daygrid-day-number { /* Número del día actual */
+    font-weight: bold;
+    color: #ffc107 !important; /* Amarillo para destacar el número del día de hoy */
 }
 
-/* Modal de Cita */
+/* Estilos para el Modal de Cita - Heredará mucho de .modal y .modal-content de admin_styles.css */
 #modal-cita .modal-content {
-    max-width: 600px; /* Un poco más ancho para el formulario */
+    max-width: 550px; /* Ajustar según necesidad */
+    /* background-color: #282828; ya debería estar definido globalmente */
+    /* border: 1px solid #555; ya debería estar definido globalmente */
 }
+
 #form-cita label {
-    margin-top: 12px;
+    /* display: block; margin-top: 10px; margin-bottom: 5px; color: #ccc; */
+    /* Estos estilos ya deberían estar en admin_styles.css o style.css para labels globales */
+    margin-top: 15px; /* Un poco más de espacio entre labels en este form */
 }
+
+#form-cita input[type="text"],
 #form-cita input[type="datetime-local"],
-#form-cita input[type="color"],
-#form-cita select {
-    background-color: #444; /* Fondo un poco más claro para inputs específicos */
-    border: 1px solid #666;
+#form-cita select,
+#form-cita textarea,
+#form-cita input[type="color"] {
+    /* width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border-radius: 4px; */
+    /* border: 1px solid #555; background-color: #333; color: #fff; box-sizing: border-box; */
+    /* Estilos base ya deberían estar globales. Aquí solo ajustes si son necesarios. */
+    background-color: #3a3a3a; /* Un poco más claro para los inputs del modal */
 }
+
 #form-cita input[type="checkbox"] {
     width: auto; /* Para que no ocupe todo el ancho */
     vertical-align: middle;
+    margin-right: 8px; /* Espacio entre el checkbox y su label implícito */
 }
+#form-cita label[for="cita-todo-el-dia"] {
+    display: inline-flex; /* Para alinear el texto con el checkbox */
+    align-items: center;
+    margin-top: 10px;
+    font-weight: normal; /* El label no necesita ser bold */
+}
+
+
+#form-cita input[type="color"] {
+    padding: 2px; /* Ajuste para input color */
+    min-height: 35px; /* Altura mínima para el selector de color */
+}
+
+#info-vehiculo-cita {
+    font-size:0.9em; 
+    color:#bbb; /* Un gris más claro */
+    margin-top: 2px; 
+    margin-bottom:10px;
+    min-height: 1.2em; /* Para que no salte el layout */
+    padding-left: 5px;
+}
+
 #btn-eliminar-cita {
     margin-left: 10px;
+    background-color: #dc3545; /* Heredado de .btn-delete si existe globalmente */
+}
+#btn-eliminar-cita:hover {
+    background-color: #c82333; /* Heredado de .btn-delete:hover si existe globalmente */
+}
+
+/* Responsividad para el calendario y modal */
+@media (max-width: 767.98px) {
+    #calendario {
+        padding: 10px;
+    }
+    .fc .fc-toolbar.fc-header-toolbar {
+        flex-direction: column; /* Apilar secciones del toolbar */
+        gap: 10px; /* Espacio entre secciones apiladas */
+    }
+    .fc .fc-toolbar-chunk { /* Cada sección (left, center, right) */
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 5px;
+    }
+     .fc .fc-toolbar-title {
+        font-size: 1.3em;
+    }
+    .fc .fc-button {
+        padding: 0.3em 0.6em;
+        font-size: 0.9em;
+    }
+
+    #modal-cita .modal-content {
+        width: 95%;
+        padding: 15px;
+    }
 }

@@ -6,15 +6,17 @@
 <title>Agenda de Citas - Panel de Administración</title>
 <link rel="icon" href="/favicon.png" type="image/png">
 
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="admin_styles.css">
-<link rel="stylesheet" href="admin_agenda_styles.css"> <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<link rel="stylesheet" href="style.css">       {*/* CSS Global de tu sitio */}
+<link rel="stylesheet" href="admin_styles.css"> {*/* CSS Global para el panel de admin */}
+<link rel="stylesheet" href="admin_agenda_styles.css"> {/* CSS específico para esta página */}
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 
 </head>
-<body class="admin-page">
+<body class="admin-page"> {/* Asegúrate que .admin-page aplique estilos base si es necesario */}
 
 <header>
-  <h1 style="color:#ad0000;">Panel de Administración</h1>
+  <h1>Panel de Administración</h1> {/* Quité el style inline, debe heredar de CSS */}
 </header>
 
 <div class="admin-container">
@@ -24,13 +26,12 @@
     </button>
     <h3>Menú</h3>
     <ul id="adminMenuItems">
-      <li><a href="admin.html">Panel</a></li>
-      <li><a href="admin_agenda.html">Agenda</a></li>
       <li><a href="admin_vehiculos.html">Vehículos</a></li>
       <li><a href="admin_presupuestos.html">Presupuestos</a></li>
       <li><a href="admin_trabajos.html">Trabajos</a></li>
       <li><a href="admin_manuales.html">Manuales</a></li>
-      <li><a href="index.html">Volver al inicio</a></li>
+      <li><a href="admin_agenda.html" class="active">Agenda</a></li>
+      <li><a href="index.html">Volver a Inicio</a></li>
     </ul>
   </aside>
 
@@ -39,20 +40,21 @@
       <h2>Agenda de Citas y Trabajos</h2>
       <p>Organiza las recepciones de vehículos, fechas de entrega y otros eventos del taller.</p>
       
-      <div id="botones-agenda" style="margin-bottom: 20px;">
+      <div id="botones-agenda"> {/* Contenedor para botones de acción de la agenda */}
         <button id="btn-crear-cita" class="btn-action">Crear Nueva Cita</button>
       </div>
 
       <div id="calendario">
-        </div>
+        {/* FullCalendar se renderizará aquí */}
+      </div>
     </section>
   </main>
 </div>
 
-<div id="modal-cita" class="modal">
-  <div class="modal-content">
+<div id="modal-cita" class="modal"> {/* Ya tienes estilos para .modal globalmente */}
+  <div class="modal-content">   {/* Ya tienes estilos para .modal-content globalmente */}
     <span class="close-modal-btn" id="cerrar-modal-cita">&times;</span>
-    <h3 id="modal-cita-titulo">Agregar/Editar Cita</h3>
+    <h3 id="modal-cita-titulo">Agregar/Editar Cita</h3> {/* Estilo de h3 del modal global */}
     <form id="form-cita">
       <input type="hidden" id="cita-id">
 
@@ -74,28 +76,26 @@
       <label for="cita-fecha-fin">Fecha y Hora de Fin (Opcional):</label>
       <input type="datetime-local" id="cita-fecha-fin">
       
-      <label for="cita-todo-el-dia">
-        <input type="checkbox" id="cita-todo-el-dia" style="width: auto; margin-right: 5px;"> Evento de todo el día
-      </label>
+      <div> {/* Contenedor para el checkbox y su label para mejor alineación */}
+        <input type="checkbox" id="cita-todo-el-dia">
+        <label for="cita-todo-el-dia">Evento de todo el día</label>
+      </div>
 
       <label for="cita-vehiculo">Vehículo Asociado (Opcional):</label>
       <select id="cita-vehiculo">
           <option value="">-- Ninguno --</option>
-          {/* Opciones de vehículos se cargarán aquí desde JS */}
       </select>
-      <div id="info-vehiculo-cita" style="font-size:0.9em; color:#ccc; margin-top: -5px; margin-bottom:10px;"></div>
-
+      <div id="info-vehiculo-cita"></div>
 
       <label for="cita-descripcion">Descripción (Opcional):</label>
       <textarea id="cita-descripcion" rows="3"></textarea>
       
       <label for="cita-color">Color del Evento (Opcional):</label>
-      <input type="color" id="cita-color" value="#ad0000" style="width: 50px; height: 30px; padding: 2px;">
+      <input type="color" id="cita-color" value="#ad0000"> {/* Quitado style inline */}
 
-
-      <div style="margin-top: 20px;">
+      <div style="margin-top: 20px; text-align: right;"> {/* Alinear botones a la derecha */}
+        <button type="button" id="btn-eliminar-cita" class="btn-action btn-delete" style="display:none; margin-right:10px;">Eliminar</button>
         <button type="submit" class="btn-submit-form">Guardar Cita</button>
-        <button type="button" id="btn-eliminar-cita" class="btn-action btn-delete" style="display:none;">Eliminar Cita</button>
       </div>
     </form>
   </div>
@@ -108,12 +108,8 @@
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
-{/* <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script> NO es necesario para la agenda */}
-
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js'></script> {/* Para idioma español */}
-
-
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js'></script>
 <script src="script.js"></script>
 <script src="admin_agenda_scripts.js"></script> 
 
