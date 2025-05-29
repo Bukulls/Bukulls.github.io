@@ -4,183 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vehículos - Panel de Administración</title>
-<link rel="icon" href="/logo.ico" type="image/x-icon">
-<link rel="stylesheet" href="style.css">
-<style>
-/* Estilos básicos del admin.html original */
-body { background-color: #000; color: #fff; font-family: Arial, sans-serif; margin:0; padding:0; } /* Estilos base */
-.admin-container { display: flex; min-height: 100vh; }
-
-.admin-menu {
-    background-color: #222;
-    color: #fff;
-    width: 220px;
-    flex-shrink: 0;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-}
-.admin-menu-toggle {
-    display: none;
-    background-color: #ad0000;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    font-size: 1.2em;
-    cursor: pointer;
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 101;
-}
-.admin-menu h3 { margin-bottom: 15px; margin-top: 0; }
-.admin-menu ul { list-style: none; padding: 0; }
-.admin-menu li { margin: 10px 0; }
-.admin-menu a { color: #fff; text-decoration: none; font-weight: bold; display: block; padding: 8px 0; }
-.admin-menu a:hover, .admin-menu a.active { color: #ad0000; } /* .active para la página actual */
-
-.admin-content { flex: 1; padding: 20px; box-sizing: border-box; overflow-x: hidden; }
-.hidden { display: none !important; }
-
-/* Estilos para formularios y tablas (copiados de admin.html) */
-label { display: block; margin-top: 10px; margin-bottom: 5px; color: #ccc; }
-input[type="text"], input[type="number"], input[type="tel"], textarea, select {
-    width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border-radius: 4px;
-    border: 1px solid #555; background-color: #333; color: #fff; box-sizing: border-box;
-}
-input[type="file"] { color: #ccc; margin-bottom: 10px; }
-textarea { resize: vertical; }
-button, .btn-submit-form, .btn-action {
-    background-color: #ad0000; color: white; padding: 10px 15px; border: none;
-    border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px; margin-right: 5px;
-}
-button:hover, .btn-submit-form:hover, .btn-action:hover { background-color: #ff0000; }
-button.btn-edit { background-color: #007bff; } button.btn-edit:hover { background-color: #0056b3; }
-button.btn-delete { background-color: #dc3545; } button.btn-delete:hover { background-color: #c82333; }
-#lista-vehiculos ul { background-color: #1e1e1e; border: 1px solid #383838; padding: 15px; margin-bottom: 15px; border-radius: 5px; list-style:none; }
-#lista-vehiculos h4 { color: #ad0000; margin-top:0; }
-#previsualizacion-imagenes img, #previsualizacion-imagenes-editar img { border: 1px solid #444; border-radius: 3px; }
-
-/* Modal Styles (copiados de admin.html) */
-.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); padding-top: 20px;}
-.modal-content { background-color: #282828; color: #fff; margin: 5% auto; padding: 25px; border: 1px solid #555; width: 80%; max-width: 700px; border-radius: 8px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-.modal-content h3 { color: #ad0000; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; }
-.close-modal-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; position: absolute; top: 10px; right: 20px; line-height: 1;}
-.close-modal-btn:hover, .close-modal-btn:focus { color: #ff0000; text-decoration: none; cursor: pointer; }
-header { background-color: #000; color: #ad0000; padding: 15px 20px; text-align: center; } /* Header del admin */
-
-/* --- Media Queries para Responsividad del Menú --- */
-@media (max-width: 991.98px) {
-    .admin-menu {
-        width: 180px;
-        padding: 15px;
-    }
-    .admin-content {
-        padding: 15px;
-    }
-    .modal-content {
-        width: 90%;
-    }
-    input[type="text"], input[type="number"], input[type="tel"], textarea, select,
-    button, .btn-submit-form, .btn-action {
-        font-size: 0.95em;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .admin-container {
-        flex-direction: column;
-    }
-    .admin-menu {
-        width: 100%;
-        height: auto;
-        padding-bottom: 10px;
-    }
-    .admin-menu-toggle {
-        display: block;
-    }
-    .admin-menu h3 {
-        text-align: left;
-        margin-left: 10px;
-        margin-bottom: 0;
-        padding-top: 5px;
-    }
-    .admin-menu ul#adminMenuItems {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        background-color: #333;
-        padding: 10px 0;
-    }
-    .admin-menu.admin-menu-open ul#adminMenuItems {
-        display: flex;
-    }
-    .admin-menu li {
-        margin: 0;
-        width: 100%;
-        text-align: left;
-    }
-    .admin-menu li a {
-        padding: 12px 20px;
-        border-bottom: 1px solid #444;
-    }
-    .admin-menu li:last-child a {
-        border-bottom: none;
-    }
-    .admin-menu li a.active {
-        background-color: #ad0000;
-        color: white;
-    }
-     .admin-menu li a:hover {
-        background-color: #4e0000;
-    }
-
-    .admin-content {
-        padding: 10px;
-    }
-    header h1 {
-        font-size: 1.5em;
-    }
-    input[type="text"], input[type="number"], input[type="tel"], textarea, select,
-    button, .btn-submit-form, .btn-action {
-        padding: 12px;
-        font-size: 1em;
-    }
-    button, .btn-submit-form, .btn-action {
-        width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-    button:last-child, .btn-submit-form:last-child, .btn-action:last-child {
-        margin-bottom: 0;
-    }
-    .modal-content {
-        width: 95%;
-        padding: 20px;
-        margin-top: 20px;
-    }
-    .modal-content h3 {
-        font-size: 1.2em;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .admin-menu h3 {
-        font-size: 1.1em;
-        padding-top: 8px;
-    }
-    .admin-menu-toggle {
-        top: 12px;
-        right: 12px;
-        padding: 6px 10px;
-    }
-    header h1 {
-        font-size: 1.3em;
-    }
-}
-</style>
-</head>
+<link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="admin_styles.css"> <link rel="stylesheet" href="admin_vehiculos_styles.css"> </head>
 <body>
 
 <header>
@@ -188,13 +12,11 @@ header { background-color: #000; color: #ad0000; padding: 15px 20px; text-align:
 </header>
 
 <div class="admin-container">
-  <aside class="admin-menu" id="adminMenu">
-    <button class="admin-menu-toggle" id="adminMenuToggle" aria-label="Abrir menú" aria-expanded="false">
-        &#9776;
-    </button>
+  <aside class="admin-menu">
     <h3>Menú</h3>
-    <ul id="adminMenuItems">
-      <li><a href="admin_vehiculos.html" class="active">Vehículos</a></li> <li><a href="admin_presupuestos.html">Presupuestos</a></li>
+    <ul>
+      <li><a href="admin_vehiculos.html" class="active">Vehículos</a></li>
+      <li><a href="admin_presupuestos.html">Presupuestos</a></li>
       <li><a href="admin_trabajos.html">Trabajos</a></li>
       <li><a href="admin_manuales.html">Manuales</a></li>
       <li><a href="index.html">Volver a Inicio</a></li>
@@ -202,37 +24,52 @@ header { background-color: #000; color: #ad0000; padding: 15px 20px; text-align:
   </aside>
 
   <main class="admin-content">
-    <section id="vehiculos-section"> <h2>Panel de Administración de Vehículos</h2>
-      <div id="form-ingreso-vehiculo-container">
-        <h3>Ingresar Nuevo Vehículo</h3>
+    <section id="vehiculos-section">
+      <h2>Panel de Administración de Vehículos</h2>
+      
+      <div id="form-ingreso-vehiculo-container" style="background-color: #2a2a2a; padding: 20px; border-radius: 5px; margin-bottom:30px;">
+        <h3 style="color: #ffc107; margin-top:0; border-bottom: 1px solid #444; padding-bottom:10px;">Ingresar Nuevo Vehículo</h3>
         <form id="form-ingreso-vehiculo">
           <label for="vehiculo-patente">Patente:</label>
           <input type="text" id="vehiculo-patente" required>
+          
           <label for="vehiculo-marca">Marca:</label>
           <input type="text" id="vehiculo-marca" required>
+          
           <label for="vehiculo-modelo">Modelo:</label>
           <input type="text" id="vehiculo-modelo" required>
+          
           <label for="vehiculo-ano">Año:</label>
-          <input type="number" id="vehiculo-ano" min="1900" max="2099" required>
+          <input type="number" id="vehiculo-ano" min="1900" max="2099" step="1" required>
+          
           <label for="vehiculo-cliente-nombre">Nombre del Cliente:</label>
           <input type="text" id="vehiculo-cliente-nombre">
-          <label for="vehiculo-cliente-telefono">Teléfono:</label>
+          
+          <label for="vehiculo-cliente-telefono">Teléfono del Cliente:</label>
           <input type="tel" id="vehiculo-cliente-telefono">
+          
           <label for="vehiculo-descripcion-trabajo">Descripción del Trabajo/Problema:</label>
           <textarea id="vehiculo-descripcion-trabajo" rows="4" required></textarea>
-          <label for="vehiculo-imagenes">Imágenes (máx. 5):</label>
+          
+          <label for="vehiculo-imagenes">Imágenes del vehículo (máx. 5):</label>
           <input type="file" id="vehiculo-imagenes" multiple accept="image/*">
-          <div id="previsualizacion-imagenes" style="margin-top:10px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+          <div id="previsualizacion-imagenes" style="margin-top:10px; display: flex; flex-wrap: wrap; gap: 10px;">
+            </div>
+          
           <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Vehículo</button>
         </form>
       </div>
+      
+      <hr style="border-color: #555; margin: 30px 0;">
+
       <div id="lista-vehiculos-container" style="margin-top: 30px;">
         <h3>Vehículos Ingresados</h3>
         <div id="lista-vehiculos">
-          <p>Cargando vehículos...</p> </div>
+          <p>Cargando vehículos...</p> 
+        </div>
       </div>
     </section>
-    </main>
+  </main>
 </div>
 
 <div id="modal-editar-vehiculo" class="modal">
@@ -241,30 +78,41 @@ header { background-color: #000; color: #ad0000; padding: 15px 20px; text-align:
     <h3>Editar Vehículo</h3>
     <form id="form-editar-vehiculo">
       <input type="hidden" id="vehiculo-id-editar">
+      
       <label for="vehiculo-patente-editar">Patente:</label>
       <input type="text" id="vehiculo-patente-editar" required>
+      
       <label for="vehiculo-marca-editar">Marca:</label>
       <input type="text" id="vehiculo-marca-editar" required>
+      
       <label for="vehiculo-modelo-editar">Modelo:</label>
       <input type="text" id="vehiculo-modelo-editar" required>
+      
       <label for="vehiculo-ano-editar">Año:</label>
-      <input type="number" id="vehiculo-ano-editar" min="1900" max="2099" required>
+      <input type="number" id="vehiculo-ano-editar" min="1900" max="2099" step="1" required>
+      
       <label for="vehiculo-cliente-nombre-editar">Nombre del Cliente:</label>
       <input type="text" id="vehiculo-cliente-nombre-editar">
-      <label for="vehiculo-cliente-telefono-editar">Teléfono:</label>
+      
+      <label for="vehiculo-cliente-telefono-editar">Teléfono del Cliente:</label>
       <input type="tel" id="vehiculo-cliente-telefono-editar">
+      
       <label for="vehiculo-descripcion-trabajo-editar">Descripción del Trabajo/Problema:</label>
       <textarea id="vehiculo-descripcion-trabajo-editar" rows="4" required></textarea>
-      <label>Imágenes Actuales:</label>
-      <div id="imagenes-actuales-editar" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 5px;"></div>
-      <label for="vehiculo-imagenes-editar">Añadir/Reemplazar Imágenes (máx. 5 nuevas):</label>
+      
+      <label style="margin-top:15px;">Imágenes Actuales (clic en 'X' para marcar/desmarcar para eliminar al guardar):</label>
+      <div id="imagenes-actuales-editar" style="margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 5px;">
+        </div>
+      
+      <label for="vehiculo-imagenes-editar">Añadir/Reemplazar Imágenes (máx. 5 en total):</label>
       <input type="file" id="vehiculo-imagenes-editar" multiple accept="image/*">
-      <div id="previsualizacion-imagenes-editar" style="margin-top:10px; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+      <div id="previsualizacion-imagenes-editar" style="margin-top:10px; display: flex; flex-wrap: wrap; gap: 10px;">
+        </div>
+      
       <button type="submit" class="btn-submit-form" style="margin-top: 20px;">Guardar Cambios</button>
     </form>
   </div>
 </div>
-
 
 <footer style="background-color: #000; color: #ad0000; text-align: center; padding: 15px; border-top: 1px solid #333;">
   <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
@@ -272,336 +120,8 @@ header { background-color: #000; color: #ad0000; padding: 15px 20px; text-align:
 
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script> <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script> 
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script>
 
-<script src="script.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // --- INICIO: Lógica para el menú responsive ---
-  const adminMenuToggle = document.getElementById('adminMenuToggle');
-  const adminMenu = document.getElementById('adminMenu');
-
-  if (adminMenuToggle && adminMenu) {
-    adminMenuToggle.addEventListener('click', function() {
-      adminMenu.classList.toggle('admin-menu-open');
-      const isExpanded = adminMenu.classList.contains('admin-menu-open');
-      this.setAttribute('aria-expanded', isExpanded);
-      this.innerHTML = isExpanded ? '&times;' : '&#9776;'; // Cambia entre hamburguesa y X
-      this.setAttribute('aria-label', isExpanded ? 'Cerrar menú' : 'Abrir menú');
-    });
-  }
-  // --- FIN: Lógica para el menú responsive ---
-
-  // Verificar si Firebase está inicializado desde script.js
-  if (typeof db === 'undefined' || typeof storage === 'undefined') {
-    console.error("Firebase (db o storage) no está inicializado. Verifica que script.js se cargue correctamente ANTES de este script y que defina db y storage globalmente.");
-    alert("Error crítico: No se pudo conectar a la base de datos. Por favor, recarga o contacta soporte.");
-    return;
-  }
-
-  // --- Elementos DOM para Vehículos ---
-  const formIngresoVehiculo = document.getElementById('form-ingreso-vehiculo');
-  const listaVehiculosDiv = document.getElementById('lista-vehiculos');
-  const previsualizacionImagenesDiv = document.getElementById('previsualizacion-imagenes');
-  const inputImagenesVehiculo = document.getElementById('vehiculo-imagenes');
-
-  // --- Modal de Edición de Vehículo ---
-  const modalEditarVehiculo = document.getElementById('modal-editar-vehiculo');
-  const btnCerrarModalEditar = document.getElementById('cerrar-modal-editar-vehiculo');
-  const formEditarVehiculo = document.getElementById('form-editar-vehiculo');
-  const inputImagenesEditar = document.getElementById('vehiculo-imagenes-editar');
-  const previsualizacionImagenesEditarDiv = document.getElementById('previsualizacion-imagenes-editar');
-  const imagenesActualesEditarDiv = document.getElementById('imagenes-actuales-editar');
-  window.imagenesAEliminarDelVehiculo = []; // Variable global para el modal de edición
-
-  if (btnCerrarModalEditar) {
-    btnCerrarModalEditar.onclick = function() {
-      if(modalEditarVehiculo) modalEditarVehiculo.style.display = "none";
-    }
-  }
-  window.onclick = function(event) { // Cuidado, esto puede interferir con otros modales si los tienes.
-    if (event.target == modalEditarVehiculo) {
-      if(modalEditarVehiculo) modalEditarVehiculo.style.display = "none";
-    }
-  }
-
-  if (inputImagenesEditar && previsualizacionImagenesEditarDiv) {
-      inputImagenesEditar.addEventListener('change', function(event) {
-        previsualizacionImagenesEditarDiv.innerHTML = '';
-        const files = event.target.files;
-        const numImagenesActualesVisibles = Array.from(imagenesActualesEditarDiv.children).filter(child => child.style.opacity !== '0.3').length;
-        const maxNuevasImagenes = 5 - numImagenesActualesVisibles;
-
-        if (files.length > maxNuevasImagenes) {
-            alert(`Puedes añadir un máximo de ${maxNuevasImagenes} imágenes nuevas (para un total de 5).`);
-            inputImagenesEditar.value = "";
-            return;
-        }
-        for (const file of files) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.style.maxWidth = '80px'; img.style.maxHeight = '80px'; img.style.margin = '2px'; img.style.border = '1px solid #555';
-            previsualizacionImagenesEditarDiv.appendChild(img);
-          }
-          reader.readAsDataURL(file);
-        }
-      });
-  }
-
-  // --- Funciones CRUD para Vehículos ---
-  async function mostrarVehiculos() {
-      if (!listaVehiculosDiv) { console.error("listaVehiculosDiv no encontrado"); return; }
-      listaVehiculosDiv.innerHTML = '<p>Cargando vehículos...</p>';
-      try {
-        const querySnapshot = await db.collection("vehiculos").orderBy("registradoEl", "desc").get();
-        if (querySnapshot.empty) {
-          listaVehiculosDiv.innerHTML = '<p>Aún no hay vehículos registrados.</p>';
-          return;
-        }
-        let vehiculosHTML = '<ul style="list-style: none; padding: 0;">';
-        querySnapshot.forEach(doc => {
-          const vehiculo = doc.data();
-          const vehiculoId = doc.id;
-          vehiculosHTML += `
-            <li style="border: 1px solid #333; padding: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #1e1e1e;">
-              <h4 style="margin-top:0; color: #ad0000;">Patente: ${vehiculo.patente || 'N/A'}</h4>
-              <p><strong>ID:</strong> ${vehiculoId}</p>
-              <p><strong>Marca:</strong> ${vehiculo.marca || 'N/A'} - <strong>Modelo:</strong> ${vehiculo.modelo || 'N/A'} - <strong>Año:</strong> ${vehiculo.ano || 'N/A'}</p>
-              <p><strong>Cliente:</strong> ${vehiculo.clienteNombre || 'N/A'} - <strong>Teléfono:</strong> ${vehiculo.clienteTelefono || 'N/A'}</p>
-              <p><strong>Descripción:</strong><br>${(vehiculo.descripcionTrabajo || 'N/A').replace(/\n/g, '<br>')}</p>
-              ${vehiculo.imagenes && vehiculo.imagenes.length > 0 ?
-                '<p style="margin-bottom: 5px;"><strong>Imágenes:</strong></p><div style="display: flex; flex-wrap: wrap; gap: 10px;">' + vehiculo.imagenes.map(imgUrl => `<a href="${imgUrl}" target="_blank"><img src="${imgUrl}" alt="Imagen vehículo" style="width: 80px; height: 80px; object-fit: cover; border: 1px solid #444; border-radius: 3px;"></a>`).join('') + '</div>'
-                : '<p>No hay imágenes.</p>'}
-              <p style="font-size: 0.8em; color: #888; margin-top: 10px;">Registrado el: ${vehiculo.registradoEl ? new Date(vehiculo.registradoEl.seconds * 1000).toLocaleString() : 'N/A'}</p>
-              <div style="margin-top:10px;">
-                <button class="btn-action btn-edit" data-id="${vehiculoId}">Editar</button>
-                <button class="btn-action btn-delete" data-id="${vehiculoId}">Eliminar</button>
-              </div>
-            </li>`;
-        });
-        vehiculosHTML += '</ul>';
-        listaVehiculosDiv.innerHTML = vehiculosHTML;
-
-        listaVehiculosDiv.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', () => abrirModalEditarVehiculo(btn.dataset.id));
-        });
-        listaVehiculosDiv.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', () => eliminarVehiculo(btn.dataset.id));
-        });
-      } catch (error) {
-        console.error("Error al mostrar vehículos: ", error);
-        if (listaVehiculosDiv) listaVehiculosDiv.innerHTML = '<p style="color:red;">Error al cargar los vehículos.</p>';
-      }
-  }
-
-  async function abrirModalEditarVehiculo(vehiculoId) {
-      window.imagenesAEliminarDelVehiculo = [];
-      try {
-          const docRef = db.collection("vehiculos").doc(vehiculoId);
-          const docSnap = await docRef.get();
-          if (docSnap.exists) {
-              const data = docSnap.data();
-              document.getElementById('vehiculo-id-editar').value = vehiculoId;
-              document.getElementById('vehiculo-patente-editar').value = data.patente || '';
-              document.getElementById('vehiculo-marca-editar').value = data.marca || '';
-              document.getElementById('vehiculo-modelo-editar').value = data.modelo || '';
-              document.getElementById('vehiculo-ano-editar').value = data.ano || '';
-              document.getElementById('vehiculo-cliente-nombre-editar').value = data.clienteNombre || '';
-              document.getElementById('vehiculo-cliente-telefono-editar').value = data.clienteTelefono || '';
-              document.getElementById('vehiculo-descripcion-trabajo-editar').value = data.descripcionTrabajo || '';
-
-              imagenesActualesEditarDiv.innerHTML = '';
-              if (data.imagenes && data.imagenes.length > 0) {
-                  data.imagenes.forEach((url) => {
-                      const imgContainer = document.createElement('div'); /* ... (código para mostrar imágenes con botón X) ... */
-                      imgContainer.style.position = 'relative'; imgContainer.style.margin = '2px';
-                      imgContainer.style.border = '1px solid #666'; imgContainer.style.display = 'inline-block';
-                      const img = document.createElement('img');
-                      img.src = url; img.style.width = '80px'; img.style.height = '80px'; img.style.objectFit = 'cover';
-                      imgContainer.appendChild(img);
-                      const removeBtn = document.createElement('button');
-                      removeBtn.textContent = 'X'; removeBtn.type = 'button';
-                      removeBtn.style.position = 'absolute'; removeBtn.style.top = '0'; removeBtn.style.right = '0';
-                      removeBtn.style.background = 'rgba(0,0,0,0.7)'; removeBtn.style.color = 'white';
-                      removeBtn.style.border = 'none'; removeBtn.style.cursor = 'pointer'; removeBtn.style.padding = '2px 5px';
-                      removeBtn.onclick = function() {
-                          imgContainer.style.opacity = '0.3';
-                          if (!window.imagenesAEliminarDelVehiculo.includes(url)) {
-                              window.imagenesAEliminarDelVehiculo.push(url);
-                          }
-                          removeBtn.disabled = true;
-                      };
-                      imgContainer.appendChild(removeBtn);
-                      imagenesActualesEditarDiv.appendChild(imgContainer);
-                  });
-              } else { imagenesActualesEditarDiv.innerHTML = '<p>No hay imágenes actuales.</p>'; }
-              if (previsualizacionImagenesEditarDiv) previsualizacionImagenesEditarDiv.innerHTML = '';
-              if(inputImagenesEditar) inputImagenesEditar.value = '';
-              if(modalEditarVehiculo) modalEditarVehiculo.style.display = "block";
-          } else { alert("Error: No se encontró el vehículo para editar."); }
-      } catch (error) { alert("Error al cargar datos: " + error.message); }
-  }
-
-  async function eliminarVehiculo(vehiculoId) {
-      if (!confirm("¿Seguro de eliminar este vehículo y sus imágenes?")) return;
-      try {
-          const vehiculoRef = db.collection("vehiculos").doc(vehiculoId);
-          const docSnap = await vehiculoRef.get();
-          if (docSnap.exists) {
-              const vehiculoData = docSnap.data();
-              if (vehiculoData.imagenes && vehiculoData.imagenes.length > 0) {
-                  const deletePromises = vehiculoData.imagenes.map(imageUrl => {
-                      try {
-                          const imageRef = storage.refFromURL(imageUrl);
-                          return imageRef.delete().catch(err => console.warn("Storage delete warning:", err));
-                      } catch (e) { return Promise.resolve(); }
-                  });
-                  await Promise.all(deletePromises);
-              }
-              await vehiculoRef.delete();
-              alert("Vehículo eliminado.");
-              if (typeof mostrarVehiculos === "function") mostrarVehiculos();
-          } else { alert("Error: Vehículo no existe."); }
-      } catch (error) { alert("Error al eliminar: " + error.message); console.error(error); }
-  }
-
-  // --- Event Listeners para la sección Vehículos ---
-  if (inputImagenesVehiculo && previsualizacionImagenesDiv) {
-    inputImagenesVehiculo.addEventListener('change', function(event) {
-      previsualizacionImagenesDiv.innerHTML = '';
-      const files = event.target.files;
-      if (files.length > 5) { alert("Máximo 5 imágenes."); inputImagenesVehiculo.value = ""; return; }
-      for (const file of files) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-              const img = document.createElement('img'); img.src = e.target.result;
-              img.style.maxWidth = '100px'; img.style.maxHeight = '100px'; img.style.margin = '5px'; img.style.border = '1px solid #444';
-              previsualizacionImagenesDiv.appendChild(img);
-          }
-          reader.readAsDataURL(file);
-      }
-    });
-  }
-
-  if (formIngresoVehiculo) {
-    formIngresoVehiculo.addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const submitButton = formIngresoVehiculo.querySelector('button[type="submit"]');
-      submitButton.disabled = true; submitButton.textContent = 'Guardando...';
-      const patente = document.getElementById('vehiculo-patente').value.trim().toUpperCase();
-      const marca = document.getElementById('vehiculo-marca').value.trim();
-      const modelo = document.getElementById('vehiculo-modelo').value.trim();
-      const ano = document.getElementById('vehiculo-ano').value;
-      const clienteNombre = document.getElementById('vehiculo-cliente-nombre').value.trim();
-      const clienteTelefono = document.getElementById('vehiculo-cliente-telefono').value.trim();
-      const descripcionTrabajo = document.getElementById('vehiculo-descripcion-trabajo').value.trim();
-      const files = inputImagenesVehiculo ? inputImagenesVehiculo.files : [];
-      let urlsImagenes = [];
-
-      if (!patente || !marca || !modelo || !ano || !descripcionTrabajo) {
-          alert("Por favor, complete todos los campos obligatorios.");
-          submitButton.disabled = false; submitButton.textContent = 'Guardar Vehículo'; return;
-      }
-      if (files.length > 5) {
-          alert("Máximo 5 imágenes.");
-          submitButton.disabled = false; submitButton.textContent = 'Guardar Vehiculo'; return;
-      }
-      try {
-        if (files.length > 0) {
-          const uploadPromises = Array.from(files).map(file => {
-              const filePath = `vehiculos/${patente.replace(/\s+/g, '_')}/${Date.now()}_${file.name}`;
-              const fileRef = storage.ref().child(filePath);
-              return fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
-          });
-          urlsImagenes = await Promise.all(uploadPromises);
-        }
-        const nuevoVehiculo = {patente, marca, modelo, ano: parseInt(ano), clienteNombre, clienteTelefono, descripcionTrabajo, imagenes: urlsImagenes, registradoEl: firebase.firestore.FieldValue.serverTimestamp()};
-        await db.collection("vehiculos").add(nuevoVehiculo);
-        alert("¡Vehículo guardado!");
-        formIngresoVehiculo.reset();
-        if (previsualizacionImagenesDiv) previsualizacionImagenesDiv.innerHTML = '';
-        if (typeof mostrarVehiculos === "function") mostrarVehiculos();
-      } catch (error) { alert("Error al guardar vehículo: " + error.message); }
-      finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Vehículo'; }
-    });
-  }
-
-  if (formEditarVehiculo) {
-      formEditarVehiculo.addEventListener('submit', async function(event) {
-          event.preventDefault();
-          const vehiculoId = document.getElementById('vehiculo-id-editar').value;
-          if (!vehiculoId) { alert("Error: ID de vehículo no encontrado."); return; }
-          const submitButton = formEditarVehiculo.querySelector('button[type="submit"]');
-          submitButton.disabled = true; submitButton.textContent = 'Guardando Cambios...';
-          const patenteVehiculo = document.getElementById('vehiculo-patente-editar').value.trim().toUpperCase();
-          let urlsNuevasImagenes = [];
-          const filesParaSubir = document.getElementById('vehiculo-imagenes-editar').files;
-          try {
-              if (filesParaSubir.length > 0) {
-                  const uploadPromises = Array.from(filesParaSubir).map(file => {
-                      const filePath = `vehiculos/${patenteVehiculo.replace(/\s+/g, '_')}/edit_${Date.now()}_${file.name}`;
-                      const fileRef = storage.ref().child(filePath);
-                      return fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL());
-                  });
-                  urlsNuevasImagenes = await Promise.all(uploadPromises);
-              }
-              const vehiculoDocActual = await db.collection("vehiculos").doc(vehiculoId).get();
-              let imagenesActualesEnFirestore = vehiculoDocActual.exists ? (vehiculoDocActual.data().imagenes || []) : [];
-
-              if (window.imagenesAEliminarDelVehiculo && window.imagenesAEliminarDelVehiculo.length > 0) {
-                  const deleteStoragePromises = window.imagenesAEliminarDelVehiculo.map(url => {
-                      try {
-                          const imageRef = storage.refFromURL(url);
-                          return imageRef.delete().catch(err => console.warn("No se pudo borrar de Storage:", url, err));
-                      } catch (e) { return Promise.resolve(); }
-                  });
-                  await Promise.all(deleteStoragePromises);
-              }
-
-              let imagenesFinales = imagenesActualesEnFirestore.filter(url => !(window.imagenesAEliminarDelVehiculo && window.imagenesAEliminarDelVehiculo.includes(url)));
-              imagenesFinales = imagenesFinales.concat(urlsNuevasImagenes);
-              if (imagenesFinales.length > 5) {
-                  alert("Se ha excedido el límite de 5 imágenes en total. Se guardarán las primeras 5.");
-                  imagenesFinales = imagenesFinales.slice(0, 5);
-              }
-              const datosActualizados = {
-                  patente: patenteVehiculo,
-                  marca: document.getElementById('vehiculo-marca-editar').value.trim(),
-                  modelo: document.getElementById('vehiculo-modelo-editar').value.trim(),
-                  ano: parseInt(document.getElementById('vehiculo-ano-editar').value),
-                  clienteNombre: document.getElementById('vehiculo-cliente-nombre-editar').value.trim(),
-                  clienteTelefono: document.getElementById('vehiculo-cliente-telefono-editar').value.trim(),
-                  descripcionTrabajo: document.getElementById('vehiculo-descripcion-trabajo-editar').value.trim(),
-                  imagenes: imagenesFinales,
-                  actualizadoEl: firebase.firestore.FieldValue.serverTimestamp()
-              };
-              if (!datosActualizados.patente || !datosActualizados.marca || !datosActualizados.modelo || !datosActualizados.ano) {
-                  throw new Error("Patente, Marca, Modelo y Año son obligatorios.");
-              }
-              await db.collection("vehiculos").doc(vehiculoId).update(datosActualizados);
-              alert("¡Vehículo actualizado!");
-              if(modalEditarVehiculo) modalEditarVehiculo.style.display = "none";
-              if (typeof mostrarVehiculos === "function") mostrarVehiculos();
-          } catch (error) { alert("Error al actualizar el vehículo: " + error.message); }
-          finally {
-              submitButton.disabled = false; submitButton.textContent = 'Guardar Cambios';
-              window.imagenesAEliminarDelVehiculo = [];
-          }
-      });
-  }
-
-  // --- Carga Inicial de la Sección de Vehículos (ya que es la única en esta página) ---
-  if (typeof mostrarVehiculos === "function") {
-      mostrarVehiculos();
-  } else {
-      console.error("La función mostrarVehiculos no está definida al cargar la página.");
-  }
-
-});
-</script>
-
-</body>
+<script src="script.js"></script> <script src="admin_vehiculos_scripts.js"></script> </body>
 </html>

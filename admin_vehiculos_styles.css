@@ -1,0 +1,80 @@
+/* Estilos básicos del admin.html original */
+body { background-color: #000; color: #fff; font-family: Arial, sans-serif; margin:0; padding:0; } /* Estilos base */
+.admin-container { display: flex; min-height: 100vh; }
+.admin-menu { background-color: #222; color: #fff; width: 220px; flex-shrink: 0; padding: 20px; }
+.admin-menu h3 { margin-bottom: 15px; }
+.admin-menu ul { list-style: none; padding: 0; }
+.admin-menu li { margin: 10px 0; }
+.admin-menu a { color: #fff; text-decoration: none; font-weight: bold; display: block; padding: 8px 0; }
+.admin-menu a:hover, .admin-menu a.active { color: #ad0000; } /* .active para la página actual */
+.admin-content { flex: 1; padding: 20px; }
+.hidden { display: none !important; }
+
+/* Estilos para formularios y tablas (copiados de admin.html) */
+label { display: block; margin-top: 10px; margin-bottom: 5px; color: #ccc; }
+input[type="text"], input[type="number"], input[type="tel"], textarea, select {
+    width: calc(100% - 22px); padding: 10px; margin-bottom: 10px; border-radius: 4px;
+    border: 1px solid #555; background-color: #333; color: #fff; box-sizing: border-box;
+}
+input[type="file"] { color: #ccc; margin-bottom: 10px; }
+textarea { resize: vertical; }
+button, .btn-submit-form, .btn-action {
+    background-color: #ad0000; color: white; padding: 10px 15px; border: none;
+    border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px; margin-right: 5px;
+}
+button:hover, .btn-submit-form:hover, .btn-action:hover { background-color: #ff0000; }
+button.btn-edit { background-color: #007bff; } button.btn-edit:hover { background-color: #0056b3; }
+button.btn-delete { background-color: #dc3545; } button.btn-delete:hover { background-color: #c82333; }
+
+#lista-vehiculos ul { 
+    background-color: #1e1e1e; 
+    border: 1px solid #383838; 
+    padding: 0; /* Quitar padding para que los li controlen su propio padding */
+    margin-bottom: 15px; 
+    border-radius: 5px; 
+    list-style:none; 
+}
+/* Estilo para cada item de vehículo si se usa li directamente dentro del div#lista-vehiculos */
+#lista-vehiculos > ul > li {
+    border: 1px solid #333; 
+    padding: 15px; 
+    margin-bottom: 15px; /* Espacio entre items si la ul no tiene padding */
+    border-radius: 5px; 
+    background-color: #1e1e1e; /* Fondo ya está en la ul, pero puede ser redundante o específico para li */
+}
+#lista-vehiculos > ul > li:last-child {
+    margin-bottom: 0; /* Quitar margen del último item */
+}
+
+#lista-vehiculos h4 { color: #ad0000; margin-top:0; }
+#previsualizacion-imagenes img, #previsualizacion-imagenes-editar img { 
+    border: 1px solid #444; 
+    border-radius: 3px; 
+    max-width: 100px; /* Para asegurar que no se desborden */
+    max-height: 100px;
+    margin: 5px; /* Añadido para espaciado */
+    object-fit: cover; /* Para que las imágenes se vean bien sin distorsionarse */
+}
+#imagenes-actuales-editar img { /* Aplicar también a imágenes actuales en edición */
+    border: 1px solid #444; 
+    border-radius: 3px; 
+    max-width: 80px;
+    max-height: 80px;
+    margin: 2px;
+    object-fit: cover;
+}
+
+
+/* Modal Styles (copiados de admin.html) */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); }
+.modal-content { background-color: #282828; color: #fff; margin: 5% auto; padding: 25px; border: 1px solid #555; width: 80%; max-width: 700px; border-radius: 8px; position: relative; }
+.modal-content h3 { color: #ad0000; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; }
+.close-modal-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; position: absolute; top: 10px; right: 20px; }
+.close-modal-btn:hover, .close-modal-btn:focus { color: #ff0000; text-decoration: none; cursor: pointer; }
+
+/* Header del admin (ya debería estar en style.css o admin_styles.css, pero se incluye por si acaso) */
+/* Si ya tienes estos estilos en un CSS global, puedes omitirlos aquí para evitar redundancia */
+/*
+header { background-color: #000; color: #ad0000; padding: 20px; text-align: center; }
+footer { background-color: #000; color: #ad0000; text-align: center; padding: 15px; border-top: 1px solid #333;}
+*/
