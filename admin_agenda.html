@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda de Citas - Panel de Administración</title>
+<link rel="icon" href="/favicon.png" type="image/png">
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin_styles.css">
+<link rel="stylesheet" href="admin_agenda_styles.css"> <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+
+</head>
+<body class="admin-page">
+
+<header>
+  <h1 style="color:#ad0000;">Panel de Administración</h1>
+</header>
+
+<div class="admin-container">
+  <aside class="admin-menu" id="adminMenu">
+    <button class="admin-menu-toggle" id="adminMenuToggle" aria-label="Abrir menú" aria-expanded="false">
+        &#9776;
+    </button>
+    <h3>Menú</h3>
+    <ul id="adminMenuItems">
+      <li><a href="admin_vehiculos.html">Vehículos</a></li>
+      <li><a href="admin_presupuestos.html">Presupuestos</a></li>
+      <li><a href="admin_trabajos.html">Trabajos</a></li>
+      <li><a href="admin_manuales.html">Manuales</a></li>
+      <li><a href="admin_agenda.html" class="active">Agenda</a></li> {/* Nuevo item de menú */}
+      <li><a href="index.html">Volver a Inicio</a></li>
+    </ul>
+  </aside>
+
+  <main class="admin-content">
+    <section id="agenda-section">
+      <h2>Agenda de Citas y Trabajos</h2>
+      <p>Organiza las recepciones de vehículos, fechas de entrega y otros eventos del taller.</p>
+      
+      <div id="botones-agenda" style="margin-bottom: 20px;">
+        <button id="btn-crear-cita" class="btn-action">Crear Nueva Cita</button>
+      </div>
+
+      <div id="calendario">
+        </div>
+    </section>
+  </main>
+</div>
+
+<div id="modal-cita" class="modal">
+  <div class="modal-content">
+    <span class="close-modal-btn" id="cerrar-modal-cita">&times;</span>
+    <h3 id="modal-cita-titulo">Agregar/Editar Cita</h3>
+    <form id="form-cita">
+      <input type="hidden" id="cita-id">
+
+      <label for="cita-titulo">Título de la Cita:</label>
+      <input type="text" id="cita-titulo" required>
+
+      <label for="cita-tipo">Tipo de Cita:</label>
+      <select id="cita-tipo">
+          <option value="recepcion">Recepción de Vehículo</option>
+          <option value="entrega">Entrega Estimada</option>
+          <option value="diagnostico">Diagnóstico</option>
+          <option value="mantenimiento">Mantenimiento</option>
+          <option value="otro">Otro Evento</option>
+      </select>
+
+      <label for="cita-fecha-inicio">Fecha y Hora de Inicio:</label>
+      <input type="datetime-local" id="cita-fecha-inicio" required>
+
+      <label for="cita-fecha-fin">Fecha y Hora de Fin (Opcional):</label>
+      <input type="datetime-local" id="cita-fecha-fin">
+      
+      <label for="cita-todo-el-dia">
+        <input type="checkbox" id="cita-todo-el-dia" style="width: auto; margin-right: 5px;"> Evento de todo el día
+      </label>
+
+      <label for="cita-vehiculo">Vehículo Asociado (Opcional):</label>
+      <select id="cita-vehiculo">
+          <option value="">-- Ninguno --</option>
+          {/* Opciones de vehículos se cargarán aquí desde JS */}
+      </select>
+      <div id="info-vehiculo-cita" style="font-size:0.9em; color:#ccc; margin-top: -5px; margin-bottom:10px;"></div>
+
+
+      <label for="cita-descripcion">Descripción (Opcional):</label>
+      <textarea id="cita-descripcion" rows="3"></textarea>
+      
+      <label for="cita-color">Color del Evento (Opcional):</label>
+      <input type="color" id="cita-color" value="#ad0000" style="width: 50px; height: 30px; padding: 2px;">
+
+
+      <div style="margin-top: 20px;">
+        <button type="submit" class="btn-submit-form">Guardar Cita</button>
+        <button type="button" id="btn-eliminar-cita" class="btn-action btn-delete" style="display:none;">Eliminar Cita</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2025 Taller Automotriz EDC. Todos los derechos reservados.</p>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-auth-compat.js"></script>
+{/* <script src="https://www.gstatic.com/firebasejs/11.8.0/firebase-storage-compat.js"></script> NO es necesario para la agenda */}
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js'></script> {/* Para idioma español */}
+
+
+<script src="script.js"></script>
+<script src="admin_agenda_scripts.js"></script> 
+
+</body>
+</html>

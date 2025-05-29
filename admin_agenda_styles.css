@@ -1,0 +1,67 @@
+/* admin_agenda_styles.css */
+
+#calendario {
+    max-width: 1100px; /* O el ancho que prefieras */
+    margin: 0 auto;
+    background-color: #1e1e1e; /* Fondo oscuro para el calendario */
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #333;
+}
+
+/* Ajustes de color para FullCalendar en tema oscuro */
+:root {
+    --fc-border-color: #333;
+    --fc-daygrid-event-dot-width: 8px;
+    --fc-list-event-dot-width: 10px;
+    --fc-event-bg-color: #ad0000; /* Color por defecto de evento */
+    --fc-event-border-color: #830000;
+    --fc-event-text-color: #fff;
+    --fc-event-selected-overlay-bg-color: rgba(173, 0, 0, 0.25);
+    --fc-more-link-bg-color: #2c3e50;
+    --fc-more-link-text-color: #e0e0e0;
+    --fc-today-bg-color: rgba(173, 0, 0, 0.15); /* Fondo para el día actual */
+    --fc-page-bg-color: #1e1e1e; /* Fondo de la página del calendario */
+    --fc-neutral-bg-color: #1a1a1a; /* Fondo de celdas, etc. */
+    --fc-neutral-text-color: #ccc; /* Color de texto para números de día, etc. */
+    --fc-popover-bg-color: #282828;
+    --fc-popover-border-color: #444;
+    --fc-popover-header-bg-color: #222;
+    --fc-button-text-color: #fff;
+    --fc-button-bg-color: #ad0000;
+    --fc-button-border-color: #830000;
+    --fc-button-hover-bg-color: #ff0000;
+    --fc-button-hover-border-color: #ad0000;
+    --fc-button-active-bg-color: #830000;
+    --fc-button-active-border-color: #5a0000;
+    --fc-highlight-color: rgba(173, 0, 0, 0.3);
+}
+
+.fc-toolbar-title { /* Título del mes/semana/día */
+    color: #ffc107 !important;
+}
+
+.fc-daygrid-day-number, .fc-col-header-cell-cushion { /* Números de día y encabezados de columna */
+    color: #ccc !important; 
+}
+
+/* Modal de Cita */
+#modal-cita .modal-content {
+    max-width: 600px; /* Un poco más ancho para el formulario */
+}
+#form-cita label {
+    margin-top: 12px;
+}
+#form-cita input[type="datetime-local"],
+#form-cita input[type="color"],
+#form-cita select {
+    background-color: #444; /* Fondo un poco más claro para inputs específicos */
+    border: 1px solid #666;
+}
+#form-cita input[type="checkbox"] {
+    width: auto; /* Para que no ocupe todo el ancho */
+    vertical-align: middle;
+}
+#btn-eliminar-cita {
+    margin-left: 10px;
+}
