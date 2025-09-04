@@ -1,0 +1,118 @@
+#presupuesto-detalle-container {
+    background-color: var(--color-fondo-principal);
+    padding: 30px;
+    border-radius: var(--radio-borde);
+    border: 1px solid var(--color-borde-oscuro);
+    color: var(--color-texto-claro);
+}
+
+.info-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-borde-oscuro);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.seccion-presupuesto {
+    margin-bottom: 25px;
+}
+
+.seccion-presupuesto h2 {
+    font-size: 1.2em;
+    color: var(--color-acento-azul);
+    border-bottom: none;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.seccion-presupuesto p {
+    margin: 4px 0;
+    color: var(--color-texto-secundario);
+}
+.seccion-presupuesto p strong {
+    color: var(--color-texto-claro);
+}
+
+.tabla-costos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.tabla-costos th, .tabla-costos td {
+    border: 1px solid var(--color-borde-oscuro);
+    padding: 10px;
+    text-align: left;
+}
+
+.tabla-costos thead {
+    background-color: #252525;
+}
+
+.tabla-costos tfoot {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--color-acento-azul);
+    background-color: #252525;
+}
+
+.tabla-costos .monto {
+    text-align: right;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.footer-presupuesto {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--color-texto-secundario);
+}
+
+#btn-imprimir {
+    margin-top: 20px;
+    width: 100%;
+}
+
+/* Estilos para la impresión */
+@media print {
+    body {
+        background-color: #fff;
+        color: #000;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    main.container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        background-color: #fff;
+    }
+
+    #presupuesto-detalle-container {
+        border: none;
+        padding: 5px;
+        background-color: #fff;
+        color: #000;
+    }
+    
+    .seccion-presupuesto h2, .tabla-costos tfoot {
+        color: #007BFF;
+    }
+
+     .seccion-presupuesto p, .seccion-presupuesto p strong {
+        color: #333;
+    }
+
+    .tabla-costos th, .tabla-costos td {
+        border-color: #ccc;
+    }
+    
+    .tabla-costos thead, .tabla-costos tfoot {
+       background-color: #eee;
+    }
+}
