@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes Registrados - Taller Mecánico</title>
+    <link rel="stylesheet" href="admin_ingreso.css">
+    <link rel="stylesheet" href="clientes_registrados.css">
+    <link rel="stylesheet" href="menu.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <button id="menu-btn" class="menu-btn">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+    </button>
+
+    <nav id="side-nav" class="side-nav">
+        <ul>
+            <li><a href="admin_ingreso.html">Registro de Clientes</a></li>
+            <li><a href="clientes_registrados.html">Clientes Registrados</a></li>
+            <li><a href="presupuesto.html">Generar Presupuesto</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="tabla-container">
+            <h1>Clientes Registrados</h1>
+            <p>Busca, visualiza y gestiona la información de los clientes existentes.</p>
+            
+            <div class="filtro-container">
+                <label for="filtro-busqueda">Buscar cliente:</label>
+                <input type="text" id="filtro-busqueda" placeholder="Buscar por nombre, patente, etc...">
+            </div>
+
+            <table id="tabla-clientes">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Patente</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Año</th>
+                        <th style="width: 150px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-body">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="clientes_registrados.js"></script>
+    <script src="menu.js"></script> 
+</body>
+</html>
