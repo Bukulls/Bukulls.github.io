@@ -1,22 +1,26 @@
 /* --- Estilos Generales --- */
 :root {
-    --color-primario: #005A9C; /* Un azul corporativo */
-    --color-secundario: #F7F7F7;
-    --color-texto: #333;
-    --color-borde: #DDD;
-    --color-sombra: rgba(0, 0, 0, 0.1);
+    /* Colores basados en el logo "Automat Astudillo" */
+    --color-fondo-principal: #1A1A1A; /* Negro/Gris muy oscuro para el fondo general */
+    --color-fondo-secundario: #2C2C2C; /* Gris oscuro para contenedores */
+    --color-acento-azul: #00BFFF; /* Azul eléctrico del logo (SkyBlue Deep) */
+    --color-texto-claro: #E0E0E0; /* Gris claro para texto principal */
+    --color-texto-secundario: #B0B0B0; /* Gris medio para texto secundario o labels */
+    --color-borde-oscuro: #444; /* Borde oscuro para elementos */
+    --color-sombra-oscuro: rgba(0, 0, 0, 0.4); /* Sombra más pronunciada en fondos oscuros */
     --radio-borde: 8px;
-    /* NUEVO: Colores para los botones de acción */
-    --color-editar: #3498DB; /* Azul para editar */
-    --color-editar-hover: #2980B9;
-    --color-eliminar: #E74C3C; /* Rojo para eliminar */
-    --color-eliminar-hover: #C0392B;
+
+    /* Colores para los botones de acción */
+    --color-editar: #007BFF; /* Azul para editar (ligeramente diferente al acento para distinción) */
+    --color-editar-hover: #0056b3;
+    --color-eliminar: #DC3545; /* Rojo para eliminar */
+    --color-eliminar-hover: #C82333;
 }
 
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: var(--color-secundario);
-    color: var(--color-texto);
+    background-color: var(--color-fondo-principal);
+    color: var(--color-texto-claro);
     margin: 0;
     padding: 20px;
 }
@@ -24,33 +28,34 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background-color: white;
+    background-color: var(--color-fondo-secundario); /* Fondo oscuro para el contenedor principal */
     padding: 30px;
     border-radius: var(--radio-borde);
-    box-shadow: 0 4px 15px var(--color-sombra);
+    box-shadow: 0 8px 25px var(--color-sombra-oscuro); /* Sombra más definida */
 }
 
 h1, h2 {
-    color: var(--color-primario);
-    border-bottom: 2px solid var(--color-borde);
+    color: var(--color-acento-azul); /* Títulos en azul eléctrico */
+    border-bottom: 2px solid var(--color-borde-oscuro);
     padding-bottom: 10px;
     margin-top: 0;
 }
 
 p {
     line-height: 1.6;
+    color: var(--color-texto-secundario); /* Texto secundario en gris */
 }
 
 /* --- Estilos del Formulario --- */
 .form-card {
-    background-color: #fff;
+    background-color: var(--color-fondo-principal); /* Fondo oscuro para el formulario */
     padding: 25px;
     border-radius: var(--radio-borde);
     margin-bottom: 30px;
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Dos columnas */
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
-    border: 1px solid var(--color-borde);
+    border: 1px solid var(--color-borde-oscuro);
 }
 
 .form-section {
@@ -68,29 +73,38 @@ p {
     font-weight: 500;
     margin-bottom: 5px;
     font-size: 0.9em;
+    color: var(--color-texto-secundario); /* Labels en gris */
 }
 
 .input-group input,
 .input-group textarea {
     width: 100%;
     padding: 10px;
-    border: 1px solid var(--color-borde);
+    border: 1px solid var(--color-borde-oscuro);
     border-radius: 5px;
     font-size: 1em;
-    box-sizing: border-box; /* Para que el padding no afecte el ancho total */
+    box-sizing: border-box;
+    background-color: #3A3A3A; /* Fondo oscuro para inputs */
+    color: var(--color-texto-claro); /* Texto claro en inputs */
 }
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+    color: #888; /* Placeholder en gris */
+}
+
 
 .input-group input:focus,
 .input-group textarea:focus {
     outline: none;
-    border-color: var(--color-primario);
-    box-shadow: 0 0 5px rgba(0, 90, 156, 0.2);
+    border-color: var(--color-acento-azul); /* Borde azul al enfocar */
+    box-shadow: 0 0 8px rgba(0, 191, 255, 0.4); /* Sombra de brillo azul */
 }
 
 .btn-submit {
-    grid-column: 1 / -1; /* El botón ocupa ambas columnas */
-    background-color: var(--color-primario);
-    color: white;
+    grid-column: 1 / -1;
+    background-color: var(--color-acento-azul); /* Botón principal en azul eléctrico */
+    color: var(--color-fondo-principal); /* Texto oscuro en el botón azul */
     border: none;
     padding: 15px;
     font-size: 1.1em;
@@ -101,7 +115,7 @@ p {
 }
 
 .btn-submit:hover {
-    background-color: #004170;
+    background-color: #00a0e0; /* Un azul un poco más oscuro al pasar el ratón */
 }
 
 .btn-submit:active {
@@ -109,7 +123,7 @@ p {
 }
 
 
-/* --- NUEVO: Estilos del Filtro de Búsqueda --- */
+/* --- Estilos del Filtro de Búsqueda --- */
 .filtro-container {
     margin-bottom: 20px;
 }
@@ -117,49 +131,62 @@ p {
 .filtro-container label {
     font-weight: 500;
     margin-right: 10px;
+    color: var(--color-texto-secundario);
 }
 
 .filtro-container input {
     padding: 10px;
-    border: 1px solid var(--color-borde);
+    border: 1px solid var(--color-borde-oscuro);
     border-radius: 5px;
-    width: 300px; /* Ancho del campo de búsqueda */
+    width: 300px;
+    background-color: #3A3A3A; /* Fondo oscuro para el input de filtro */
+    color: var(--color-texto-claro); /* Texto claro */
+}
+
+.filtro-container input:focus {
+    border-color: var(--color-acento-azul);
+    box-shadow: 0 0 8px rgba(0, 191, 255, 0.4);
 }
 
 
 /* --- Estilos de la Tabla --- */
 .tabla-container {
-    overflow-x: auto; /* Para que la tabla sea responsive en móviles */
+    overflow-x: auto;
 }
 
 #tabla-clientes {
     width: 100%;
-    border-collapse: collapse; /* Une los bordes de las celdas */
+    border-collapse: collapse;
     margin-top: 20px;
 }
 
 #tabla-clientes th,
 #tabla-clientes td {
     padding: 12px 15px;
-    border: 1px solid var(--color-borde);
+    border: 1px solid var(--color-borde-oscuro);
     text-align: left;
-    vertical-align: middle; /* Alinea verticalmente el contenido */
+    vertical-align: middle;
 }
 
 #tabla-clientes thead {
-    background-color: var(--color-primario);
-    color: white;
+    background-color: var(--color-acento-azul); /* Cabecera de la tabla en azul eléctrico */
+    color: var(--color-fondo-principal); /* Texto oscuro para contrastar con el azul */
+}
+
+#tabla-clientes tbody tr {
+    background-color: var(--color-fondo-principal); /* Filas con fondo oscuro */
 }
 
 #tabla-clientes tbody tr:nth-child(even) {
-    background-color: var(--color-secundario);
+    background-color: #252525; /* Fondo ligeramente diferente para filas pares */
 }
 
 #tabla-clientes tbody tr:hover {
-    background-color: #e6f0f7;
+    background-color: #3A3A3A; /* Fondo más claro al pasar el ratón */
 }
 
-/* MODIFICADO: Estilos genéricos para los botones de acción */
+
+/* Estilos genéricos para los botones de acción */
 .btn-accion {
     color: white;
     border: none;
@@ -168,11 +195,10 @@ p {
     cursor: pointer;
     transition: background-color 0.3s;
     font-size: 0.9em;
-    margin-right: 5px; /* Espacio entre botones */
+    margin-right: 5px;
 }
 
-
-/* NUEVO: Estilo para el botón de Editar */
+/* Estilo para el botón de Editar */
 .btn-editar {
     background-color: var(--color-editar);
 }
@@ -181,8 +207,7 @@ p {
     background-color: var(--color-editar-hover);
 }
 
-
-/* MODIFICADO: Botón de Eliminar para usar la clase genérica */
+/* Botón de Eliminar */
 .btn-eliminar {
     background-color: var(--color-eliminar);
 }
@@ -195,11 +220,11 @@ p {
 /* --- Responsive Design --- */
 @media (max-width: 768px) {
     .form-card {
-        grid-template-columns: 1fr; /* En pantallas pequeñas, una sola columna */
+        grid-template-columns: 1fr;
     }
 
     .filtro-container input {
-        width: 100%; /* El buscador ocupa todo el ancho */
+        width: 100%;
         box-sizing: border-box;
     }
 }
