@@ -6,6 +6,11 @@
     --color-borde: #DDD;
     --color-sombra: rgba(0, 0, 0, 0.1);
     --radio-borde: 8px;
+    /* NUEVO: Colores para los botones de acción */
+    --color-editar: #3498DB; /* Azul para editar */
+    --color-editar-hover: #2980B9;
+    --color-eliminar: #E74C3C; /* Rojo para eliminar */
+    --color-eliminar-hover: #C0392B;
 }
 
 body {
@@ -103,6 +108,25 @@ p {
     transform: scale(0.99);
 }
 
+
+/* --- NUEVO: Estilos del Filtro de Búsqueda --- */
+.filtro-container {
+    margin-bottom: 20px;
+}
+
+.filtro-container label {
+    font-weight: 500;
+    margin-right: 10px;
+}
+
+.filtro-container input {
+    padding: 10px;
+    border: 1px solid var(--color-borde);
+    border-radius: 5px;
+    width: 300px; /* Ancho del campo de búsqueda */
+}
+
+
 /* --- Estilos de la Tabla --- */
 .tabla-container {
     overflow-x: auto; /* Para que la tabla sea responsive en móviles */
@@ -119,6 +143,7 @@ p {
     padding: 12px 15px;
     border: 1px solid var(--color-borde);
     text-align: left;
+    vertical-align: middle; /* Alinea verticalmente el contenido */
 }
 
 #tabla-clientes thead {
@@ -134,23 +159,47 @@ p {
     background-color: #e6f0f7;
 }
 
-.btn-eliminar {
-    background-color: #E74C3C;
+/* MODIFICADO: Estilos genéricos para los botones de acción */
+.btn-accion {
     color: white;
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-size: 0.9em;
+    margin-right: 5px; /* Espacio entre botones */
+}
+
+
+/* NUEVO: Estilo para el botón de Editar */
+.btn-editar {
+    background-color: var(--color-editar);
+}
+
+.btn-editar:hover {
+    background-color: var(--color-editar-hover);
+}
+
+
+/* MODIFICADO: Botón de Eliminar para usar la clase genérica */
+.btn-eliminar {
+    background-color: var(--color-eliminar);
 }
 
 .btn-eliminar:hover {
-    background-color: #C0392B;
+    background-color: var(--color-eliminar-hover);
 }
+
 
 /* --- Responsive Design --- */
 @media (max-width: 768px) {
     .form-card {
         grid-template-columns: 1fr; /* En pantallas pequeñas, una sola columna */
+    }
+
+    .filtro-container input {
+        width: 100%; /* El buscador ocupa todo el ancho */
+        box-sizing: border-box;
     }
 }

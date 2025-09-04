@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes - Taller Mecánico</title>
-    <!-- Enlazamos nuestra hoja de estilos CSS -->
     <link rel="stylesheet" href="admin_ingreso.css">
-    <!-- Usaremos una fuente de Google para que se vea más moderno -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -14,10 +12,9 @@
 <body>
 
     <main class="container">
-        <h1> Registro de Clientes y Vehículos</h1>
+        <h1>Registro de Clientes y Vehículos</h1>
         <p>Ingresa los datos del cliente y su vehículo para añadirlos al sistema.</p>
 
-        <!-- Este es el formulario donde se ingresarán los datos -->
         <form id="registro-form" class="form-card">
             <div class="form-section">
                 <h2>Datos del Cliente</h2>
@@ -62,9 +59,14 @@
             <button type="submit" class="btn-submit">Agregar Cliente al Registro</button>
         </form>
 
-        <!-- Aquí se mostrará la lista de clientes ingresados -->
         <div class="tabla-container">
             <h2>Clientes Registrados</h2>
+            
+            <div class="filtro-container">
+                <label for="filtro-busqueda">Buscar cliente:</label>
+                <input type="text" id="filtro-busqueda" placeholder="Buscar por nombre, patente, etc...">
+            </div>
+
             <table id="tabla-clientes">
                 <thead>
                     <tr>
@@ -74,17 +76,15 @@
                         <th>Marca</th>
                         <th>Modelo</th>
                         <th>Año</th>
-                        <th>Acciones</th>
+                        <th style="width: 150px;">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tabla-body">
-                    <!-- Las filas de datos se insertarán aquí con JavaScript -->
-                </tbody>
+                    </tbody>
             </table>
         </div>
     </main>
 
-    <!-- Al final del body, enlazamos nuestro archivo JavaScript -->
     <script src="admin_ingreso.js"></script>
 </body>
 </html>
