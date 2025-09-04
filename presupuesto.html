@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Presupuestos - Taller Mecánico</title>
+    <link rel="stylesheet" href="admin_ingreso.css">
+    <link rel="stylesheet" href="presupuesto.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <main class="container">
+        <h1>Generar Nuevo Presupuesto</h1>
+        <p>Selecciona un cliente y completa los detalles del presupuesto.</p>
+
+        <form id="presupuesto-form" class="form-card">
+            
+            <div class="form-section full-width">
+                <h2>1. Datos del Cliente</h2>
+                <div class="input-group">
+                    <label for="cliente-select">Seleccionar Cliente</label>
+                    <select id="cliente-select" required>
+                        <option value="">-- Cargar Clientes --</option>
+                    </select>
+                </div>
+                <div id="cliente-info" class="cliente-info-card">
+                    </div>
+            </div>
+
+            <div class="form-section">
+                <h2>2. Diagnóstico y Mano de Obra</h2>
+                <div class="input-group">
+                    <label for="diagnostico-obs">Diagnóstico del Vehículo</label>
+                    <textarea id="diagnostico-obs" rows="4" placeholder="Describe el trabajo a realizar..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="mano-obra-monto">Monto Mano de Obra (CLP)</label>
+                    <input type="number" id="mano-obra-monto" placeholder="Ej: 50000" required min="0">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>3. Repuestos (Opcional)</h2>
+                <div id="repuestos-container">
+                    </div>
+                <button type="button" id="btn-agregar-repuesto" class="btn-secondary">+</button>
+            </div>
+            
+            <div class="total-container full-width">
+                <h2>Total Estimado: <span id="total-presupuesto">$0</span></h2>
+            </div>
+            
+            <button type="submit" class="btn-submit">Guardar Presupuesto</button>
+        </form>
+    </main>
+
+    <script src="presupuesto.js"></script>
+</body>
+</html>
