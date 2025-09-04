@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes - Taller Mecánico</title>
+    <!-- Enlazamos nuestra hoja de estilos CSS -->
+    <link rel="stylesheet" href="admin_ingreso.css">
+    <!-- Usaremos una fuente de Google para que se vea más moderno -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <main class="container">
+        <h1> Registro de Clientes y Vehículos</h1>
+        <p>Ingresa los datos del cliente y su vehículo para añadirlos al sistema.</p>
+
+        <!-- Este es el formulario donde se ingresarán los datos -->
+        <form id="registro-form" class="form-card">
+            <div class="form-section">
+                <h2>Datos del Cliente</h2>
+                <div class="input-group">
+                    <label for="cliente-nombre">Nombre Completo</label>
+                    <input type="text" id="cliente-nombre" placeholder="Ej: Juan Pérez" required>
+                </div>
+                <div class="input-group">
+                    <label for="cliente-telefono">Teléfono</label>
+                    <input type="tel" id="cliente-telefono" placeholder="Ej: 912345678" required>
+                </div>
+                <div class="input-group">
+                    <label for="cliente-email">Correo Electrónico</label>
+                    <input type="email" id="cliente-email" placeholder="Ej: juan.perez@email.com">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Datos del Vehículo</h2>
+                <div class="input-group">
+                    <label for="vehiculo-patente">Patente</label>
+                    <input type="text" id="vehiculo-patente" placeholder="Ej: ABCD-12" required>
+                </div>
+                <div class="input-group">
+                    <label for="vehiculo-marca">Marca</label>
+                    <input type="text" id="vehiculo-marca" placeholder="Ej: Toyota" required>
+                </div>
+                <div class="input-group">
+                    <label for="vehiculo-modelo">Modelo</label>
+                    <input type="text" id="vehiculo-modelo" placeholder="Ej: Yaris" required>
+                </div>
+                <div class="input-group">
+                    <label for="vehiculo-anio">Año</label>
+                    <input type="number" id="vehiculo-anio" placeholder="Ej: 2022" required min="1900" max="2025">
+                </div>
+                <div class="input-group">
+                    <label for="vehiculo-obs">Observaciones</label>
+                    <textarea id="vehiculo-obs" rows="3" placeholder="Detalles del problema, historial, etc."></textarea>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-submit">Agregar Cliente al Registro</button>
+        </form>
+
+        <!-- Aquí se mostrará la lista de clientes ingresados -->
+        <div class="tabla-container">
+            <h2>Clientes Registrados</h2>
+            <table id="tabla-clientes">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Patente</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Año</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-body">
+                    <!-- Las filas de datos se insertarán aquí con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Al final del body, enlazamos nuestro archivo JavaScript -->
+    <script src="admin_ingreso.js"></script>
+</body>
+</html>
