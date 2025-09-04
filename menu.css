@@ -1,0 +1,94 @@
+/* --- Estilos para el Menú de Navegación Lateral --- */
+
+:root {
+    /* Colores basados en el logo "Automat Astudillo" */
+    --color-fondo-principal: #1A1A1A;
+    --color-fondo-secundario: #2C2C2C;
+    --color-acento-azul: #00BFFF;
+    --color-texto-claro: #E0E0E0;
+    --color-borde-oscuro: #444;
+}
+
+/* --- Botón del Menú (Hamburguesa) --- */
+.menu-btn {
+    position: fixed; /* Se mantiene fijo en la pantalla */
+    top: 20px;
+    left: 20px;
+    z-index: 1001; /* Se asegura que esté por encima de otros elementos */
+    background-color: var(--color-fondo-secundario);
+    border: 1px solid var(--color-borde-oscuro);
+    border-radius: 8px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px; /* Espacio entre las líneas */
+    transition: background-color 0.3s ease;
+}
+
+.menu-btn:hover {
+    background-color: #3a3a3a;
+}
+
+.menu-btn .line {
+    width: 25px;
+    height: 3px;
+    background-color: var(--color-acento-azul);
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Animación del botón a una 'X' cuando está activo */
+.menu-btn.active .line-1 {
+    transform: translateY(8px) rotate(45deg);
+}
+.menu-btn.active .line-2 {
+    opacity: 0;
+}
+.menu-btn.active .line-3 {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+
+/* --- Panel del Menú Lateral --- */
+.side-nav {
+    position: fixed;
+    top: 0;
+    left: -300px; /* Inicia oculto fuera de la pantalla */
+    width: 280px;
+    height: 100%;
+    background-color: var(--color-fondo-principal);
+    border-right: 2px solid var(--color-borde-oscuro);
+    z-index: 1000;
+    padding-top: 80px; /* Espacio para que no quede detrás del botón */
+    transition: left 0.4s ease; /* Animación de deslizamiento */
+    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+}
+
+.side-nav.open {
+    left: 0; /* Lo muestra en la pantalla */
+}
+
+.side-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.side-nav ul li a {
+    display: block;
+    padding: 15px 25px;
+    color: var(--color-texto-claro);
+    text-decoration: none;
+    font-size: 1.1em;
+    border-bottom: 1px solid var(--color-borde-oscuro);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.side-nav ul li a:hover {
+    background-color: var(--color-acento-azul);
+    color: var(--color-fondo-principal);
+}

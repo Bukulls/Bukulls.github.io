@@ -5,12 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes - Taller Mecánico</title>
     <link rel="stylesheet" href="admin_ingreso.css">
+    <link rel="stylesheet" href="menu.css"> 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
+    <button id="menu-btn" class="menu-btn">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+    </button>
+
+    <nav id="side-nav" class="side-nav">
+        <ul>
+            <li><a href="admin_ingreso.html">Registro de Clientes</a></li>
+            <li><a href="presupuesto.html">Generar Presupuesto</a></li>
+        </ul>
+    </nav>
     <main class="container">
         <h1>Registro de Clientes y Vehículos</h1>
         <p>Ingresa los datos del cliente y su vehículo para añadirlos al sistema.</p>
@@ -86,5 +99,6 @@
     </main>
 
     <script src="admin_ingreso.js"></script>
+    <script src="menu.js"></script> 
 </body>
 </html>
