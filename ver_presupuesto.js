@@ -67,32 +67,41 @@ document.addEventListener('DOMContentLoaded', function() {
     btnDescargar.addEventListener('click', function() {
         const elementoParaExportar = document.getElementById('presupuesto-a-exportar');
         const nombreArchivo = `Presupuesto_${cliente.nombre.replace(/ /g, '_')}_${cliente.patente}.pdf`;
+
+        // ANÁLISIS DEL CAMBIO FINAL:
+        // Usamos la opción 'backgroundColor' para forzar el fondo blanco.
         const opt = {
             margin: 0.5,
             filename: nombreArchivo,
-            html2canvas: { scale: 2 },
+            image: { type: 'jpeg', quality: 1.0 },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff' // ¡Esta es la clave para el fondo!
+            },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
-        // --- ANÁLISIS DEL CAMBIO FINAL ---
-        // Volvemos a modificar el elemento original, pero añadiendo una clase temporal
-        // a los elementos PADRE (body, main) para neutralizarlos.
+        // Guardamos los estilos originales para revertirlos después.
+        const originalStyles = new Map();
+        const elementsToStyle = [document.body, document.querySelector('.container'), elementoParaExportar, ...elementoParaExportar.querySelectorAll('*')];
+        elementsToStyle.forEach(el => originalStyles.set(el, el.style.cssText));
 
-        const body = document.body;
-        const mainContainer = document.querySelector('.container');
-        
-        // 1. Añadimos una clase que elimina márgenes y padding de los contenedores.
-        body.classList.add('pdf-export-parent');
-        mainContainer.classList.add('pdf-export-parent');
-        
-        // 2. Aplicamos los estilos de tema blanco directamente al elemento a exportar.
-        elementoParaExportar.classList.add('pdf-export-mode');
+        // Aplicamos estilos temporales para la captura
+        document.body.style.margin = '0';
+        document.body.style.padding = '0';
+        document.querySelector('.container').style.margin = '0';
+        document.querySelector('.container').style.padding = '0';
+        document.querySelector('.container').style.boxShadow = 'none';
+
+        // Forzamos los colores correctos en el contenido
+        elementoParaExportar.querySelectorAll('*').forEach(el => el.style.color = '#000000');
+        elementoParaExportar.querySelectorAll('.info-empresa h1, .seccion-presupuesto h2, .tabla-costos tfoot, .tabla-costos tfoot *').forEach(el => el.style.color = '#007BFF');
+        elementoParaExportar.querySelectorAll('.tabla-costos thead, .tabla-costos tfoot').forEach(el => el.style.backgroundColor = '#eeeeee');
 
         html2pdf().from(elementoParaExportar).set(opt).save().then(() => {
-            // 3. Limpiamos las clases una vez que el PDF se ha guardado.
-            body.classList.remove('pdf-export-parent');
-            mainContainer.classList.remove('pdf-export-parent');
-            elementoParaExportar.classList.remove('pdf-export-mode');
+            // La forma más segura de restaurar todo es simplemente recargar la página.
+            window.location.reload();
         });
     });
 });
