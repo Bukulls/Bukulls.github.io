@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (isNaN(presupuestoId) || !presupuestos[presupuestoId]) {
         detalleContainer.innerHTML = '<h2>Error: Presupuesto no encontrado.</h2>';
+        btnDescargar.disabled = true;
         return;
     }
 
@@ -19,10 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!cliente) {
         detalleContainer.innerHTML = '<h2>Error: Cliente asociado no encontrado.</h2>';
+        btnDescargar.disabled = true;
         return;
     }
 
-    // El resto de la lógica para construir el HTML sigue igual...
     let repuestosHTML = '<tr><td colspan="2" style="text-align:center;">- Sin repuestos detallados -</td></tr>';
     if (presupuesto.repuestos && presupuesto.repuestos.length > 0) {
         repuestosHTML = presupuesto.repuestos.map(rep => `
@@ -63,44 +64,46 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     `;
 
-    // --- ANÁLISIS DEL CAMBIO: LÓGICA DE EXPORTACIÓN REFORZADA ---
     btnDescargar.addEventListener('click', function() {
         const elementoParaExportar = document.getElementById('presupuesto-a-exportar');
         const nombreArchivo = `Presupuesto_${cliente.nombre.replace(/ /g, '_')}_${cliente.patente}.pdf`;
 
         const opt = {
-            margin: 0.5,
-            filename: nombreArchivo,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            margin: 0.5, filename: nombreArchivo, image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
-        // Guardamos los estilos originales para restaurarlos después
         const originalStyles = new Map();
         const allElements = [elementoParaExportar, ...elementoParaExportar.querySelectorAll('*')];
-        allElements.forEach(el => {
-            originalStyles.set(el, el.getAttribute('style'));
+        allElements.forEach(el => originalStyles.set(el, el.getAttribute('style')));
+
+        // --- ANÁLISIS DEL CAMBIO: LÓGICA DE ESTILOS MÁS PRECISA ---
+
+        // 1. Estilo base del contenedor: fondo blanco y texto negro por defecto.
+        Object.assign(elementoParaExportar.style, { backgroundColor: '#ffffff', color: '#000000', border: 'none', padding: '5px' });
+        
+        // 2. Títulos principales en azul.
+        elementoParaExportar.querySelectorAll('.info-empresa h1, .seccion-presupuesto h2').forEach(el => el.style.color = '#007BFF');
+        
+        // 3. Párrafos y etiquetas (<strong>) en negro para asegurar legibilidad.
+        elementoParaExportar.querySelectorAll('.info-empresa p, .seccion-presupuesto p, .seccion-presupuesto p strong, .footer-presupuesto p').forEach(el => el.style.color = '#000000');
+        
+        // 4. Estilo explícito para la tabla de costos para garantizar su visibilidad.
+        elementoParaExportar.querySelectorAll('.tabla-costos').forEach(table => {
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.querySelectorAll('thead, tfoot').forEach(section => section.style.backgroundColor = '#eeeeee');
+            table.querySelectorAll('th, td').forEach(cell => {
+                Object.assign(cell.style, { color: '#000000', border: '1px solid #cccccc', padding: '8px', textAlign: 'left' });
+            });
+            table.querySelectorAll('.monto').forEach(cell => cell.style.textAlign = 'right');
+            table.querySelectorAll('tfoot th, tfoot td').forEach(cell => cell.style.color = '#007BFF');
         });
 
-        // Aplicamos estilos de "fuerza bruta" para el PDF
-        Object.assign(elementoParaExportar.style, { backgroundColor: '#ffffff', color: '#000000', border: 'none', padding: '5px' });
-        elementoParaExportar.querySelectorAll('.info-empresa h1, .seccion-presupuesto h2, .tabla-costos tfoot').forEach(el => el.style.color = '#007BFF');
-        elementoParaExportar.querySelectorAll('.info-empresa p, .seccion-presupuesto p, .footer-presupuesto p, .tabla-costos td, .tabla-costos th').forEach(el => el.style.color = '#333333');
-        elementoParaExportar.querySelectorAll('.tabla-costos thead, .tabla-costos tfoot').forEach(el => el.style.backgroundColor = '#eeeeee');
-        elementoParaExportar.querySelectorAll('.tabla-costos th, .tabla-costos td').forEach(el => el.style.borderColor = '#cccccc');
-        elementoParaExportar.querySelectorAll('.cabecera-presupuesto').forEach(el => el.style.borderBottomColor = '#007BFF');
-
-
-        // Generar y descargar el PDF
         html2pdf().from(elementoParaExportar).set(opt).save().then(() => {
-            // Restaurar los estilos originales para que la vista en pantalla vuelva a la normalidad
             originalStyles.forEach((style, el) => {
-                if (style === null) {
-                    el.removeAttribute('style');
-                } else {
-                    el.setAttribute('style', style);
-                }
+                if (style === null) el.removeAttribute('style');
+                else el.setAttribute('style', style);
             });
         });
     });
