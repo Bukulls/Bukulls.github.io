@@ -72,23 +72,22 @@ document.addEventListener('DOMContentLoaded', function() {
             html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
+        // ANÁLISIS DEL CAMBIO: Seleccionamos los contenedores padre
+        const body = document.body;
+        const mainContainer = document.querySelector('.container');
+
         const originalStyles = new Map();
-        const allElements = [elementoParaExportar, ...elementoParaExportar.querySelectorAll('*')];
+        const allElements = [body, mainContainer, elementoParaExportar, ...elementoParaExportar.querySelectorAll('*')];
         allElements.forEach(el => originalStyles.set(el, el.getAttribute('style')));
 
-        // --- ANÁLISIS DEL CAMBIO FINAL ---
-        // Se aplica un conjunto de reglas más simple y robusto.
+        // 1. FORZAMOS A LOS CONTENEDORES PADRE A NO TENER MÁRGENES NI PADDING
+        Object.assign(body.style, { margin: '0', padding: '0' });
+        Object.assign(mainContainer.style, { margin: '0', padding: '0', boxShadow: 'none' });
 
-        // 1. Estilo base del contenedor: fondo blanco y texto negro por defecto.
+        // 2. Aplicamos los estilos al contenido del presupuesto (código sin cambios)
         Object.assign(elementoParaExportar.style, { backgroundColor: '#ffffff', color: '#000000', border: 'none' });
-        
-        // 2. Títulos principales en azul.
         elementoParaExportar.querySelectorAll('.info-empresa h1, .seccion-presupuesto h2').forEach(el => el.style.color = '#007BFF');
-        
-        // 3. CORRECCIÓN: Se añaden los selectores para la fecha y el N° de presupuesto (.info-header).
         elementoParaExportar.querySelectorAll('.info-header p, .info-header p strong, .info-empresa p, .seccion-presupuesto p, .seccion-presupuesto p strong, .footer-presupuesto p').forEach(el => el.style.color = '#000000');
-
-        // 4. CORRECCIÓN: Se simplifica y se asegura la visibilidad de la tabla.
         elementoParaExportar.querySelectorAll('.tabla-costos').forEach(table => {
             table.style.width = '100%';
             table.style.borderCollapse = 'collapse';
@@ -102,6 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
             table.querySelectorAll('tfoot th, tfoot td').forEach(cell => cell.style.color = '#007BFF');
         });
 
+        // 3. Generamos el PDF y luego restauramos todos los estilos
         html2pdf().from(elementoParaExportar).set(opt).save().then(() => {
             originalStyles.forEach((style, el) => {
                 if (style === null) el.removeAttribute('style');
