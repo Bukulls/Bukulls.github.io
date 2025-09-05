@@ -67,7 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
     btnDescargar.addEventListener('click', function() {
         const elementoParaExportar = document.getElementById('presupuesto-a-exportar');
         const nombreArchivo = `Presupuesto_${cliente.nombre.replace(/ /g, '_')}_${cliente.patente}.pdf`;
-
         const opt = {
             margin: 0.5, filename: nombreArchivo, image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -77,26 +76,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const allElements = [elementoParaExportar, ...elementoParaExportar.querySelectorAll('*')];
         allElements.forEach(el => originalStyles.set(el, el.getAttribute('style')));
 
-        // --- ANÁLISIS DEL CAMBIO: LÓGICA DE ESTILOS MÁS PRECISA ---
+        // --- ANÁLISIS DEL CAMBIO FINAL ---
+        // Se aplica un conjunto de reglas más simple y robusto.
 
         // 1. Estilo base del contenedor: fondo blanco y texto negro por defecto.
-        Object.assign(elementoParaExportar.style, { backgroundColor: '#ffffff', color: '#000000', border: 'none', padding: '5px' });
+        Object.assign(elementoParaExportar.style, { backgroundColor: '#ffffff', color: '#000000', border: 'none' });
         
         // 2. Títulos principales en azul.
         elementoParaExportar.querySelectorAll('.info-empresa h1, .seccion-presupuesto h2').forEach(el => el.style.color = '#007BFF');
         
-        // 3. Párrafos y etiquetas (<strong>) en negro para asegurar legibilidad.
-        elementoParaExportar.querySelectorAll('.info-empresa p, .seccion-presupuesto p, .seccion-presupuesto p strong, .footer-presupuesto p').forEach(el => el.style.color = '#000000');
-        
-        // 4. Estilo explícito para la tabla de costos para garantizar su visibilidad.
+        // 3. CORRECCIÓN: Se añaden los selectores para la fecha y el N° de presupuesto (.info-header).
+        elementoParaExportar.querySelectorAll('.info-header p, .info-header p strong, .info-empresa p, .seccion-presupuesto p, .seccion-presupuesto p strong, .footer-presupuesto p').forEach(el => el.style.color = '#000000');
+
+        // 4. CORRECCIÓN: Se simplifica y se asegura la visibilidad de la tabla.
         elementoParaExportar.querySelectorAll('.tabla-costos').forEach(table => {
             table.style.width = '100%';
             table.style.borderCollapse = 'collapse';
+            table.style.marginTop = '15px';
             table.querySelectorAll('thead, tfoot').forEach(section => section.style.backgroundColor = '#eeeeee');
             table.querySelectorAll('th, td').forEach(cell => {
-                Object.assign(cell.style, { color: '#000000', border: '1px solid #cccccc', padding: '8px', textAlign: 'left' });
+                cell.style.color = '#000000';
+                cell.style.border = '1px solid #cccccc';
+                cell.style.padding = '8px';
             });
-            table.querySelectorAll('.monto').forEach(cell => cell.style.textAlign = 'right');
             table.querySelectorAll('tfoot th, tfoot td').forEach(cell => cell.style.color = '#007BFF');
         });
 
