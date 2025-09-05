@@ -81,7 +81,8 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     `;
 
-    // Funcionalidad del botón de descarga
+    // --- ANÁLISIS DEL CAMBIO ---
+    // Se ha modificado la lógica del botón de descarga.
     btnDescargar.addEventListener('click', function() {
         const elementoParaExportar = document.getElementById('presupuesto-a-exportar');
         const nombreArchivo = `Presupuesto_${cliente.nombre.replace(' ', '_')}_${cliente.patente}.pdf`;
@@ -94,7 +95,13 @@ document.addEventListener('DOMContentLoaded', function() {
           jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
-        // Generar y descargar el PDF
-        html2pdf().from(elementoParaExportar).set(opt).save();
+        // 1. Añadimos la clase 'pdf-export-mode' para cambiar los estilos a blanco.
+        elementoParaExportar.classList.add('pdf-export-mode');
+
+        // 2. Generamos el PDF. El método save() devuelve una promesa.
+        html2pdf().from(elementoParaExportar).set(opt).save().then(function() {
+            // 3. Una vez que el PDF se ha guardado, quitamos la clase para que la vista en pantalla vuelva a la normalidad.
+            elementoParaExportar.classList.remove('pdf-export-mode');
+        });
     });
 });

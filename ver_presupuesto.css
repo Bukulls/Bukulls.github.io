@@ -101,7 +101,7 @@
     width: 100%;
 }
 
-/* --- Estilos para la impresión / PDF --- */
+/* Estilos para la impresión / PDF */
 @media print {
     body {
         background-color: #fff;
@@ -119,26 +119,20 @@
         box-shadow: none;
         background-color: #fff;
     }
-    
-    /* ANÁLISIS DEL CAMBIO:
-         Aquí está la clave. Además de los estilos que ya tenías, he añadido !important a las
-         propiedades 'background-color' y 'color'. Esto le da máxima prioridad al estilo,
-         asegurando que la librería que genera el PDF use el fondo blanco y el texto negro,
-         ignorando los estilos del tema oscuro de la pantalla.
-    */
+
     #presupuesto-a-exportar {
         border: none;
         padding: 5px;
-        background-color: #fff !important; /* FORZAMOS FONDO BLANCO */
-        color: #000 !important;           /* FORZAMOS TEXTO NEGRO */
+        background-color: #fff !important;
+        color: #000 !important;
     }
     
     .seccion-presupuesto h2, .tabla-costos tfoot, .info-empresa h1 {
         color: #007BFF;
     }
 
-     .seccion-presupuesto p, .seccion-presupuesto p strong, .info-empresa p, .footer-presupuesto {
-        color: #333 !important; /* Aseguramos que todo el texto secundario sea oscuro */
+     .seccion-presupuesto p, .seccion-presupuesto p strong, .info-empresa p {
+        color: #333;
     }
 
     .tabla-costos th, .tabla-costos td {
@@ -148,4 +142,37 @@
     .tabla-costos thead, .tabla-costos tfoot {
        background-color: #eee;
     }
+}
+
+
+/* --- ANÁLISIS DEL CAMBIO --- */
+/* Se ha añadido esta nueva sección al final del archivo.
+   Esta clase será activada por JavaScript solo durante la exportación a PDF. */
+.pdf-export-mode {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: none !important;
+}
+.pdf-export-mode .info-empresa h1,
+.pdf-export-mode .seccion-presupuesto h2,
+.pdf-export-mode .tabla-costos tfoot {
+    color: #007BFF !important;
+}
+.pdf-export-mode .info-empresa p,
+.pdf-export-mode .seccion-presupuesto p,
+.pdf-export-mode .seccion-presupuesto p strong,
+.pdf-export-mode .footer-presupuesto p {
+    color: #333333 !important;
+}
+.pdf-export-mode .tabla-costos th,
+.pdf-export-mode .tabla-costos td {
+    border-color: #cccccc !important;
+    color: #333333 !important;
+}
+.pdf-export-mode .tabla-costos thead,
+.pdf-export-mode .tabla-costos tfoot {
+    background-color: #eeeeee !important;
+}
+.pdf-export-mode .cabecera-presupuesto {
+    border-bottom-color: #007BFF !important;
 }
