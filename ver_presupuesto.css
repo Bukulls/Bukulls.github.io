@@ -143,36 +143,3 @@
        background-color: #eee;
     }
 }
-
-
-/* --- ANÁLISIS DEL CAMBIO --- */
-/* Se ha añadido esta nueva sección al final del archivo.
-   Esta clase será activada por JavaScript solo durante la exportación a PDF. */
-.pdf-export-mode {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    border: none !important;
-}
-.pdf-export-mode .info-empresa h1,
-.pdf-export-mode .seccion-presupuesto h2,
-.pdf-export-mode .tabla-costos tfoot {
-    color: #007BFF !important;
-}
-.pdf-export-mode .info-empresa p,
-.pdf-export-mode .seccion-presupuesto p,
-.pdf-export-mode .seccion-presupuesto p strong,
-.pdf-export-mode .footer-presupuesto p {
-    color: #333333 !important;
-}
-.pdf-export-mode .tabla-costos th,
-.pdf-export-mode .tabla-costos td {
-    border-color: #cccccc !important;
-    color: #333333 !important;
-}
-.pdf-export-mode .tabla-costos thead,
-.pdf-export-mode .tabla-costos tfoot {
-    background-color: #eeeeee !important;
-}
-.pdf-export-mode .cabecera-presupuesto {
-    border-bottom-color: #007BFF !important;
-}
