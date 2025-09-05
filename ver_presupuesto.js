@@ -67,28 +67,32 @@ document.addEventListener('DOMContentLoaded', function() {
     btnDescargar.addEventListener('click', function() {
         const elementoOriginal = document.getElementById('presupuesto-a-exportar');
         const nombreArchivo = `Presupuesto_${cliente.nombre.replace(/ /g, '_')}_${cliente.patente}.pdf`;
+        
+        // ANÁLISIS DEL CAMBIO: El margen de 0.5 pulgadas ahora controlará todo el espaciado.
         const opt = {
-            margin: 0.5, filename: nombreArchivo, image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            margin: 0.5, 
+            filename: nombreArchivo, 
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true }, 
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
-        // --- ANÁLISIS DEL CAMBIO FINAL Y DEFINITIVO ---
-        // 1. Clonamos el elemento para no afectar la vista del usuario.
         const clon = elementoOriginal.cloneNode(true);
 
-        // 2. Aplicamos estilos al clon para que sea invisible pero renderizable en la esquina superior.
+        // Se eliminó el padding y el width fijo para darle control total a la librería.
         Object.assign(clon.style, {
             position: 'absolute',
             top: '0',
             left: '0',
-            width: '8.5in', // Ancho de una hoja carta para que el contenido se ajuste bien
             backgroundColor: '#ffffff',
             color: '#000000',
             border: 'none',
-            padding: '0.5in' // Margen interno para que no quede pegado a los bordes
+            padding: '0', // Relleno CERO
+            margin: '0',  // Margen CERO
+            boxSizing: 'border-box'
         });
 
-        // 3. Aplicamos los estilos de color a los elementos internos del CLON.
+        // Los estilos de color internos no cambian
         clon.querySelectorAll('.info-empresa h1, .seccion-presupuesto h2').forEach(el => el.style.color = '#007BFF');
         clon.querySelectorAll('.info-header p, .info-header p strong, .info-empresa p, .seccion-presupuesto p, .seccion-presupuesto p strong, .footer-presupuesto p').forEach(el => el.style.color = '#000000');
         clon.querySelectorAll('.tabla-costos').forEach(table => {
@@ -104,12 +108,9 @@ document.addEventListener('DOMContentLoaded', function() {
             table.querySelectorAll('tfoot th, tfoot td').forEach(cell => cell.style.color = '#007BFF');
         });
 
-        // 4. Añadimos el clon al cuerpo del documento.
         document.body.appendChild(clon);
 
-        // 5. Generamos el PDF a partir del CLON.
         html2pdf().from(clon).set(opt).save().then(() => {
-            // 6. Una vez guardado el PDF, eliminamos el clon. ¡Limpieza completa!
             document.body.removeChild(clon);
         });
     });
