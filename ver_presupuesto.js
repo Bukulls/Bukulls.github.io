@@ -65,30 +65,33 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
 
     btnDescargar.addEventListener('click', function() {
-        const elementoParaExportar = document.getElementById('presupuesto-a-exportar');
+        const elementoOriginal = document.getElementById('presupuesto-a-exportar');
         const nombreArchivo = `Presupuesto_${cliente.nombre.replace(/ /g, '_')}_${cliente.patente}.pdf`;
         const opt = {
             margin: 0.5, filename: nombreArchivo, image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
-        // ANÁLISIS DEL CAMBIO: Seleccionamos los contenedores padre
-        const body = document.body;
-        const mainContainer = document.querySelector('.container');
+        // --- ANÁLISIS DEL CAMBIO FINAL Y DEFINITIVO ---
+        // 1. Clonamos el elemento para no afectar la vista del usuario.
+        const clon = elementoOriginal.cloneNode(true);
 
-        const originalStyles = new Map();
-        const allElements = [body, mainContainer, elementoParaExportar, ...elementoParaExportar.querySelectorAll('*')];
-        allElements.forEach(el => originalStyles.set(el, el.getAttribute('style')));
+        // 2. Aplicamos estilos al clon para que sea invisible pero renderizable en la esquina superior.
+        Object.assign(clon.style, {
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            width: '8.5in', // Ancho de una hoja carta para que el contenido se ajuste bien
+            backgroundColor: '#ffffff',
+            color: '#000000',
+            border: 'none',
+            padding: '0.5in' // Margen interno para que no quede pegado a los bordes
+        });
 
-        // 1. FORZAMOS A LOS CONTENEDORES PADRE A NO TENER MÁRGENES NI PADDING
-        Object.assign(body.style, { margin: '0', padding: '0' });
-        Object.assign(mainContainer.style, { margin: '0', padding: '0', boxShadow: 'none' });
-
-        // 2. Aplicamos los estilos al contenido del presupuesto (código sin cambios)
-        Object.assign(elementoParaExportar.style, { backgroundColor: '#ffffff', color: '#000000', border: 'none' });
-        elementoParaExportar.querySelectorAll('.info-empresa h1, .seccion-presupuesto h2').forEach(el => el.style.color = '#007BFF');
-        elementoParaExportar.querySelectorAll('.info-header p, .info-header p strong, .info-empresa p, .seccion-presupuesto p, .seccion-presupuesto p strong, .footer-presupuesto p').forEach(el => el.style.color = '#000000');
-        elementoParaExportar.querySelectorAll('.tabla-costos').forEach(table => {
+        // 3. Aplicamos los estilos de color a los elementos internos del CLON.
+        clon.querySelectorAll('.info-empresa h1, .seccion-presupuesto h2').forEach(el => el.style.color = '#007BFF');
+        clon.querySelectorAll('.info-header p, .info-header p strong, .info-empresa p, .seccion-presupuesto p, .seccion-presupuesto p strong, .footer-presupuesto p').forEach(el => el.style.color = '#000000');
+        clon.querySelectorAll('.tabla-costos').forEach(table => {
             table.style.width = '100%';
             table.style.borderCollapse = 'collapse';
             table.style.marginTop = '15px';
@@ -101,12 +104,13 @@ document.addEventListener('DOMContentLoaded', function() {
             table.querySelectorAll('tfoot th, tfoot td').forEach(cell => cell.style.color = '#007BFF');
         });
 
-        // 3. Generamos el PDF y luego restauramos todos los estilos
-        html2pdf().from(elementoParaExportar).set(opt).save().then(() => {
-            originalStyles.forEach((style, el) => {
-                if (style === null) el.removeAttribute('style');
-                else el.setAttribute('style', style);
-            });
+        // 4. Añadimos el clon al cuerpo del documento.
+        document.body.appendChild(clon);
+
+        // 5. Generamos el PDF a partir del CLON.
+        html2pdf().from(clon).set(opt).save().then(() => {
+            // 6. Una vez guardado el PDF, eliminamos el clon. ¡Limpieza completa!
+            document.body.removeChild(clon);
         });
     });
 });
