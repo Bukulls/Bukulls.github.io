@@ -101,7 +101,7 @@
     width: 100%;
 }
 
-/* Estilos para la impresión / PDF */
+/* --- Estilos para la impresión / PDF --- */
 @media print {
     body {
         background-color: #fff;
@@ -119,20 +119,26 @@
         box-shadow: none;
         background-color: #fff;
     }
-
+    
+    /* ANÁLISIS DEL CAMBIO:
+         Aquí está la clave. Además de los estilos que ya tenías, he añadido !important a las
+         propiedades 'background-color' y 'color'. Esto le da máxima prioridad al estilo,
+         asegurando que la librería que genera el PDF use el fondo blanco y el texto negro,
+         ignorando los estilos del tema oscuro de la pantalla.
+    */
     #presupuesto-a-exportar {
         border: none;
         padding: 5px;
-        background-color: #fff;
-        color: #000;
+        background-color: #fff !important; /* FORZAMOS FONDO BLANCO */
+        color: #000 !important;           /* FORZAMOS TEXTO NEGRO */
     }
     
     .seccion-presupuesto h2, .tabla-costos tfoot, .info-empresa h1 {
         color: #007BFF;
     }
 
-     .seccion-presupuesto p, .seccion-presupuesto p strong, .info-empresa p {
-        color: #333;
+     .seccion-presupuesto p, .seccion-presupuesto p strong, .info-empresa p, .footer-presupuesto {
+        color: #333 !important; /* Aseguramos que todo el texto secundario sea oscuro */
     }
 
     .tabla-costos th, .tabla-costos td {
