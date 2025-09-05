@@ -132,7 +132,7 @@
     }
 
      .seccion-presupuesto p, .seccion-presupuesto p strong, .info-empresa p {
-        color: #333;
+        color: #000;
     }
 
     .tabla-costos th, .tabla-costos td {
