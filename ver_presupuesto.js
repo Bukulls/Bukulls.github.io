@@ -65,55 +65,34 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
 
     btnDescargar.addEventListener('click', function() {
-        const elementoOriginal = document.getElementById('presupuesto-a-exportar');
+        const elementoParaExportar = document.getElementById('presupuesto-a-exportar');
         const nombreArchivo = `Presupuesto_${cliente.nombre.replace(/ /g, '_')}_${cliente.patente}.pdf`;
         const opt = {
-            margin: [0.5, 0.5, 0.5, 0.5], // Margen [arriba, izquierda, abajo, derecha] en pulgadas
+            margin: 0.5,
             filename: nombreArchivo,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
-        const clon = elementoOriginal.cloneNode(true);
-
         // --- ANÁLISIS DEL CAMBIO FINAL ---
-        Object.assign(clon.style, {
-            position: 'absolute',
-            top: '0',
-            left: '0',
-            // 1. RESTAURAMOS EL ANCHO para que la librería sepa qué capturar.
-            width: '8.5in', 
-            // 2. Usamos box-sizing para controlar el tamaño de forma predecible.
-            boxSizing: 'border-box',
-            // 3. Añadimos un padding que coincida con el margen para alinear todo.
-            padding: '0.5in', 
-            backgroundColor: '#ffffff',
-            color: '#000000',
-            border: 'none',
-            zIndex: '9999' // Aseguramos que esté por encima de todo
-        });
+        // Volvemos a modificar el elemento original, pero añadiendo una clase temporal
+        // a los elementos PADRE (body, main) para neutralizarlos.
 
-        // Los estilos de color internos no cambian
-        clon.querySelectorAll('.info-empresa h1, .seccion-presupuesto h2').forEach(el => el.style.color = '#007BFF');
-        clon.querySelectorAll('.info-header p, .info-header p strong, .info-empresa p, .seccion-presupuesto p, .seccion-presupuesto p strong, .footer-presupuesto p').forEach(el => el.style.color = '#000000');
-        clon.querySelectorAll('.tabla-costos').forEach(table => {
-            table.style.width = '100%';
-            table.style.borderCollapse = 'collapse';
-            table.style.marginTop = '15px';
-            table.querySelectorAll('thead, tfoot').forEach(section => section.style.backgroundColor = '#eeeeee');
-            table.querySelectorAll('th, td').forEach(cell => {
-                cell.style.color = '#000000';
-                cell.style.border = '1px solid #cccccc';
-                cell.style.padding = '8px';
-            });
-            table.querySelectorAll('tfoot th, tfoot td').forEach(cell => cell.style.color = '#007BFF');
-        });
+        const body = document.body;
+        const mainContainer = document.querySelector('.container');
+        
+        // 1. Añadimos una clase que elimina márgenes y padding de los contenedores.
+        body.classList.add('pdf-export-parent');
+        mainContainer.classList.add('pdf-export-parent');
+        
+        // 2. Aplicamos los estilos de tema blanco directamente al elemento a exportar.
+        elementoParaExportar.classList.add('pdf-export-mode');
 
-        document.body.appendChild(clon);
-
-        html2pdf().from(clon).set(opt).save().then(() => {
-            document.body.removeChild(clon);
+        html2pdf().from(elementoParaExportar).set(opt).save().then(() => {
+            // 3. Limpiamos las clases una vez que el PDF se ha guardado.
+            body.classList.remove('pdf-export-parent');
+            mainContainer.classList.remove('pdf-export-parent');
+            elementoParaExportar.classList.remove('pdf-export-mode');
         });
     });
 });
