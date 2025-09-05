@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    // --- SELECCIÓN DE ELEMENTOS DEL DOM (sin cambios) ---
     const clienteSelect = document.getElementById('cliente-select');
     const clienteInfoCard = document.getElementById('cliente-info');
     const manoObraInput = document.getElementById('mano-obra-monto');
@@ -8,11 +7,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnAgregarRepuesto = document.getElementById('btn-agregar-repuesto');
     const totalSpan = document.getElementById('total-presupuesto');
     const presupuestoForm = document.getElementById('presupuesto-form');
+    const btnSubmit = presupuestoForm.querySelector('.btn-submit');
 
-    // --- CARGAR CLIENTES DESDE LOCALSTORAGE (sin cambios) ---
     const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+    let presupuestos = JSON.parse(localStorage.getItem('presupuestos')) || [];
 
-    // --- FUNCIONES Y EVENTOS (sin cambios hasta el submit) ---
+    // --- LÓGICA DE EDICIÓN ---
+    let modoEdicionPresupuesto = false;
+    let presupuestoAEditarIndex = null;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const editarId = urlParams.get('editar_id');
+
+    if (editarId !== null) {
+        modoEdicionPresupuesto = true;
+        presupuestoAEditarIndex = parseInt(editarId, 10);
+        cargarDatosPresupuestoParaEdicion(presupuestoAEditarIndex);
+    }
+    // --- FIN LÓGICA DE EDICIÓN ---
+
     function cargarClientesEnSelect() {
         if (clientes.length === 0) {
             clienteSelect.innerHTML = '<option value="">No hay clientes registrados</option>';
@@ -26,9 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
             clienteSelect.appendChild(option);
         });
     }
-
-    clienteSelect.addEventListener('change', function() {
-        const selectedIndex = this.value;
+    
+    function mostrarInfoCliente(selectedIndex) {
         if (selectedIndex) {
             const cliente = clientes[selectedIndex];
             clienteInfoCard.innerHTML = `
@@ -40,6 +52,10 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             clienteInfoCard.style.display = 'none';
         }
+    }
+
+    clienteSelect.addEventListener('change', function() {
+        mostrarInfoCliente(this.value);
     });
 
     function calcularTotal() {
@@ -52,16 +68,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         totalSpan.textContent = total.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
     }
-
-    btnAgregarRepuesto.addEventListener('click', function() {
+    
+    function agregarCampoRepuesto(nombre = '', monto = '') {
         const nuevoRepuesto = document.createElement('div');
         nuevoRepuesto.classList.add('repuesto-item');
         nuevoRepuesto.innerHTML = `
-            <input type="text" class="nombre-repuesto" placeholder="Nombre del Repuesto">
-            <input type="number" class="monto-repuesto" placeholder="Monto" min="0">
+            <input type="text" class="nombre-repuesto" placeholder="Nombre del Repuesto" value="${nombre}">
+            <input type="number" class="monto-repuesto" placeholder="Monto" min="0" value="${monto}">
             <button type="button" class="btn-eliminar-repuesto">-</button>
         `;
         repuestosContainer.appendChild(nuevoRepuesto);
+    }
+
+    btnAgregarRepuesto.addEventListener('click', function() {
+        agregarCampoRepuesto();
     });
 
     repuestosContainer.addEventListener('click', function(e) {
@@ -76,24 +96,46 @@ document.addEventListener('DOMContentLoaded', function() {
             calcularTotal();
         }
     });
+    
+    function cargarDatosPresupuestoParaEdicion(index) {
+        const presupuesto = presupuestos[index];
+        if (!presupuesto) {
+            alert('Error: No se encontró el presupuesto a editar.');
+            return;
+        }
 
-    // --- MODIFICADO: GUARDAR PRESUPUESTO ---
+        document.getElementById('diagnostico-obs').value = presupuesto.diagnostico;
+        manoObraInput.value = presupuesto.manoObra;
+        
+        clienteSelect.value = presupuesto.clienteIndex;
+        mostrarInfoCliente(presupuesto.clienteIndex);
+        clienteSelect.disabled = true; // No se puede cambiar el cliente al editar
+
+        repuestosContainer.innerHTML = ''; // Limpiar campos de repuestos
+        presupuesto.repuestos.forEach(rep => {
+            agregarCampoRepuesto(rep.nombre, rep.monto);
+        });
+
+        btnSubmit.textContent = 'Guardar Cambios en Presupuesto';
+        btnSubmit.style.backgroundColor = 'var(--color-editar)';
+        calcularTotal();
+    }
+
     presupuestoForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
         const selectedClientIndex = clienteSelect.value;
         if (!selectedClientIndex) {
-            alert('Error: Debe seleccionar un cliente antes de guardar.');
+            alert('Error: Debe seleccionar un cliente.');
             return;
         }
 
         const manoObra = parseFloat(manoObraInput.value) || 0;
-        if (manoObra <= 0) {
-            alert('Error: El monto de la mano de obra debe ser mayor a cero.');
-            return;
+        if (manoObra <= 0 && !modoEdicionPresupuesto) {
+             alert('Error: El monto de la mano de obra debe ser mayor a cero.');
+             return;
         }
 
-        // Recolectar los repuestos
         const repuestos = [];
         const repuestoItems = document.querySelectorAll('.repuesto-item');
         repuestoItems.forEach(item => {
@@ -104,31 +146,31 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Calcular total final
         const totalFinal = manoObra + repuestos.reduce((sum, rep) => sum + rep.monto, 0);
 
-        // Crear el objeto del presupuesto
         const presupuestoData = {
             clienteIndex: selectedClientIndex,
             diagnostico: document.getElementById('diagnostico-obs').value,
             manoObra: manoObra,
             repuestos: repuestos,
             total: totalFinal,
-            fecha: new Date().toLocaleDateString('es-CL') // Guarda la fecha actual
+            fecha: new Date().toLocaleDateString('es-CL')
         };
 
-        // Cargar presupuestos existentes, agregar el nuevo y guardar
-        let presupuestos = JSON.parse(localStorage.getItem('presupuestos')) || [];
-        presupuestos.push(presupuestoData);
+        if (modoEdicionPresupuesto) {
+            // Si estamos editando, actualizamos el presupuesto existente
+            presupuestos[presupuestoAEditarIndex] = presupuestoData;
+            alert('¡Presupuesto actualizado exitosamente!');
+        } else {
+            // Si no, creamos uno nuevo
+            presupuestos.push(presupuestoData);
+            alert('¡Presupuesto guardado exitosamente!');
+        }
+        
         localStorage.setItem('presupuestos', JSON.stringify(presupuestos));
         
-        alert('¡Presupuesto guardado exitosamente!');
-        
-        // Redirigir a la lista de clientes para ver el resultado
         window.location.href = 'clientes_registrados.html';
     });
 
-
-    // --- INICIALIZACIÓN ---
     cargarClientesEnSelect();
 });

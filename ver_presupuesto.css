@@ -1,10 +1,37 @@
-#presupuesto-detalle-container {
+#presupuesto-a-exportar {
     background-color: var(--color-fondo-principal);
     padding: 30px;
     border-radius: var(--radio-borde);
     border: 1px solid var(--color-borde-oscuro);
     color: var(--color-texto-claro);
 }
+
+.cabecera-presupuesto {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--color-acento-azul);
+    margin-bottom: 20px;
+}
+
+.logo {
+    max-width: 150px;
+    height: auto;
+    border-radius: 8px;
+}
+
+.info-empresa h1 {
+    margin: 0;
+    color: var(--color-acento-azul);
+    font-size: 1.8em;
+    border-bottom: none;
+}
+.info-empresa p {
+    margin: 2px 0;
+    color: var(--color-texto-secundario);
+}
+
 
 .info-header {
     display: flex;
@@ -69,12 +96,12 @@
     color: var(--color-texto-secundario);
 }
 
-#btn-imprimir {
+#btn-descargar-pdf {
     margin-top: 20px;
     width: 100%;
 }
 
-/* Estilos para la impresión */
+/* Estilos para la impresión / PDF */
 @media print {
     body {
         background-color: #fff;
@@ -93,18 +120,18 @@
         background-color: #fff;
     }
 
-    #presupuesto-detalle-container {
+    #presupuesto-a-exportar {
         border: none;
         padding: 5px;
         background-color: #fff;
         color: #000;
     }
     
-    .seccion-presupuesto h2, .tabla-costos tfoot {
+    .seccion-presupuesto h2, .tabla-costos tfoot, .info-empresa h1 {
         color: #007BFF;
     }
 
-     .seccion-presupuesto p, .seccion-presupuesto p strong {
+     .seccion-presupuesto p, .seccion-presupuesto p strong, .info-empresa p {
         color: #333;
     }
 

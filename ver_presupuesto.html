@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle del Presupuesto - Taller Mecánico</title>
-    
     <link rel="stylesheet" href="admin_ingreso.css">
     <link rel="stylesheet" href="menu.css">
     <link rel="stylesheet" href="ver_presupuesto.css">
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -30,11 +29,21 @@
     </nav>
 
     <main class="container">
-        <div id="presupuesto-detalle-container">
-            <h1 id="titulo-presupuesto">Cargando datos del presupuesto...</h1>
+        <div id="presupuesto-a-exportar">
+            <div class="cabecera-presupuesto">
+                <img src="Gemini_Generated_Image_h4hz80h4hz80h4hz.jpg" alt="Logo Automat Astudillo" class="logo">
+                <div class="info-empresa">
+                    <h1>Presupuesto de Reparación</h1>
+                    <p>Automat Astudillo</p>
+                    <p>Dirección Ficticia 123, Villa Alemana</p>
+                    <p>Teléfono: +56 9 1234 5678</p>
+                </div>
+            </div>
+            <div id="presupuesto-detalle-container">
+                <h2 id="titulo-presupuesto">Cargando datos...</h2>
+            </div>
         </div>
-
-        <button id="btn-imprimir" class="btn-submit no-print">Imprimir Presupuesto</button>
+        <button id="btn-descargar-pdf" class="btn-submit no-print">Descargar PDF</button>
     </main>
 
     <script src="ver_presupuesto.js"></script>

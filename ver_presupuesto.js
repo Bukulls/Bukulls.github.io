@@ -1,36 +1,27 @@
 document.addEventListener('DOMContentLoaded', function() {
     const detalleContainer = document.getElementById('presupuesto-detalle-container');
-    const btnImprimir = document.getElementById('btn-imprimir');
+    const btnDescargar = document.getElementById('btn-descargar-pdf');
 
-    // Cargar datos
     const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
     const presupuestos = JSON.parse(localStorage.getItem('presupuestos')) || [];
 
-    // Obtener el ID del presupuesto desde la URL
     const urlParams = new URLSearchParams(window.location.search);
     const presupuestoId = parseInt(urlParams.get('id'), 10);
 
-    // Validar que el ID sea válido y que el presupuesto exista
     if (isNaN(presupuestoId) || !presupuestos[presupuestoId]) {
-        detalleContainer.innerHTML = '<h1>Error: Presupuesto no encontrado.</h1><p>Por favor, vuelve a la lista de clientes y selecciona un presupuesto válido.</p>';
+        detalleContainer.innerHTML = '<h2>Error: Presupuesto no encontrado.</h2>';
         return;
     }
 
     const presupuesto = presupuestos[presupuestoId];
-    
-    // --- CORRECCIÓN APLICADA AQUÍ ---
-    // Convertimos el `clienteIndex` (que se guarda como texto) a un número entero.
-    // Esta es la única línea que cambia respecto al código original que te di.
-    const clienteIndex = parseInt(presupuesto.clienteIndex, 10); 
-    const cliente = clientes[clienteIndex]; // Usamos el índice ya convertido a número.
+    const clienteIndex = parseInt(presupuesto.clienteIndex, 10);
+    const cliente = clientes[clienteIndex];
 
-    // Ahora, con el índice corregido, esta validación funcionará y no se quedará "cargando".
     if (!cliente) {
-        detalleContainer.innerHTML = '<h1>Error: No se encontró el cliente asociado a este presupuesto.</h1>';
+        detalleContainer.innerHTML = '<h2>Error: Cliente asociado no encontrado.</h2>';
         return;
     }
 
-    // Generar HTML para la lista de repuestos
     let repuestosHTML = '<tr><td colspan="2" style="text-align:center;">- Sin repuestos detallados -</td></tr>';
     if (presupuesto.repuestos && presupuesto.repuestos.length > 0) {
         repuestosHTML = presupuesto.repuestos.map(rep => `
@@ -41,10 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
         `).join('');
     }
 
-    // Construir el HTML final del detalle del presupuesto
-    // Toda esta sección se mantiene exactamente igual.
     detalleContainer.innerHTML = `
-        <h1>Detalle de Presupuesto</h1>
         <div class="info-header">
             <p><strong>Fecha:</strong> ${presupuesto.fecha}</p>
             <p><strong>Presupuesto N°:</strong> ${String(presupuestoId + 1).padStart(4, '0')}</p>
@@ -93,8 +81,20 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     `;
 
-    // Funcionalidad del botón imprimir, sin cambios.
-    btnImprimir.addEventListener('click', function() {
-        window.print();
+    // Funcionalidad del botón de descarga
+    btnDescargar.addEventListener('click', function() {
+        const elementoParaExportar = document.getElementById('presupuesto-a-exportar');
+        const nombreArchivo = `Presupuesto_${cliente.nombre.replace(' ', '_')}_${cliente.patente}.pdf`;
+
+        const opt = {
+          margin:       0.5,
+          filename:     nombreArchivo,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        // Generar y descargar el PDF
+        html2pdf().from(elementoParaExportar).set(opt).save();
     });
 });
