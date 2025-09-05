@@ -67,29 +67,31 @@ document.addEventListener('DOMContentLoaded', function() {
     btnDescargar.addEventListener('click', function() {
         const elementoOriginal = document.getElementById('presupuesto-a-exportar');
         const nombreArchivo = `Presupuesto_${cliente.nombre.replace(/ /g, '_')}_${cliente.patente}.pdf`;
-        
-        // ANÁLISIS DEL CAMBIO: El margen de 0.5 pulgadas ahora controlará todo el espaciado.
         const opt = {
-            margin: 0.5, 
-            filename: nombreArchivo, 
+            margin: [0.5, 0.5, 0.5, 0.5], // Margen [arriba, izquierda, abajo, derecha] en pulgadas
+            filename: nombreArchivo,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true }, 
+            html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
 
         const clon = elementoOriginal.cloneNode(true);
 
-        // Se eliminó el padding y el width fijo para darle control total a la librería.
+        // --- ANÁLISIS DEL CAMBIO FINAL ---
         Object.assign(clon.style, {
             position: 'absolute',
             top: '0',
             left: '0',
+            // 1. RESTAURAMOS EL ANCHO para que la librería sepa qué capturar.
+            width: '8.5in', 
+            // 2. Usamos box-sizing para controlar el tamaño de forma predecible.
+            boxSizing: 'border-box',
+            // 3. Añadimos un padding que coincida con el margen para alinear todo.
+            padding: '0.5in', 
             backgroundColor: '#ffffff',
             color: '#000000',
             border: 'none',
-            padding: '0', // Relleno CERO
-            margin: '0',  // Margen CERO
-            boxSizing: 'border-box'
+            zIndex: '9999' // Aseguramos que esté por encima de todo
         });
 
         // Los estilos de color internos no cambian
