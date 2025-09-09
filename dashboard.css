@@ -1,4 +1,89 @@
-/* AÑADE ESTO al final de dashboard.css */
+/* dashboard.css */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.dashboard-columna h2 {
+    border-bottom-color: var(--color-borde-oscuro);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-container {
+    background-color: var(--color-fondo-principal);
+    border-radius: var(--radio-borde);
+    padding: 10px;
+    min-height: 400px;
+}
+
+.trabajo-card {
+    background-color: var(--color-fondo-secundario);
+    border: 1px solid var(--color-borde-oscuro);
+    border-left: 5px solid var(--color-acento-azul);
+    border-radius: 5px;
+    margin-bottom: 10px;
+    overflow: hidden; /* Clave para el efecto de acordeón */
+}
+
+/* --- ESTILOS PARA EL ACORDEÓN --- */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+    user-select: none; /* Evita que se seleccione el texto al hacer clic */
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.1em;
+    color: var(--color-texto-claro);
+}
+
+.toggle-icon {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--color-acento-azul);
+    transition: transform 0.3s ease;
+}
+
+.trabajo-card.active .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.card-body {
+    max-height: 0; /* Oculto por defecto */
+    transition: max-height 0.4s ease-out; /* Animación suave */
+    padding: 0 15px;
+}
+
+.trabajo-card.active .card-body {
+    padding: 0 15px 15px 15px; /* Añadir padding inferior cuando está activo */
+}
+/* --- FIN ESTILOS ACORDEÓN --- */
+
+
+#col-pendientes .trabajo-card { border-left-color: #ffc107; }
+#col-aceptados .trabajo-card { border-left-color: #28a745; }
+#col-finalizados .trabajo-card { border-left-color: #007BFF; }
+
+.trabajo-card p {
+    margin: 4px 0;
+    font-size: 0.9em;
+    color: var(--color-texto-secundario);
+}
+
+.card-footer {
+    margin-top: 10px;
+    text-align: right;
+    border-top: 1px solid var(--color-borde-oscuro);
+    padding-top: 10px;
+}
+
 .empty-col-msg {
     color: var(--color-texto-secundario);
     text-align: center;
