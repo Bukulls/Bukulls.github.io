@@ -67,12 +67,11 @@
     text-decoration: none; /* Para los enlaces que parecen botones */
     display: inline-block; /* Para que el padding funcione correctamente en los 'a' */
     border: none;
-    padding: 8px 12px;
+    padding: 6px 10px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
     font-size: 0.9em;
-    margin-right: 5px;
 }
 
 /* Estilo para el botón de Editar */
@@ -93,73 +92,48 @@
     background-color: var(--color-eliminar-hover);
 }
 
-@media (max-width: 768px) {
-    .filtro-container input {
-        width: 100%;
-        box-sizing: border-box;
-    }
-}
-/* AÑADE ESTO al final de clientes_registrados.css */
-
-.btn-crear-ot {
-    background-color: #ffc107; /* Un color ámbar para diferenciarlo */
-    color: #1A1A1A;
-}
-.btn-crear-ot:hover {
-    background-color: #e0a800;
-}
-/* AÑADE ESTO al final de clientes_registrados.css */
+/* --- ESTILOS AÑADIDOS PARA ORGANIZACIÓN Y NUEVAS FUNCIONES --- */
 .acciones-cell {
-    min-width: 280px; /* Ancho mínimo para que quepan los botones */
+    min-width: 320px;
+    vertical-align: top;
+}
+
+.acciones-grupo-header {
+    font-weight: bold;
+    color: var(--color-texto-secundario);
+    font-size: 0.8em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 .cliente-acciones {
     display: flex;
-    justify-content: space-around;
-    margin-bottom: 10px;
+    gap: 10px;
+    justify-content: flex-start;
 }
 
 .acciones-divisor {
     border: none;
     border-top: 1px solid var(--color-borde-oscuro);
-    margin: 10px 0;
+    margin: 15px 0;
 }
 
 .presupuesto-accion-grupo {
     background-color: #252525;
     padding: 8px;
     border-radius: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-size: 0.9em;
 }
 
-.presupuesto-info {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--color-texto-secundario);
-}
-
-.botones-grupo {
-    display: flex;
-    justify-content: flex-start;
-    gap: 5px;
-}
-/* AÑADE ESTO al final de clientes_registrados.css */
-
-.btn-finalizar {
-    background-color: #28a745; /* Verde para indicar éxito/finalización */
-    color: white;
-}
-.btn-finalizar:hover {
-    background-color: #218838;
-}
-/* AÑADE ESTO al final de clientes_registrados.css */
 .presupuesto-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
 }
+
 .status-badge {
     padding: 3px 8px;
     border-radius: 12px;
@@ -168,9 +142,18 @@
     color: white;
     text-transform: capitalize;
 }
+
 .status-pendiente { background-color: #ffc107; color: #333; }
 .status-aceptado { background-color: #28a745; }
-.estado-control { display: flex; align-items: center; gap: 5px; font-size: 0.8em; }
+
+.estado-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8em;
+    margin-bottom: 8px;
+}
+
 .estado-control select {
     background-color: #3A3A3A;
     color: var(--color-texto-claro);
@@ -178,8 +161,46 @@
     border-radius: 4px;
     padding: 2px;
 }
+
 .acciones-divisor-inner {
     border: none;
     border-top: 1px solid #444;
     margin: 8px 0;
+}
+
+.botones-grupo {
+    display: flex;
+    justify-content: flex-start;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.btn-eliminar-presupuesto {
+    padding: 2px 8px;
+    font-size: 1.2em;
+    line-height: 1;
+    margin-left: auto; /* Empuja el botón 'x' a la derecha del contenedor */
+}
+
+.btn-crear-ot {
+    background-color: #ffc107;
+    color: #1A1A1A;
+}
+.btn-crear-ot:hover {
+    background-color: #e0a800;
+}
+
+.btn-finalizar {
+    background-color: #28a745;
+    color: white;
+}
+.btn-finalizar:hover {
+    background-color: #218838;
+}
+
+@media (max-width: 768px) {
+    .filtro-container input {
+        width: 100%;
+        box-sizing: border-box;
+    }
 }
