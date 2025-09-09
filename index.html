@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Taller Mecánico</title>
+    <link rel="stylesheet" href="admin_ingreso.css">
+    <link rel="stylesheet" href="menu.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+    <button id="menu-btn" class="menu-btn">
+        </button>
+    <nav id="side-nav" class="side-nav">
+        <ul>
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="admin_ingreso.html">Registro de Clientes</a></li>
+            <li><a href="clientes_registrados.html">Clientes Registrados</a></li>
+            <li><a href="presupuesto.html">Generar Presupuesto</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <h1>Dashboard de Trabajos</h1>
+        <div class="dashboard-grid">
+            <div class="dashboard-columna">
+                <h2><span class="col-icon">⏳</span> Pendientes</h2>
+                <div id="col-pendientes" class="card-container"></div>
+            </div>
+            <div class="dashboard-columna">
+                <h2><span class="col-icon">👍</span> Aceptados</h2>
+                <div id="col-aceptados" class="card-container"></div>
+            </div>
+            <div class="dashboard-columna">
+                <h2><span class="col-icon">✅</span> Finalizados</h2>
+                <div id="col-finalizados" class="card-container"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="dashboard.js"></script>
+    <script src="menu.js"></script> 
+</body>
+</html>

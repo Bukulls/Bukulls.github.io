@@ -161,14 +161,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const totalFinal = manoObra + repuestos.reduce((sum, rep) => sum + rep.monto, 0);
 
-        const presupuestoData = {
-            clienteIndex: clienteIndexSeleccionado,
-            diagnostico: document.getElementById('diagnostico-obs').value,
-            manoObra: manoObra,
-            repuestos: repuestos,
-            total: totalFinal,
-            fecha: new Date().toLocaleDateString('es-CL')
-        };
+const presupuestoData = {
+    clienteIndex: clienteIndexSeleccionado,
+    diagnostico: document.getElementById('diagnostico-obs').value,
+    manoObra: manoObra,
+    repuestos: repuestos,
+    total: totalFinal,
+    fecha: new Date().toLocaleDateString('es-CL'),
+    status: 'pendiente' // AÑADE ESTA LÍNEA
+};
 
         if (modoEdicionPresupuesto) {
             // Si estamos editando, actualizamos el presupuesto existente
