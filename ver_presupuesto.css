@@ -1,44 +1,150 @@
-/* --- ESTILOS TEMPORALES PARA EXPORTAR PDF --- */
+/* --- ESTILOS PARA LA PÁGINA DE VISUALIZACIÓN DEL PRESUPUESTO --- */
 
-/* Esta clase neutraliza los contenedores padre */
-.pdf-export-parent {
-    margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
+/* Estilo del contenedor principal del presupuesto en la app (tema oscuro) */
+.presupuesto-card {
+    background-color: var(--color-fondo-principal);
+    border: 1px solid var(--color-borde-oscuro);
+    border-radius: var(--radio-borde);
+    padding: 25px;
+    color: var(--color-texto-claro);
 }
 
-/* Esta clase aplica el tema blanco al contenido del presupuesto */
-.pdf-export-mode {
+.cabecera-presupuesto {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--color-borde-oscuro);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.cabecera-presupuesto .logo {
+    max-width: 180px;
+}
+
+.cabecera-presupuesto .info-empresa {
+    text-align: right;
+}
+
+.info-empresa h1 {
+    margin: 0 0 10px 0;
+    color: var(--color-acento-azul);
+    font-size: 1.5em;
+    border-bottom: none;
+}
+
+.info-empresa p {
+    margin: 4px 0;
+    font-size: 0.9em;
+    color: var(--color-texto-secundario);
+}
+
+.info-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+}
+
+.seccion-presupuesto {
+    margin-bottom: 25px;
+}
+
+.seccion-presupuesto h2 {
+    font-size: 1.2em;
+    color: var(--color-acento-azul);
+    border-bottom: 1px solid var(--color-borde-oscuro);
+    padding-bottom: 8px;
+    margin-top: 0;
+}
+
+/* Flexbox para datos del cliente y vehículo */
+.datos-cliente-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 30px; /* Espacio vertical y horizontal */
+}
+.datos-cliente-grid p {
+    margin: 5px 0;
+    flex: 1 1 45%; /* Permite que los elementos crezcan y se ajusten */
+}
+
+.seccion-presupuesto p strong {
+    color: var(--color-texto-claro);
+}
+
+.tabla-costos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.tabla-costos th, .tabla-costos td {
+    padding: 10px;
+    border: 1px solid var(--color-borde-oscuro);
+}
+
+.tabla-costos thead {
+    background-color: #333;
+}
+
+.tabla-costos tfoot {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.tabla-costos .monto {
+    text-align: right;
+}
+
+.footer-presupuesto {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid var(--color-borde-oscuro);
+    font-size: 0.85em;
+    color: var(--color-texto-secundario);
+}
+
+/* --- TEMA CLARO PARA LA EXPORTACIÓN A PDF --- */
+/* Esta clase se aplicará dinámicamente al clon del presupuesto */
+
+.theme-light {
     background-color: #ffffff !important;
     color: #000000 !important;
-    border: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
 }
 
-.pdf-export-mode .info-empresa h1,
-.pdf-export-mode .seccion-presupuesto h2,
-.pdf-export-mode .tabla-costos tfoot {
-    color: #007BFF !important;
+.theme-light h1, .theme-light h2 {
+    color: #0056b3 !important;
 }
 
-.pdf-export-mode .info-header p,
-.pdf-export-mode .info-header p strong,
-.pdf-export-mode .info-empresa p,
-.pdf-export-mode .seccion-presupuesto p,
-.pdf-export-mode .seccion-presupuesto p strong,
-.pdf-export-mode .footer-presupuesto p,
-.pdf-export-mode .tabla-costos td,
-.pdf-export-mode .tabla-costos th {
+.theme-light p, .theme-light strong, .theme-light th, .theme-light td {
+    color: #333333 !important;
+}
+
+.theme-light .info-empresa p {
+    color: #555555 !important;
+}
+
+.theme-light .cabecera-presupuesto,
+.theme-light .seccion-presupuesto h2,
+.theme-light .tabla-costos th,
+.theme-light .tabla-costos td,
+.theme-light .footer-presupuesto {
+    border-color: #dddddd !important;
+}
+
+.theme-light .tabla-costos thead {
+    background-color: #f2f2f2 !important;
     color: #000000 !important;
 }
 
-.pdf-export-mode .tabla-costos thead,
-.pdf-export-mode .tabla-costos tfoot {
-    background-color: #eeeeee !important;
+.theme-light .tabla-costos tfoot {
+    background-color: #f2f2f2 !important;
+    color: #0056b3 !important;
 }
 
-.pdf-export-mode .tabla-costos th,
-.pdf-export-mode .tabla-costos td {
-    border-color: #cccccc !important;
+/* Ocultar elementos no deseados en la impresión/PDF */
+.no-print {
+    display: none !important;
 }

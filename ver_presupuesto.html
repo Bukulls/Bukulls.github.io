@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
 
@@ -19,7 +19,6 @@
         <div class="line line-2"></div>
         <div class="line line-3"></div>
     </button>
-
     <nav id="side-nav" class="side-nav no-print">
         <ul>
             <li><a href="admin_ingreso.html">Registro de Clientes</a></li>
@@ -29,21 +28,12 @@
     </nav>
 
     <main class="container">
-        <div id="presupuesto-a-exportar">
-            <div class="cabecera-presupuesto">
-                <img src="logo_pdf.png" alt="Logo Automat Astudillo" class="logo">
-                <div class="info-empresa">
-                    <h1>Presupuesto de Reparación</h1>
-                    <p>Automat Astudillo</p>
-                    <p>Bernardo Leighton #0334B , Villa alemana</p>
-                    <p>Teléfono: +56 9 </p>
-                </div>
+        
+        <div id="presupuesto-a-exportar" class="presupuesto-card">
             </div>
-            <div id="presupuesto-detalle-container">
-                <h2 id="titulo-presupuesto">Cargando datos...</h2>
-            </div>
-        </div>
+
         <button id="btn-descargar-pdf" class="btn-submit no-print">Descargar PDF</button>
+
     </main>
 
     <script src="ver_presupuesto.js"></script>
