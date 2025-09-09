@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function mostrarInfoCliente(selectedIndex) {
-        if (selectedIndex) {
+        if (selectedIndex !== null && selectedIndex !== "") {
             const cliente = clientes[selectedIndex];
             clienteInfoCard.innerHTML = `
                 <p><strong>Vehículo:</strong> ${cliente.marca} ${cliente.modelo} (${cliente.anio})</p>
@@ -112,26 +112,39 @@ document.addEventListener('DOMContentLoaded', function() {
         clienteSelect.disabled = true; // No se puede cambiar el cliente al editar
 
         repuestosContainer.innerHTML = ''; // Limpiar campos de repuestos
-        presupuesto.repuestos.forEach(rep => {
-            agregarCampoRepuesto(rep.nombre, rep.monto);
-        });
+        if(presupuesto.repuestos) {
+            presupuesto.repuestos.forEach(rep => {
+                agregarCampoRepuesto(rep.nombre, rep.monto);
+            });
+        }
 
         btnSubmit.textContent = 'Guardar Cambios en Presupuesto';
         btnSubmit.style.backgroundColor = 'var(--color-editar)';
         calcularTotal();
     }
 
+    // --- LÓGICA DE ENVÍO CORREGIDA ---
     presupuestoForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const selectedClientIndex = clienteSelect.value;
-        if (!selectedClientIndex) {
+        // Obtenemos el índice del cliente de forma segura
+        let clienteIndexSeleccionado;
+        if (modoEdicionPresupuesto) {
+            // En modo edición, lo tomamos del presupuesto que se está editando
+            clienteIndexSeleccionado = presupuestos[presupuestoAEditarIndex].clienteIndex;
+        } else {
+            // En modo creación, lo tomamos del <select>
+            clienteIndexSeleccionado = clienteSelect.value;
+        }
+
+        // Validamos que se haya seleccionado un cliente
+        if (clienteIndexSeleccionado === "") {
             alert('Error: Debe seleccionar un cliente.');
             return;
         }
-
+        
         const manoObra = parseFloat(manoObraInput.value) || 0;
-        if (manoObra <= 0 && !modoEdicionPresupuesto) {
+        if (manoObra <= 0) {
              alert('Error: El monto de la mano de obra debe ser mayor a cero.');
              return;
         }
@@ -149,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const totalFinal = manoObra + repuestos.reduce((sum, rep) => sum + rep.monto, 0);
 
         const presupuestoData = {
-            clienteIndex: selectedClientIndex,
+            clienteIndex: clienteIndexSeleccionado,
             diagnostico: document.getElementById('diagnostico-obs').value,
             manoObra: manoObra,
             repuestos: repuestos,

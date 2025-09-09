@@ -108,3 +108,39 @@
 .btn-crear-ot:hover {
     background-color: #e0a800;
 }
+/* AÑADE ESTO al final de clientes_registrados.css */
+.acciones-cell {
+    min-width: 280px; /* Ancho mínimo para que quepan los botones */
+}
+
+.cliente-acciones {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+
+.acciones-divisor {
+    border: none;
+    border-top: 1px solid var(--color-borde-oscuro);
+    margin: 10px 0;
+}
+
+.presupuesto-accion-grupo {
+    background-color: #252525;
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.presupuesto-info {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--color-texto-secundario);
+}
+
+.botones-grupo {
+    display: flex;
+    justify-content: flex-start;
+    gap: 5px;
+}

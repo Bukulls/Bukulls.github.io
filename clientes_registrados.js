@@ -23,17 +23,36 @@ document.addEventListener('DOMContentLoaded', function() {
             const index = clientes.findIndex(c => c.patente === cliente.patente);
             const fila = document.createElement('tr');
             
-            const presupuestoIndex = presupuestos.map(p => p.clienteIndex).lastIndexOf(index.toString());
-            
+            // --- INICIO DE LA MODIFICACIÓN ---
+            // Buscamos TODOS los presupuestos que coincidan con el índice del cliente
+            const presupuestosDelClienteIndices = [];
+            presupuestos.forEach((p, pIndex) => {
+                // Se usa '==' para comparar de forma flexible (string vs número)
+                if (p.clienteIndex == index) {
+                    presupuestosDelClienteIndices.push(pIndex);
+                }
+            });
+
             let botonesPresupuestoHTML = '';
-           if (presupuestoIndex !== -1) {
-    // Creamos los botones de Ver, Editar y el nuevo de Crear OT
-    botonesPresupuestoHTML = `
-        <a href="ver_presupuesto.html?id=${presupuestoIndex}" class="btn-accion btn-ver">Ver Ppto.</a>
-        <a href="presupuesto.html?editar_id=${presupuestoIndex}" class="btn-accion btn-editar">Editar Ppto.</a>
-        <a href="orden_trabajo.html?id=${presupuestoIndex}" class="btn-accion btn-crear-ot">Crear OT</a>
-    `;
-}
+            if (presupuestosDelClienteIndices.length > 0) {
+                // Si encontramos presupuestos, creamos un grupo de botones para cada uno
+                presupuestosDelClienteIndices.forEach(presupuestoIndex => {
+                    const presupuesto = presupuestos[presupuestoIndex];
+                    botonesPresupuestoHTML += `
+                        <div class="presupuesto-accion-grupo">
+                            <span class="presupuesto-info">Ppto. N°${String(presupuestoIndex + 1).padStart(4, '0')} (${presupuesto.fecha || ''}):</span>
+                            <div class="botones-grupo">
+                                <a href="ver_presupuesto.html?id=${presupuestoIndex}" class="btn-accion btn-ver">Ver</a>
+                                <a href="presupuesto.html?editar_id=${presupuestoIndex}" class="btn-accion btn-editar">Editar</a>
+                                <a href="orden_trabajo.html?id=${presupuestoIndex}" class="btn-accion btn-crear-ot">Crear OT</a>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                botonesPresupuestoHTML = '<span>Aún no tiene presupuestos</span>';
+            }
+            // --- FIN DE LA MODIFICACIÓN ---
 
             fila.innerHTML = `
                 <td>${cliente.nombre}</td>
@@ -43,8 +62,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${cliente.modelo}</td>
                 <td>${cliente.anio}</td>
                 <td class="acciones-cell">
-                    <a href="admin_ingreso.html?editar=${index}" class="btn-accion btn-editar">Editar Cliente</a>
-                    ${botonesPresupuestoHTML} <button class="btn-accion btn-eliminar" data-index="${index}">Eliminar</button>
+                    <div class="cliente-acciones">
+                        <a href="admin_ingreso.html?editar=${index}" class="btn-accion btn-editar">Editar Cliente</a>
+                        <button class="btn-accion btn-eliminar" data-index="${index}">Eliminar</button>
+                    </div>
+                    <hr class="acciones-divisor">
+                    ${botonesPresupuestoHTML}
                 </td>
             `;
             
@@ -56,8 +79,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (evento.target.classList.contains('btn-eliminar')) {
             const index = evento.target.getAttribute('data-index');
             
-            const confirmar = confirm('¿Estás seguro de que deseas eliminar este cliente?');
+            const confirmar = confirm('¿Estás seguro de que deseas eliminar este cliente? Se eliminarán también todos sus presupuestos asociados.');
             if (confirmar) {
+                // Eliminar presupuestos asociados
+                presupuestos = presupuestos.filter(p => p.clienteIndex != index);
+                localStorage.setItem('presupuestos', JSON.stringify(presupuestos));
+                
+                // Eliminar cliente
                 clientes.splice(index, 1);
                 guardarClientes();
                 filtrarYRenderizar(); 
