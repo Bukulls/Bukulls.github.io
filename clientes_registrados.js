@@ -75,7 +75,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td class="acciones-cell">
                     <div class="acciones-grupo-header">Acciones del Cliente</div>
                     <div class="cliente-acciones">
-                        <a href="admin_ingreso.html?editar=${index}" class="btn-accion btn-editar">Editar Cliente</a>
+                    <a href="historial_cliente.html?clienteIndex=${index}" class="btn-accion btn-historial">Ver Historial</a>    
+                    <a href="admin_ingreso.html?editar=${index}" class="btn-accion btn-editar">Editar Cliente</a>
                         <button class="btn-accion btn-eliminar" data-index="${index}">Eliminar Cliente</button>
                     </div>
                     <hr class="acciones-divisor">

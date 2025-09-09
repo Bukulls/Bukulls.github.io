@@ -204,3 +204,12 @@
         box-sizing: border-box;
     }
 }
+/* AÑADE ESTO al final de clientes_registrados.css */
+
+.btn-historial {
+    background-color: #6f42c1; /* Un color violeta para diferenciarlo */
+    color: white;
+}
+.btn-historial:hover {
+    background-color: #5a32a3;
+}
