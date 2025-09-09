@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- ELEMENTOS DEL DOM ---
     const detalleContainer = document.getElementById('presupuesto-a-exportar');
     const btnDescargar = document.getElementById('btn-descargar-pdf');
+    // AÑADIDO PARA WHATSAPP
+    const btnWhatsapp = document.getElementById('btn-whatsapp');
+    const accionesContainer = document.querySelector('.acciones-container');
 
     // --- OBTENER DATOS ---
     const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
@@ -11,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- FUNCIÓN PARA FORMATEAR MONEDA ---
     const formatearMoneda = (valor) => {
-        // Verificación para asegurar que el valor es un número
         if (typeof valor !== 'number') return '$0';
         return valor.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
     };
@@ -118,11 +120,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p><strong>Motivo:</strong> ${error.message}</p>
                 </div>
             `;
-            btnDescargar.style.display = 'none'; // Ocultamos el botón que no funcionaría
+            // Se actualiza para ocultar el contenedor de ambos botones en caso de error
+            if (accionesContainer) accionesContainer.style.display = 'none';
         }
     }
     
-    // --- FUNCIÓN PARA DESCARGAR EL PDF (SIN CAMBIOS, PERO AHORA SEGURA) ---
+    // --- FUNCIÓN PARA DESCARGAR EL PDF (SIN CAMBIOS) ---
     function descargarPDF() {
         const presupuesto = presupuestos[presupuestoId];
         const cliente = clientes[presupuesto.clienteIndex];
@@ -140,6 +143,39 @@ document.addEventListener('DOMContentLoaded', function() {
         html2pdf().from(elementoParaExportar).set(opt).save();
     }
 
+    // --- FUNCIÓN AÑADIDA PARA ENVIAR POR WHATSAPP ---
+    function enviarPorWhatsapp() {
+        try {
+            const presupuesto = presupuestos[presupuestoId];
+            const cliente = clientes[presupuesto.clienteIndex];
+
+            // Limpia y formatea el número de teléfono para el estándar internacional
+            let telefonoCliente = cliente.telefono.replace(/\s+/g, '');
+            if (!telefonoCliente.startsWith('56')) {
+                telefonoCliente = '56' + telefonoCliente;
+            }
+
+            const nombreCliente = cliente.nombre.split(' ')[0]; // Solo el primer nombre
+            const vehiculo = `${cliente.marca} ${cliente.modelo}`;
+            const total = formatearMoneda(presupuesto.total);
+            const linkPresupuesto = window.location.href;
+
+            // Mensaje predefinido
+            const mensaje = `Hola ${nombreCliente}, te enviamos el presupuesto para tu ${vehiculo} desde Automat Astudillo.\n\n*Total Estimado: ${total}*\n\nPuedes ver el detalle completo aquí:\n${linkPresupuesto}`;
+            
+            // Crea y abre la URL de WhatsApp
+            const whatsappUrl = `https://wa.me/${telefonoCliente}?text=${encodeURIComponent(mensaje)}`;
+            window.open(whatsappUrl, '_blank');
+
+        } catch (error) {
+            console.error("Error al generar enlace de WhatsApp:", error);
+            alert("No se pudo crear el mensaje de WhatsApp. Verifique los datos del cliente.");
+        }
+    }
+
+    // --- ASIGNAR EVENTOS Y EJECUTAR ---
     btnDescargar.addEventListener('click', descargarPDF);
+    // EVENTO AÑADIDO PARA EL BOTÓN DE WHATSAPP
+    btnWhatsapp.addEventListener('click', enviarPorWhatsapp); 
     renderizarPresupuesto();
 });

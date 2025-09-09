@@ -181,3 +181,27 @@
         display: none !important;
     }
 }
+/* --- ESTILOS PARA LOS BOTONES DE ACCIÓN --- */
+.acciones-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 25px auto 10px auto;
+}
+/* Ajuste para que los botones se vean bien dentro del contenedor flex */
+.acciones-container .btn-submit {
+    margin: 0;
+    width: auto;
+    padding: 12px 20px;
+    grid-column: auto; /* Resetea cualquier estilo de grid previo */
+}
+/* Estilo específico para el botón de WhatsApp */
+.btn-whatsapp {
+    background-color: #25D366; /* Verde de WhatsApp */
+    color: white;
+}
+.btn-whatsapp:hover {
+    background-color: #1EBE57; /* Verde más oscuro al pasar el mouse */
+}
