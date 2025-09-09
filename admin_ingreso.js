@@ -43,16 +43,20 @@ document.addEventListener('DOMContentLoaded', function() {
     formulario.addEventListener('submit', function(evento) {
         evento.preventDefault();
 
-        const clienteData = {
-            nombre: document.getElementById('cliente-nombre').value,
-            telefono: document.getElementById('cliente-telefono').value,
-            email: document.getElementById('cliente-email').value,
-            patente: document.getElementById('vehiculo-patente').value.toUpperCase(),
-            marca: document.getElementById('vehiculo-marca').value,
-            modelo: document.getElementById('vehiculo-modelo').value,
-            anio: document.getElementById('vehiculo-anio').value,
-            observaciones: document.getElementById('vehiculo-obs').value
-        };
+        // En admin_ingreso.js, dentro del evento 'submit'
+const clienteData = {
+    nombre: document.getElementById('cliente-nombre').value,
+    rut: document.getElementById('cliente-rut').value, // NUEVO
+    telefono: document.getElementById('cliente-telefono').value,
+    email: document.getElementById('cliente-email').value,
+    direccion: document.getElementById('cliente-direccion').value, // NUEVO
+    comuna: document.getElementById('cliente-comuna').value, // NUEVO
+    patente: document.getElementById('vehiculo-patente').value.toUpperCase(),
+    marca: document.getElementById('vehiculo-marca').value,
+    modelo: document.getElementById('vehiculo-modelo').value,
+    anio: document.getElementById('vehiculo-anio').value,
+    observaciones: document.getElementById('vehiculo-obs').value
+};
 
         if (modoEdicion) {
             clientes[clienteIndex] = clienteData;
@@ -79,5 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (editarIndex !== null && clientes[editarIndex]) {
         cargarClienteEnFormulario(editarIndex);
+        document.getElementById('cliente-rut').value = cliente.rut || '';
+        document.getElementById('cliente-direccion').value = cliente.direccion || '';
+        document.getElementById('cliente-comuna').value = cliente.comuna || '';
     }
 });

@@ -26,13 +26,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const presupuestoIndex = presupuestos.map(p => p.clienteIndex).lastIndexOf(index.toString());
             
             let botonesPresupuestoHTML = '';
-            if (presupuestoIndex !== -1) {
-                // Creamos los botones de Ver y Editar para el presupuesto
-                botonesPresupuestoHTML = `
-                    <a href="ver_presupuesto.html?id=${presupuestoIndex}" class="btn-accion btn-ver">Ver</a>
-                    <a href="presupuesto.html?editar_id=${presupuestoIndex}" class="btn-accion btn-editar">Editar</a>
-                `;
-            }
+           if (presupuestoIndex !== -1) {
+    // Creamos los botones de Ver, Editar y el nuevo de Crear OT
+    botonesPresupuestoHTML = `
+        <a href="ver_presupuesto.html?id=${presupuestoIndex}" class="btn-accion btn-ver">Ver Ppto.</a>
+        <a href="presupuesto.html?editar_id=${presupuestoIndex}" class="btn-accion btn-editar">Editar Ppto.</a>
+        <a href="orden_trabajo.html?id=${presupuestoIndex}" class="btn-accion btn-crear-ot">Crear OT</a>
+    `;
+}
 
             fila.innerHTML = `
                 <td>${cliente.nombre}</td>

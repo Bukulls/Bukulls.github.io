@@ -99,3 +99,12 @@
         box-sizing: border-box;
     }
 }
+/* AÑADE ESTO al final de clientes_registrados.css */
+
+.btn-crear-ot {
+    background-color: #ffc107; /* Un color ámbar para diferenciarlo */
+    color: #1A1A1A;
+}
+.btn-crear-ot:hover {
+    background-color: #e0a800;
+}
