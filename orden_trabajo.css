@@ -132,4 +132,7 @@
     .signature-box label {
         color: #333;
     }
+    .ot-logo-info .logo {
+    mix-blend-mode: multiply;
+}
 }

@@ -172,7 +172,9 @@
     background-color: #f2f2f2 !important;
     color: #0056b3 !important;
 }
-
+.theme-light .logo {
+    mix-blend-mode: multiply;
+}
 
 /* --- ESTILOS DE IMPRESIÓN --- */
 /* Estas reglas SÓLO se aplican al imprimir o generar el PDF */
