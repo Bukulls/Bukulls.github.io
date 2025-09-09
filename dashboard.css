@@ -1,0 +1,7 @@
+/* AÑADE ESTO al final de dashboard.css */
+.empty-col-msg {
+    color: var(--color-texto-secundario);
+    text-align: center;
+    margin-top: 20px;
+    font-style: italic;
+}
