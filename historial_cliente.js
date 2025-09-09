@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Añadir presupuestos activos
     presupuestos.forEach((presupuesto, index) => {
-        if (presupuesto && presupuesto.clienteIndex === clienteIndex) {
+        // La comparación se hace con '==' (igualdad flexible) para evitar problemas de tipo (número vs string)
+        if (presupuesto && presupuesto.clienteIndex == clienteIndex) {
             historialCompleto.push({
                 tipo: 'presupuesto',
                 id: index,
@@ -45,7 +46,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Añadir trabajos finalizados
     trabajosFinalizados.forEach(trabajo => {
-        if (trabajo.clienteIndex === clienteIndex) {
+        // --- CORRECCIÓN CLAVE AQUÍ ---
+        // Se usa '==' en lugar de '===' para asegurar que la comparación funcione
+        // aunque uno sea número y el otro texto.
+        if (trabajo.clienteIndex == clienteIndex) {
             historialCompleto.push({
                 tipo: 'finalizado',
                 id: trabajo.presupuestoId,
@@ -61,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Por ahora, lo mostraremos en el orden en que se encontró.
 
     // 4. Renderizar el historial en la página
+    historialContainer.innerHTML = ''; // Limpiar por si acaso
     if (historialCompleto.length === 0) {
         historialContainer.innerHTML = '<p>Este cliente no tiene ningún historial de trabajos.</p>';
         return;
