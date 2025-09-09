@@ -148,3 +148,27 @@
 .no-print {
     display: none !important;
 }
+/* --- ESTILOS PARA LA TARJETA DE ERROR --- */
+.error-card {
+    background-color: #4d2a2a; /* Un fondo rojizo oscuro */
+    border: 1px solid var(--color-eliminar); /* Borde rojo de alerta */
+    border-radius: var(--radio-borde);
+    padding: 25px;
+    text-align: center;
+    color: var(--color-texto-claro);
+}
+
+.error-card h2 {
+    color: var(--color-eliminar);
+    border-bottom: none;
+    margin-top: 0;
+}
+
+.error-card p {
+    color: var(--color-texto-claro);
+    line-height: 1.5;
+}
+
+.error-card strong {
+    color: #ffc107; /* Amarillo para resaltar el mensaje técnico */
+}

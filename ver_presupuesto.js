@@ -11,121 +11,135 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- FUNCIÓN PARA FORMATEAR MONEDA ---
     const formatearMoneda = (valor) => {
+        // Verificación para asegurar que el valor es un número
+        if (typeof valor !== 'number') return '$0';
         return valor.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
     };
 
-    // --- FUNCIÓN PARA RENDERIZAR EL PRESUPUESTO ---
+    // --- FUNCIÓN PARA RENDERIZAR EL PRESUPUESTO (CON MANEJO DE ERRORES) ---
     function renderizarPresupuesto() {
-        if (isNaN(presupuestoId) || !presupuestos[presupuestoId]) {
-            detalleContainer.innerHTML = '<h2>Error: Presupuesto no encontrado.</h2>';
-            btnDescargar.style.display = 'none';
-            return;
-        }
+        try {
+            // 1. Validar el ID del presupuesto desde la URL
+            if (isNaN(presupuestoId)) {
+                throw new Error("La URL no contiene un ID de presupuesto válido.");
+            }
 
-        const presupuesto = presupuestos[presupuestoId];
-        const cliente = clientes[presupuesto.clienteIndex];
+            // 2. Encontrar el presupuesto usando el ID
+            const presupuesto = presupuestos[presupuestoId];
+            if (!presupuesto) {
+                throw new Error(`No se encontró ningún presupuesto con el ID: ${presupuestoId}.`);
+            }
 
-        if (!cliente) {
-            detalleContainer.innerHTML = '<h2>Error: Cliente asociado no encontrado.</h2>';
-            btnDescargar.style.display = 'none';
-            return;
-        }
+            // 3. Validar y encontrar el cliente asociado
+            const clienteIndex = presupuesto.clienteIndex;
+            if (clienteIndex === undefined || clienteIndex === null) {
+                throw new Error("Este presupuesto no tiene un cliente asociado correctamente.");
+            }
+            const cliente = clientes[clienteIndex];
+            if (!cliente) {
+                throw new Error(`El cliente asociado (ID: ${clienteIndex}) no fue encontrado. Es posible que haya sido eliminado.`);
+            }
 
-        // Generar filas de la tabla de repuestos
-        let repuestosHTML = '';
-        if (presupuesto.repuestos && presupuesto.repuestos.length > 0) {
-            repuestosHTML = presupuesto.repuestos.map(rep => `
-                <tr>
-                    <td>Repuesto: ${rep.nombre}</td>
-                    <td class="monto">${formatearMoneda(rep.monto)}</td>
-                </tr>
-            `).join('');
-        }
+            // --- Si todas las validaciones pasan, construimos el HTML ---
 
-        // Plantilla HTML completa del presupuesto
-        detalleContainer.innerHTML = `
-            <div class="cabecera-presupuesto">
-                <img src="logo_pdf.png" alt="Logo Automat Astudillo" class="logo">
-                <div class="info-empresa">
-                    <h1>Presupuesto de Reparación</h1>
-                    <p>Automat Astudillo</p>
-                    <p>Bernardo Leighton #0334B, Villa Alemana</p>
-                    <p>Teléfono: +56 9 XXXXXXXX</p>
+            let repuestosHTML = '';
+            if (presupuesto.repuestos && presupuesto.repuestos.length > 0) {
+                repuestosHTML = presupuesto.repuestos.map(rep => `
+                    <tr>
+                        <td>Repuesto: ${rep.nombre || 'Sin nombre'}</td>
+                        <td class="monto">${formatearMoneda(rep.monto)}</td>
+                    </tr>
+                `).join('');
+            }
+
+            detalleContainer.innerHTML = `
+                <div class="cabecera-presupuesto">
+                    <img src="logo_pdf.png" alt="Logo Automat Astudillo" class="logo">
+                    <div class="info-empresa">
+                        <h1>Presupuesto de Reparación</h1>
+                        <p>Automat Astudillo</p>
+                        <p>Bernardo Leighton #0334B, Villa Alemana</p>
+                        <p>Teléfono: +56 9 XXXXXXXX</p>
+                    </div>
                 </div>
-            </div>
-            <div class="info-header">
-                <p><strong>Fecha:</strong> ${presupuesto.fecha}</p>
-                <p><strong>Presupuesto N°:</strong> ${String(presupuestoId + 1).padStart(4, '0')}</p>
-            </div>
-            <div class="seccion-presupuesto">
-                <h2>Datos del Cliente</h2>
-                <div class="datos-cliente-grid">
-                    <p><strong>Nombre:</strong> ${cliente.nombre}</p>
-                    <p><strong>Teléfono:</strong> ${cliente.telefono}</p>
-                    <p><strong>Vehículo:</strong> ${cliente.marca} ${cliente.modelo} (${cliente.anio})</p>
-                    <p><strong>Patente:</strong> ${cliente.patente}</p>
+                <div class="info-header">
+                    <p><strong>Fecha:</strong> ${presupuesto.fecha || 'No definida'}</p>
+                    <p><strong>Presupuesto N°:</strong> ${String(presupuestoId + 1).padStart(4, '0')}</p>
                 </div>
-            </div>
-            <div class="seccion-presupuesto">
-                <h2>Diagnóstico / Trabajo a Realizar</h2>
-                <p>${presupuesto.diagnostico || 'No especificado.'}</p>
-            </div>
-            <div class="seccion-presupuesto">
-                <h2>Detalle de Costos</h2>
-                <table class="tabla-costos">
-                    <thead>
-                        <tr>
-                            <th>Descripción</th>
-                            <th>Monto</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Mano de Obra</td>
-                            <td class="monto">${formatearMoneda(presupuesto.manoObra)}</td>
-                        </tr>
-                        ${repuestosHTML}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th>Total Estimado</th>
-                            <th class="monto">${formatearMoneda(presupuesto.total)}</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            <div class="footer-presupuesto">
-                <p>Este presupuesto es válido por 15 días. Gracias por su preferencia.</p>
-            </div>
-        `;
+                <div class="seccion-presupuesto">
+                    <h2>Datos del Cliente</h2>
+                    <div class="datos-cliente-grid">
+                        <p><strong>Nombre:</strong> ${cliente.nombre}</p>
+                        <p><strong>Teléfono:</strong> ${cliente.telefono}</p>
+                        <p><strong>Vehículo:</strong> ${cliente.marca} ${cliente.modelo} (${cliente.anio})</p>
+                        <p><strong>Patente:</strong> ${cliente.patente}</p>
+                    </div>
+                </div>
+                <div class="seccion-presupuesto">
+                    <h2>Diagnóstico / Trabajo a Realizar</h2>
+                    <p>${presupuesto.diagnostico || 'No especificado.'}</p>
+                </div>
+                <div class="seccion-presupuesto">
+                    <h2>Detalle de Costos</h2>
+                    <table class="tabla-costos">
+                        <thead>
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Mano de Obra</td>
+                                <td class="monto">${formatearMoneda(presupuesto.manoObra)}</td>
+                            </tr>
+                            ${repuestosHTML}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Total Estimado</th>
+                                <th class="monto">${formatearMoneda(presupuesto.total)}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="footer-presupuesto">
+                    <p>Este presupuesto es válido por 15 días. Gracias por su preferencia.</p>
+                </div>
+            `;
+
+        } catch (error) {
+            // --- Bloque CATCH: Si algo falla, se ejecuta esto ---
+            console.error("Error al renderizar el presupuesto:", error);
+            detalleContainer.innerHTML = `
+                <div class="error-card">
+                    <h2>Oops! Hubo un problema al cargar</h2>
+                    <p>No se pudieron mostrar los detalles del presupuesto.</p>
+                    <p><strong>Motivo:</strong> ${error.message}</p>
+                </div>
+            `;
+            btnDescargar.style.display = 'none'; // Ocultamos el botón que no funcionaría
+        }
     }
     
-    // --- FUNCIÓN PARA GENERAR Y DESCARGAR EL PDF ---
+    // --- FUNCIÓN PARA DESCARGAR EL PDF (SIN CAMBIOS, PERO AHORA SEGURA) ---
     function descargarPDF() {
         const presupuesto = presupuestos[presupuestoId];
         const cliente = clientes[presupuesto.clienteIndex];
         const nombreArchivo = `Presupuesto_${String(presupuestoId + 1).padStart(4, '0')}_${cliente.nombre.replace(/ /g, '_')}_${cliente.patente}.pdf`;
-
-        // 1. Clonar el elemento que queremos exportar
         const elementoParaExportar = detalleContainer.cloneNode(true);
-
-        // 2. Aplicar la clase de tema claro al clon
         elementoParaExportar.classList.add('theme-light');
         
-        // 3. Opciones de html2pdf
         const opt = {
-            margin:       [0.5, 0.5, 0.5, 0.5], // Arriba, Izquierda, Abajo, Derecha (en pulgadas)
+            margin:       [0.5, 0.5, 0.5, 0.5],
             filename:     nombreArchivo,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true },
             jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
         };
-
-        // 4. Generar el PDF desde el clon estilizado
         html2pdf().from(elementoParaExportar).set(opt).save();
     }
 
-    // --- ASIGNAR EVENTOS Y EJECUTAR ---
     btnDescargar.addEventListener('click', descargarPDF);
     renderizarPresupuesto();
 });
