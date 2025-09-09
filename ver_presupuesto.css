@@ -58,7 +58,6 @@
     margin-top: 0;
 }
 
-/* Flexbox para datos del cliente y vehículo */
 .datos-cliente-grid {
     display: flex;
     flex-wrap: wrap;
@@ -106,6 +105,36 @@
     color: var(--color-texto-secundario);
 }
 
+/* --- ESTILOS PARA LA TARJETA DE ERROR --- */
+.error-card {
+    background-color: #4d2a2a;
+    border: 1px solid var(--color-eliminar);
+    border-radius: var(--radio-borde);
+    padding: 25px;
+    text-align: center;
+    color: var(--color-texto-claro);
+}
+
+.error-card h2 {
+    color: var(--color-eliminar);
+    border-bottom: none;
+    margin-top: 0;
+}
+
+.error-card p {
+    color: var(--color-texto-claro);
+}
+
+/* --- ESTILOS PARA EL BOTÓN DE DESCARGA --- */
+/* Hereda de .btn-submit pero ajustamos su posición */
+#btn-descargar-pdf {
+    display: block; /* Necesario para que el margen automático funcione */
+    width: 220px; /* Un ancho fijo para que no ocupe todo el espacio */
+    margin: 25px auto 10px auto; /* Margen superior, centrado horizontalmente, margen inferior */
+    grid-column: auto; /* Reseteamos el estilo de grid por si acaso */
+}
+
+
 /* --- TEMA CLARO PARA LA EXPORTACIÓN A PDF --- */
 /* Esta clase se aplicará dinámicamente al clon del presupuesto */
 
@@ -144,31 +173,11 @@
     color: #0056b3 !important;
 }
 
-/* Ocultar elementos no deseados en la impresión/PDF */
-.no-print {
-    display: none !important;
-}
-/* --- ESTILOS PARA LA TARJETA DE ERROR --- */
-.error-card {
-    background-color: #4d2a2a; /* Un fondo rojizo oscuro */
-    border: 1px solid var(--color-eliminar); /* Borde rojo de alerta */
-    border-radius: var(--radio-borde);
-    padding: 25px;
-    text-align: center;
-    color: var(--color-texto-claro);
-}
 
-.error-card h2 {
-    color: var(--color-eliminar);
-    border-bottom: none;
-    margin-top: 0;
-}
-
-.error-card p {
-    color: var(--color-texto-claro);
-    line-height: 1.5;
-}
-
-.error-card strong {
-    color: #ffc107; /* Amarillo para resaltar el mensaje técnico */
+/* --- ESTILOS DE IMPRESIÓN --- */
+/* Estas reglas SÓLO se aplican al imprimir o generar el PDF */
+@media print {
+    .no-print {
+        display: none !important;
+    }
 }
