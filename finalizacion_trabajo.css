@@ -1,0 +1,49 @@
+/* Estilos específicos para la página de Finalización */
+#costos-finales-container .repuesto-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+#costos-finales-container input {
+    font-size: 1em;
+    padding: 8px;
+}
+
+#costos-finales-container .nombre-item {
+    flex-grow: 1;
+}
+
+#costos-finales-container .monto-item {
+    flex-basis: 150px;
+    flex-grow: 0;
+    text-align: right;
+}
+
+.total-final-container {
+    text-align: right;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid var(--color-borde-oscuro);
+}
+
+.total-final-container h3 {
+    margin: 0;
+    color: var(--color-acento-azul);
+}
+
+/* Redefinimos la grilla de firma para 3 columnas */
+#finalizacion-container .ot-signature {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Estilos de impresión */
+@media print {
+    .total-final-container {
+        border-color: #ccc;
+    }
+    .total-final-container h3 {
+        color: #000;
+    }
+}

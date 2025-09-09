@@ -144,3 +144,12 @@
     justify-content: flex-start;
     gap: 5px;
 }
+/* AÑADE ESTO al final de clientes_registrados.css */
+
+.btn-finalizar {
+    background-color: #28a745; /* Verde para indicar éxito/finalización */
+    color: white;
+}
+.btn-finalizar:hover {
+    background-color: #218838;
+}

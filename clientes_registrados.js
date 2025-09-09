@@ -45,7 +45,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <a href="ver_presupuesto.html?id=${presupuestoIndex}" class="btn-accion btn-ver">Ver</a>
                                 <a href="presupuesto.html?editar_id=${presupuestoIndex}" class="btn-accion btn-editar">Editar</a>
                                 <a href="orden_trabajo.html?id=${presupuestoIndex}" class="btn-accion btn-crear-ot">Crear OT</a>
-                            </div>
+                                <a href="finalizacion_trabajo.html?id=${presupuestoIndex}" class="btn-accion btn-finalizar">Finalizar</a>
+                                </div>
                         </div>
                     `;
                 });
