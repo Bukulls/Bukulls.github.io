@@ -2,91 +2,25 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finalización de Trabajo - Taller</title>
+    <title>Finalización de Trabajo</title>
     <link rel="stylesheet" href="admin_ingreso.css">
     <link rel="stylesheet" href="menu.css">
-    <link rel="stylesheet" href="orden_trabajo.css"> <link rel="stylesheet" href="finalizacion_trabajo.css"> </head>
+    <link rel="stylesheet" href="documento.css"> <link rel="stylesheet" href="finalizacion_trabajo.css">
+</head>
 <body>
-
-<button id="menu-btn" class="menu-btn">
-        <div class="line line-1"></div>
-        <div class="line line-2"></div>
-        <div class="line line-3"></div>
-    </button>
-    <nav id="side-nav" class="side-nav no-print">
-        <ul>
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="admin_ingreso.html">Registro de Clientes</a></li>
-            <li><a href="clientes_registrados.html">Clientes Registrados</a></li>
-            <li><a href="presupuesto.html">Generar Presupuesto</a></li>
-            <li><a href="reportes.html">Reportes</a></li>
-        </ul>
-    </nav>
-
+    <button id="menu-btn" class="menu-btn no-print"></button>
+    <nav id="side-nav" class="side-nav no-print"></nav>
     <main class="container">
-        <div id="finalizacion-container">
-            <div class="ot-header">
-                <div class="ot-logo-info">
-                    <img src="logo_pdf.png" alt="Logo Taller" class="logo">
-                </div>
-                <div class="ot-title">
-                    <h1>INFORME DE FINALIZACIÓN Y ENTREGA</h1>
-                    <h2>OT N°: <span id="ot-numero"></span></h2>
-                </div>
+        <div id="finalizacion-container" class="documento-container">
+            <div class="doc-header">
+                <div class="doc-logo-info"><img src="logo_pdf.png" alt="Logo Taller" class="logo"><div class="doc-empresa-info"><p><strong>Automat Astudillo</strong></p><p>B. Leighton #0334B, Villa Alemana</p><p>Tel: +56 9 XXXXXXXX</p></div></div>
+                <div class="doc-title"><h1>INFORME FINAL</h1><h2>OT N°: <span id="ot-numero"></span></h2></div>
             </div>
-
             <form id="finalizacion-form">
-                <section class="ot-section data-grid">
-                    <div class="input-group"><label>Cliente</label><input type="text" id="cliente-nombre" readonly></div>
-                    <div class="input-group"><label>RUT</label><input type="text" id="cliente-rut" readonly></div>
-                    <div class="input-group"><label>Vehículo</label><input type="text" id="vehiculo-info" readonly></div>
-                    <div class="input-group"><label>Patente</label><input type="text" id="vehiculo-patente" readonly></div>
-                    <div class="input-group"><label>Fecha Ingreso</label><input type="text" id="fecha-ingreso" readonly></div>
-                    <div class="input-group"><label>Fecha Entrega</label><input type="text" id="fecha-entrega" readonly></div>
-                </section>
-
-                <section class="ot-section">
-                    <h3>TRABAJOS REALIZADOS</h3>
-                    <textarea id="trabajos-realizados" rows="5" placeholder="Detalle aquí los trabajos que se completaron..."></textarea>
-                </section>
-
-                <section class="ot-section">
-                    <h3>DETALLE FINAL DE COSTOS</h3>
-                    <div id="costos-finales-container">
-                        </div>
-                    <div class="total-final-container">
-                        <h3>Total Final: <span id="total-final">$0</span></h3>
-                    </div>
-                </section>
-
-                <section class="ot-section">
-                    <h3>OBSERVACIONES Y RECOMENDACIONES</h3>
-                    <textarea id="recomendaciones" rows="3" placeholder="Ej: Se recomienda cambio de neumáticos en 5.000km..."></textarea>
-                </section>
-                <section class="ot-section">
-    <h3>GARANTÍA DEL TRABAJO</h3>
-    <div class="input-group">
-        <label for="meses-garantia">Meses de Garantía</label>
-        <input type="text" id="meses-garantia" placeholder="Ej: 3 meses, 6 meses, etc...">
-    </div>
-</section>
-
-                <section class="ot-section ot-terms">
-                    <p>El cliente declara recibir el vehículo a su entera satisfacción, de acuerdo a los trabajos detallados en el presente informe.</p>
-                </section>
-
-                <section class="ot-section ot-signature">
-                    <div class="signature-box"><label>RECIBE CONFORME</label></div>
-                    <div class="signature-box"><label>NOMBRE</label></div>
-                    <div class="signature-box"><label>FIRMA</label></div>
-                </section>
-            </form>
+                 </form>
         </div>
- <div class="acciones-container no-print">
-    <button id="btn-guardar-finalizar" class="btn-submit btn-finalizar">Guardar y Finalizar Trabajo</button>
-    <button id="btn-imprimir" class="btn-submit">Imprimir Informe</button>
-</div>
+        <div class="acciones-container no-print">
+             </div>
     </main>
     <script src="finalizacion_trabajo.js"></script>
     <script src="menu.js"></script> 

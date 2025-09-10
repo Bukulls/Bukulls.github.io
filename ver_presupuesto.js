@@ -18,104 +18,64 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // --- FUNCIÓN PARA RENDERIZAR EL PRESUPUESTO ---
-    function renderizarPresupuesto() {
-        try {
-            if (isNaN(presupuestoId)) {
-                throw new Error("La URL no contiene un ID de presupuesto válido.");
-            }
+ function renderizarPresupuesto() {
+    try {
+        // ... (la lógica para obtener los datos no cambia) ...
+        
+        let repuestosHTML = '';
+        if (presupuesto.repuestos && presupuesto.repuestos.length > 0) {
+            repuestosHTML = presupuesto.repuestos.map(rep => `<tr><td>${rep.nombre}</td><td class="monto">${formatearMoneda(rep.monto)}</td></tr>`).join('');
+        }
 
-            const presupuesto = presupuestos[presupuestoId];
-            if (!presupuesto) {
-                throw new Error(`No se encontró ningún presupuesto con el ID: ${presupuestoId}.`);
-            }
-
-            const clienteIndex = presupuesto.clienteIndex;
-            if (clienteIndex === undefined || clienteIndex === null) {
-                throw new Error("Este presupuesto no tiene un cliente asociado correctamente.");
-            }
-            const cliente = clientes[clienteIndex];
-            if (!cliente) {
-                throw new Error(`El cliente asociado (ID: ${clienteIndex}) no fue encontrado. Es posible que haya sido eliminado.`);
-            }
-
-            let repuestosHTML = '';
-            if (presupuesto.repuestos && presupuesto.repuestos.length > 0) {
-                repuestosHTML = presupuesto.repuestos.map(rep => `
-                    <tr>
-                        <td>Repuesto: ${rep.nombre || 'Sin nombre'}</td>
-                        <td class="monto">${formatearMoneda(rep.monto)}</td>
-                    </tr>
-                `).join('');
-            }
-
-            detalleContainer.innerHTML = `
-                <div class="cabecera-presupuesto">
-                    <img src="logo_pdf.png" alt="Logo Automat Astudillo" class="logo">
-                    <div class="info-empresa">
-                        <h1>Presupuesto de Reparación</h1>
-                        <p>Automat Astudillo</p>
+        // --- NUEVA PLANTILLA HTML ESTANDARIZADA ---
+        detalleContainer.innerHTML = `
+            <div class="doc-header">
+                <div class="doc-logo-info">
+                    <img src="logo_pdf.png" alt="Logo Taller" class="logo">
+                    <div class="doc-empresa-info">
+                        <p><strong>Automat Astudillo</strong></p>
                         <p>Bernardo Leighton #0334B, Villa Alemana</p>
                         <p>Teléfono: +56 9 XXXXXXXX</p>
                     </div>
                 </div>
-                <div class="info-header">
-                    <p><strong>Fecha:</strong> ${presupuesto.fecha || 'No definida'}</p>
-                    <p><strong>Presupuesto N°:</strong> ${String(presupuestoId + 1).padStart(4, '0')}</p>
+                <div class="doc-title">
+                    <h1>PRESUPUESTO</h1>
+                    <h2>N°: <span id="ot-numero">${String(presupuestoId + 1).padStart(4, '0')}</span></h2>
                 </div>
-                <div class="seccion-presupuesto">
-                    <h2>Datos del Cliente</h2>
-                    <div class="datos-cliente-grid">
-                        <p><strong>Nombre:</strong> ${cliente.nombre}</p>
-                        <p><strong>Teléfono:</strong> ${cliente.telefono}</p>
-                        <p><strong>Vehículo:</strong> ${cliente.marca} ${cliente.modelo} (${cliente.anio})</p>
-                        <p><strong>Patente:</strong> ${cliente.patente}</p>
-                    </div>
-                </div>
-                <div class="seccion-presupuesto">
-                    <h2>Diagnóstico / Trabajo a Realizar</h2>
-                    <p>${presupuesto.diagnostico || 'No especificado.'}</p>
-                </div>
-                <div class="seccion-presupuesto">
-                    <h2>Detalle de Costos</h2>
-                    <table class="tabla-costos">
-                        <thead>
-                            <tr>
-                                <th>Descripción</th>
-                                <th>Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Mano de Obra</td>
-                                <td class="monto">${formatearMoneda(presupuesto.manoObra)}</td>
-                            </tr>
-                            ${repuestosHTML}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Total Estimado</th>
-                                <th class="monto">${formatearMoneda(presupuesto.total)}</th>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                <div class="footer-presupuesto">
-                    <p>Este presupuesto es válido por 15 días. Gracias por su preferencia.</p>
-                </div>
-            `;
+            </div>
 
-        } catch (error) {
-            console.error("Error al renderizar el presupuesto:", error);
-            detalleContainer.innerHTML = `
-                <div class="error-card">
-                    <h2>Oops! Hubo un problema al cargar</h2>
-                    <p>No se pudieron mostrar los detalles del presupuesto.</p>
-                    <p><strong>Motivo:</strong> ${error.message}</p>
+            <div class="doc-section">
+                <h3>DATOS DEL CLIENTE</h3>
+                <div class="doc-grid">
+                    <p><strong>Nombre:</strong> ${cliente.nombre}</p>
+                    <p><strong>Teléfono:</strong> ${cliente.telefono}</p>
+                    <p><strong>Vehículo:</strong> ${cliente.marca} ${cliente.modelo} (${cliente.anio})</p>
+                    <p><strong>Patente:</strong> ${cliente.patente}</p>
                 </div>
-            `;
-            if (accionesContainer) accionesContainer.style.display = 'none';
-        }
+            </div>
+
+            <div class="doc-section">
+                <h3>TRABAJO A REALIZAR</h3>
+                <p>${presupuesto.diagnostico || 'No especificado.'}</p>
+            </div>
+
+            <div class="doc-section">
+                <h3>DETALLE DE COSTOS</h3>
+                <table class="doc-table">
+                    <thead><tr><th>Descripción</th><th class="monto">Monto</th></tr></thead>
+                    <tbody>
+                        <tr><td>Mano de Obra</td><td class="monto">${formatearMoneda(presupuesto.manoObra)}</td></tr>
+                        ${repuestosHTML}
+                    </tbody>
+                    <tfoot><tr><td>Total Estimado</td><td class="monto">${formatearMoneda(presupuesto.total)}</td></tr></tfoot>
+                </table>
+            </div>
+        `;
+
+    } catch (error) {
+        // ... (el manejo de errores no cambia) ...
     }
+}
     
     // --- FUNCIÓN PARA DESCARGAR EL PDF ---
     function descargarPDF() {

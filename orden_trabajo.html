@@ -2,146 +2,32 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orden de Trabajo - Taller Mecánico</title>
+    <title>Orden de Trabajo</title>
     <link rel="stylesheet" href="admin_ingreso.css">
     <link rel="stylesheet" href="menu.css">
-    <link rel="stylesheet" href="orden_trabajo.css">
+    <link rel="stylesheet" href="documento.css"> <link rel="stylesheet" href="orden_trabajo.css">
 </head>
 <body>
-   <button id="menu-btn" class="menu-btn">
-        <div class="line line-1"></div>
-        <div class="line line-2"></div>
-        <div class="line line-3"></div>
-    </button>
-    <nav id="side-nav" class="side-nav no-print">
-        <ul>
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="admin_ingreso.html">Registro de Clientes</a></li>
-            <li><a href="clientes_registrados.html">Clientes Registrados</a></li>
-            <li><a href="presupuesto.html">Generar Presupuesto</a></li>
-            <li><a href="reportes.html">Reportes</a></li>
-        </ul>
-    </nav>
+    <button id="menu-btn" class="menu-btn no-print"></button>
+    <nav id="side-nav" class="side-nav no-print"></nav>
     <main class="container">
-        <div id="orden-trabajo-container">
-            <div class="ot-header">
-                <div class="ot-logo-info">
+        <div id="orden-trabajo-container" class="documento-container">
+            <div class="doc-header">
+                <div class="doc-logo-info">
                     <img src="logo_pdf.png" alt="Logo Taller" class="logo">
-                    <div class="info-empresa">
-                        <p>Automat Astudillo</p>
+                    <div class="doc-empresa-info">
+                        <p><strong>Automat Astudillo</strong></p>
                         <p>Bernardo Leighton #0334B, Villa Alemana</p>
                         <p>Teléfono: +56 9 XXXXXXXX</p>
                     </div>
                 </div>
-                <div class="ot-title">
-                    <h1>RECEPCIÓN Y/O ORDEN DE TRABAJO</h1>
+                <div class="doc-title">
+                    <h1>ORDEN DE TRABAJO</h1>
                     <h2>N°: <span id="ot-numero"></span></h2>
                 </div>
             </div>
-
             <form id="ot-form">
-                <section class="ot-section data-grid">
-                    <div class="input-group">
-                        <label>Nombre</label>
-                        <input type="text" id="cliente-nombre" readonly>
-                    </div>
-                    <div class="input-group">
-                        <label>RUT</label>
-                        <input type="text" id="cliente-rut" readonly>
-                    </div>
-                    <div class="input-group">
-                        <label>Dirección</label>
-                        <input type="text" id="cliente-direccion" readonly>
-                    </div>
-                    <div class="input-group">
-                        <label>Comuna</label>
-                        <input type="text" id="cliente-comuna" readonly>
-                    </div>
-                    <div class="input-group">
-                        <label>Teléfono</label>
-                        <input type="text" id="cliente-telefono" readonly>
-                    </div>
-                    <div class="input-group">
-                        <label>Fecha de Ingreso</label>
-                        <input type="text" id="fecha-ingreso" readonly>
-                    </div>
-                     <div class="input-group">
-                        <label>Marca</label>
-                        <input type="text" id="vehiculo-marca" readonly>
-                    </div>
-                     <div class="input-group">
-                        <label>Modelo</label>
-                        <input type="text" id="vehiculo-modelo" readonly>
-                    </div>
-                     <div class="input-group">
-                        <label>Año</label>
-                        <input type="text" id="vehiculo-anio" readonly>
-                    </div>
-                     <div class="input-group">
-                        <label>Patente</label>
-                        <input type="text" id="vehiculo-patente" readonly>
-                    </div>
-                    <div class="input-group">
-                        <label for="kilometraje">Kilometraje</label>
-                        <input type="text" id="kilometraje" required>
-                    </div>
-                     <div class="input-group">
-                        <label for="recepcionista">Recepcionista</label>
-                        <input type="text" id="recepcionista" value="Eduardo Marín" required>
-                    </div>
-                </section>
-
-                <section class="ot-section">
-                    <h3>TRABAJO A REALIZAR</h3>
-                    <textarea id="trabajo-realizar" rows="4"></textarea>
-                </section>
-                
-                <section class="ot-section">
-                    <h3>CHECK LIST / ESTADO DEL VEHÍCULO</h3>
-                    <div class="checklist-grid">
-                        <div class="input-group">
-                            <label>Nivel de Combustible</label>
-                            <select id="nivel-combustible">
-                                <option value="1/4">1/4 Tanque</option>
-                                <option value="1/2">1/2 Tanque</option>
-                                <option value="3/4">3/4 Tanque</option>
-                                <option value="Lleno">Tanque Lleno</option>
-                            </select>
-                        </div>
-                        <div class="input-group full-span">
-                            <label>Observaciones de Carrocería (Rayones, topones, faltantes, etc.)</label>
-                            <textarea id="obs-carroceria" rows="3" placeholder="Ej: Rayón puerta copiloto, falta tapa de bencina..."></textarea>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="ot-section">
-                    <h3>VALOR DEL TRABAJO</h3>
-                    <input type="text" id="valor-trabajo" readonly>
-                </section>
-                <section class="ot-section ot-terms">
-    <ol>
-        <li>Autorizo a Automat Astudillo para que realicen en mi vehículo la(s) intervención que se detalla.</li>
-        <li>Autorizo a sus empleados a conducir el vehículo arriba consignado por calles o carreteras para efectuar las pruebas que se estimen necesarias.</li>
-        <li>Automat Astudillo no se hace responsable por objetos de valor dejados en el vehículo y no declarado al personal de recepción.</li>
-        <li>Todo diagnostico tendrá un costo. En el caso de retiro de vehículo debe ser informado al encargado y recepcionista, además cancelar los gastos pertinentes según sea el caso.</li>
-        <li>Una vez confirmado el retiro del vehículo con el cliente, se respetará una espera de 48 hrs, posterior a eso habrá cobro de estacionamiento.</li>
-    </ol>
-</section>
-
-<section class="ot-section ot-signature">
-    <div class="signature-box">
-        <label>NOMBRE</label>
-    </div>
-    <div class="signature-box">
-        <label>RUT</label>
-    </div>
-    <div class="signature-box">
-        <label>FIRMA</label>
-    </div>
-</section>
-            </form>
+                </form>
         </div>
         <div class="acciones-container no-print">
             <button id="btn-imprimir-ot" class="btn-submit">Imprimir OT</button>

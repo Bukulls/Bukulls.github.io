@@ -1,0 +1,121 @@
+/* --- ESTILO MAESTRO PARA TODOS LOS DOCUMENTOS IMPRESOS --- */
+
+/* Contenedor principal del documento */
+.documento-container {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #ccc;
+    padding: 25px;
+    font-family: Arial, sans-serif;
+}
+
+/* Encabezado del documento */
+.doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.doc-logo-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.doc-logo-info .logo {
+    max-width: 120px;
+    mix-blend-mode: multiply; /* Corrige el fondo del logo PNG */
+}
+.doc-empresa-info p {
+    margin: 2px 0;
+    font-size: 10pt;
+}
+
+.doc-title {
+    text-align: right;
+}
+.doc-title h1 {
+    font-size: 16pt;
+    margin: 0;
+    font-weight: bold;
+}
+.doc-title h2 {
+    font-size: 12pt;
+    margin: 5px 0 0 0;
+    font-weight: normal;
+}
+
+/* Secciones generales */
+.doc-section {
+    margin-bottom: 20px;
+}
+.doc-section h3 {
+    font-size: 11pt;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+}
+
+/* Grilla para datos (cliente, vehículo, etc.) */
+.doc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 20px;
+    font-size: 10pt;
+}
+.doc-grid p {
+    margin: 4px 0;
+}
+.doc-grid p strong {
+    font-weight: bold;
+}
+
+/* Tabla de costos */
+.doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 10pt;
+}
+.doc-table th, .doc-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+.doc-table thead {
+    background-color: #e9e9e9;
+    font-weight: bold;
+}
+.doc-table tfoot {
+    font-weight: bold;
+    background-color: #e9e9e9;
+}
+.monto {
+    text-align: right;
+}
+
+/* Sección de términos y firmas */
+.doc-terms {
+    font-size: 8pt;
+    margin-top: 25px;
+}
+.doc-terms ol {
+    padding-left: 15px;
+    margin: 0;
+}
+.doc-signature {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+    text-align: center;
+    font-size: 10pt;
+}
+.signature-line {
+    border-top: 1px solid #333;
+    padding-top: 5px;
+    width: 200px;
+}

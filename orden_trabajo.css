@@ -60,32 +60,6 @@
     display: block;
 }
 
-/* Estilos para impresión */
-@media print {
-    body, .container {
-        margin: 0;
-        padding: 0;
-        background-color: #fff;
-        color: #000;
-        box-shadow: none;
-    }
-    .no-print { display: none; }
-    #orden-trabajo-container {
-        border: none;
-        color: #000;
-        background-color: #fff;
-    }
-    .ot-header, .ot-section h3 { border-color: #ccc; }
-    .ot-title h1, .ot-section h3 { color: #000; }
-    #ot-form input, #ot-form textarea, #ot-form select {
-        background-color: #f4f4f4;
-        color: #000;
-        border: 1px solid #ccc;
-    }
-    .info-empresa p { color: #555; }
-}
-/* AÑADE ESTO al final de orden_trabajo.css */
-
 .ot-terms {
     font-size: 0.8em;
     color: var(--color-texto-secundario);

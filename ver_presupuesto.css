@@ -138,44 +138,6 @@
 /* --- TEMA CLARO PARA LA EXPORTACIÓN A PDF --- */
 /* Esta clase se aplicará dinámicamente al clon del presupuesto */
 
-.theme-light {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-}
-
-.theme-light h1, .theme-light h2 {
-    color: #0056b3 !important;
-}
-
-.theme-light p, .theme-light strong, .theme-light th, .theme-light td {
-    color: #333333 !important;
-}
-
-.theme-light .info-empresa p {
-    color: #555555 !important;
-}
-
-.theme-light .cabecera-presupuesto,
-.theme-light .seccion-presupuesto h2,
-.theme-light .tabla-costos th,
-.theme-light .tabla-costos td,
-.theme-light .footer-presupuesto {
-    border-color: #dddddd !important;
-}
-
-.theme-light .tabla-costos thead {
-    background-color: #f2f2f2 !important;
-    color: #000000 !important;
-}
-
-.theme-light .tabla-costos tfoot {
-    background-color: #f2f2f2 !important;
-    color: #0056b3 !important;
-}
-.theme-light .logo {
-    mix-blend-mode: multiply;
-}
-
 /* --- ESTILOS DE IMPRESIÓN --- */
 /* Estas reglas SÓLO se aplican al imprimir o generar el PDF */
 @media print {

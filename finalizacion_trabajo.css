@@ -37,13 +37,3 @@
 #finalizacion-container .ot-signature {
     grid-template-columns: repeat(3, 1fr);
 }
-
-/* Estilos de impresión */
-@media print {
-    .total-final-container {
-        border-color: #ccc;
-    }
-    .total-final-container h3 {
-        color: #000;
-    }
-}
